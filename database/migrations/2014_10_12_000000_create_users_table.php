@@ -19,8 +19,13 @@ class CreateUsersTable extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->unsignedTinyInteger('role')->default(0);
+            $table->float('avg_rate', 4, 2)->default(0);
+            $table->unsignedInteger('rate_count')->default(0);
+            $table->unsignedInteger('verify')->nullable();
             $table->rememberToken();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
