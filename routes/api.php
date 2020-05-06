@@ -18,10 +18,16 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // });
 
-Route::group([
-    'middleware' => 'auth:api'
-], function() {
-    Route::get('user', function (Request $request) {
-        return $request->user();
-    });
+Route::group(['namespace' => 'Api'], function() {
+	Route::group(['namespace' => 'Auth'], function() {
+		Route::post('/login', 'LoginController@main');
+	});
+
+	Route::group([
+	    'middleware' => 'auth:api'
+	], function() {
+	    Route::get('user', function (Request $request) {
+	        return $request->user();
+	    });
+	});
 });
