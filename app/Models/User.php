@@ -52,4 +52,12 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasOne(Profile::class);
     }
+
+    /**
+     * @return \App\Models\Setting
+     */
+    public function setting()
+    {
+        return $this->hasOne(Setting::class);
+    }
 }
