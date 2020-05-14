@@ -11,6 +11,8 @@
 
     <!-- Fontawesome -->
     <script src="https://kit.fontawesome.com/15d7a242f0.js" crossorigin="anonymous"></script>
+    <!-- Scripts -->
+    <script src="{{ asset('js/app.js') }}" defer></script>
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
@@ -18,9 +20,12 @@
 
     <!-- Styles -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
-    @yield('css')
 </head>
 <body>
-    @yield('content')
+    <div id="app"></div>
+    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+        @csrf
+    </form>
+    <!-- built files will be auto injected -->
 </body>
 </html>
