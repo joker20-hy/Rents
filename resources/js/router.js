@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import ExampleComponent from './components/ExampleComponent.vue'
+import Dashboard from './components/pages/Dashboard.vue'
+import ProvinceList from './components/pages/ProvinceList.vue'
 
 Vue.use(Router)
 
@@ -8,8 +9,13 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'Home',
-      component: ExampleComponent
+      name: 'dashboard',
+      component: Dashboard
+    },
+    {
+      path: '/provinces',
+      name: 'provinces',
+      component: ProvinceList
     }
   ]
 })

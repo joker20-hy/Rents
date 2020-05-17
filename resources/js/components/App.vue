@@ -5,17 +5,20 @@
       <header-bar/>
       <router-view/>
     </section>
+    <logout-confirm/>
   </div>
 </template>
 <script>
 import SideMenu from './layouts/SideMenu'
 import HeaderBar from './layouts/HeaderBar'
+import LogoutConfirm from './layouts/LogoutConfirm'
 
 export default {
   name: 'App',
   components: {
     SideMenu,
-    HeaderBar
+    HeaderBar,
+    LogoutConfirm
   },
   data () {
     return {}
