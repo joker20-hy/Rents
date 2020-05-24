@@ -41,7 +41,7 @@ class AreaServices
     public function list($type = null, $id = null)
     {
         if (is_null($type) xor is_null($id)) {
-            return \abort(400, 'Missing foreign key or type');
+            return response()->json(400, 'Missing foreign key or type');
         }
         $query = is_null($type) ? $this->area : $this->area->where(PLACE_TYPE[$type]['FOREIGN_KEY'], $id);
         return $query->get();
@@ -62,11 +62,8 @@ class AreaServices
     }
 
     /**
-     * @param array $params [
-     *  'name',
-     *  'province_id',
-     *  'district_id'
-     * ]
+     * @param integer $id
+     * @param array $params [name, province_id, district_id]
      * @return \App\Models\Area
      */
     public function update($id, $params)
@@ -79,6 +76,10 @@ class AreaServices
         return $area;
     }
 
+    /**
+     * Delete an area
+     * @param integer $id
+     */
     public function destroy($id)
     {
         $area = $this->area->findOrFail($id);

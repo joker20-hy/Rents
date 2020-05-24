@@ -6,3 +6,20 @@
 
 // Bootstrap
 @import '~bootstrap/scss/bootstrap';
+
+#logout {
+  display: none;
+}
+.modal-backdrop {
+  background-color: #00000030!important;
+}
+.pagination li a {
+  padding: 10px 15px;
+  margin-right: 10px;
+  color: var(--info);
+  font-weight: 600;
+}
+.pagination li.active a {
+  border: 0px;
+  border-bottom: 2px solid var(--blue);
+}
