@@ -1,9 +1,9 @@
 <template>
   <b-modal id="notification" hide-header hide-footer>
-    <div class="pb-2" style="font-weight: 600">
+    <div class="pb-2" :class="colors.title" style="font-weight: 600">
       {{ title }}
     </div>
-    <div>
+    <div :class="colors.message">
       {{ message }}
     </div>
   </b-modal>
@@ -12,7 +12,12 @@
 export default {
   name: 'notice-modal',
   data () {
-    return {}
+    return {
+      color: {
+        title: '',
+        message: ''
+      }
+    }
   },
   computed: {
     title () {
@@ -20,6 +25,9 @@ export default {
     },
     message () {
       return this.$store.state.notification.message
+    },
+    colors () {
+      return this.$store.state.notification.colors
     }
   },
   methods: {

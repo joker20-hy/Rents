@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <h1 class="d-flex align-items-end mt-5">
-        Danh sách tỉnh thành
+        Danh sách quận/huyện
         <b-button
           :class="create ? '' : 'collapsed'"
           :aria-expanded="create ? 'true' : 'false'"
@@ -16,8 +16,16 @@
     <!-- create form -->
     <b-collapse id="create-form" v-model="create">
       <form class="my-3" @submit.prevent="store()">
-        <div class="form-group">
-            <input type="text" class="form-control" placeholder="Nhập tên tỉnh thành" v-model="province.name" required>
+        <div class="row form-group">
+          <div class="col-md-3">
+            <select class="form-control" v-model="district.province_id" required>
+              <option value="" selected>Tỉnh/thành</option>
+              <option v-for="prov in provinces" :key="prov.id" :value="prov.id">{{ prov.name }}</option>
+            </select>
+          </div>
+          <div class="col-md-9">
+            <input type="text" class="form-control" placeholder="Nhập tên quận huyện" v-model="district.name" required>
+          </div>
         </div>
         <button class="btn btn-outline-primary">Create</button>
       </form>
@@ -29,16 +37,18 @@
         <th>STT</th>
         <th>Tên</th>
         <th>Slug</th>
+        <th>Tỉnh thành</th>
         <th>Hành động</th>
       </thead>
       <transition-group name="slide-fade" tag="tbody">
-        <tr v-for="prov in provinces" :key="prov.id">
-          <td>{{ prov.id }}</td>
-          <td>{{ prov.name }}</td>
-          <td>{{ prov.slug }}</td>
+        <tr v-for="dist in districts" :key="dist.id">
+          <td>{{ dist.id }}</td>
+          <td>{{ dist.name }}</td>
+          <td>{{ dist.slug }}</td>
+          <td>{{ dist.province.name }}</td>
           <td>
-            <button class="btn btn-outline-primary" @click="edit=true,choose(prov)">Edit</button>
-            <button class="btn text-danger" @click="destroy=true,choose(prov)">Delete</button>
+            <button class="btn btn-outline-primary" @click="edit=true,choose(dist)">Edit</button>
+            <button class="btn text-danger" @click="destroy=true,choose(dist)">Delete</button>
           </td>
         </tr>
       </transition-group>
@@ -67,13 +77,22 @@
     <!-- edit province -->
     <b-modal v-model="edit" centered hide-header hide-footer>
       <div class="p-2 text-center">
-        <h3>Sửa thông tin tỉnh thành</h3>
+        <h3>Sửa thông tin quận huyện</h3>
         <form action="" class="py-3" @submit.prevent>
-          <div class="form-group">
-            <input type="text" class="form-control" v-model="chosenProvince.name">
+          <div class="row form-group">
+            <div class="col-md-6">
+              <select class="form-control" v-model="chosenDistrict.province_id">
+                <option v-for="prov in provinces" :key="prov.id" :value="prov.id">
+                  {{ prov.name }}
+                </option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <input type="text" class="form-control" v-model="chosenDistrict.name">
+            </div>
           </div>
           <div class="form-group">
-            <input type="text" class="form-control" v-model="chosenProvince.slug">
+            <input type="text" class="form-control" v-model="chosenDistrict.slug">
           </div>
         </form>
         <b-button variant="outline-primary" @click="update()">Update</b-button>
@@ -86,25 +105,37 @@
 import { $auth } from '../../auth.js'
 
 export default {
-  name: 'province-list',
+  name: 'district-list',
   data () {
     return {
-      chosenProvince: '',
+      chosenDistrict: '',
       edit: false,
       create: false,
       destroy: false,
       page: 1,
       page_count: 1,
       provinces: [],
-      province: {
-        name: ''
+      districts: [],
+      district: {
+        name: '',
+        province_id: ''
       }
     }
   },
   mounted () {
     this.list()
+    this.getProvinces()
   },
   methods: {
+    getProvinces () {
+      $auth.request.get('/api/province/all')
+      .then(res => {
+        this.provinces = res.data
+      })
+      .catch(err => {
+        this.error(err.response.data.message)
+      })
+    },
     /**
      * Change page
      * @param {Number} page target page
@@ -117,56 +148,13 @@ export default {
      * Choose a province for the next action
      * @param {Object} province
      */
-    choose (province) {
-      this.chosenProvince = {
-        id: province.id,
-        name: province.name,
-        slug: province.slug
+    choose (district) {
+      this.chosenDistrict = {
+        id: district.id,
+        name: district.name,
+        slug: district.slug,
+        province_id: district.province_id
       }
-    },
-    /**
-     * Store a new province
-     */
-    store () {
-      $auth.request.post('/api/province', {
-        name: this.province.name
-      })
-      .then(res => {
-        this.province.name = ''
-        ++this.total
-        if (this.total % 10==1) {
-          this.changePage(this.page + 1)
-        } else {
-          this.provinces.push(res.data)
-        }
-      })
-      .catch(err => console.log(err))
-    },
-    /**
-     * List all provinces
-     * @param {Number} page
-     */
-    list (page=1) {
-      $auth.request.get('/api/province?page='+this.page)
-      .then(res => {
-        this.provinces = []
-        this.page_count = res.data.last_page
-        this.total = res.data.total
-        res.data.data.forEach(province => this.provinces.push(province))
-      })
-      .catch(err => {
-        this.error('Không thể lấy được danh sách tỉnh thành')
-      })
-    },
-    /**
-     * Confirm delete a province
-     */
-    destroyConfirm () {
-      $auth.request.delete('/api/province/'+this.chosenProvince.id)
-      .then(res => {
-        this.destroy=false
-        this.provinces = this.provinces.filter(prov => prov.id!=this.chosenProvince.id)
-      })
     },
     /**
      * Success notification
@@ -206,16 +194,71 @@ export default {
         this.$bvModal.hide('notification')
       }, timeout)
     },
-    update () {
-      $auth.request.put('/api/province/'+this.chosenProvince.id, {
-        name: this.chosenProvince.name,
-        slug: this.chosenProvince.slug
+    /**
+     * Store a new province
+     */
+    store () {
+      $auth.request.post('/api/district', {
+        province_id: this.district.province_id,
+        name: this.district.name
       })
       .then(res => {
-        this.provinces.forEach(prov => {
-          if (prov.id == this.chosenProvince.id) {
-            prov.name = this.chosenProvince.name
-            prov.slug = this.chosenProvince.slug
+        this.district.province_id = ''
+        this.district.name = ''
+        this.total = this.total + 1
+        if (this.total % 10==1) {
+          this.changePage(this.page + 1)
+        } else {
+          this.districts.push(res.data)
+        }
+      })
+      .catch(err => {
+        this.error(err.response.data.message)
+      })
+    },
+    /**
+     * List all provinces
+     * @param {Number} page
+     */
+    list (page=1) {
+      $auth.request.get(`/api/district?page=${page}`)
+      .then(res => {
+        this.districts = []
+        this.page_count = res.data.last_page
+        this.total = res.data.total
+        res.data.data.forEach(district => this.districts.push(district))
+      })
+      .catch(err => {
+        this.error('Không thể lấy được danh sách quận/huyện')
+      })
+    },
+    /**
+     * Confirm delete a district
+     */
+    destroyConfirm () {
+      $auth.request.delete('/api/district/'+this.chosenDistrict.id)
+      .then(res => {
+        this.destroy=false
+        this.districts = this.districts.filter(prov => prov.id!=this.chosenDistrict.id)
+        this.success('Xóa thành công')
+      })
+      .catch(err => {
+        this.destroy=false
+        this.error(err.response.data.message)
+      })
+    },
+    update () {
+      $auth.request.put('/api/district/'+this.chosenDistrict.id, {
+        name: this.chosenDistrict.name,
+        slug: this.chosenDistrict.slug,
+        province_id: this.chosenDistrict.province_id
+      })
+      .then(res => {
+        this.districts.forEach(prov => {
+          if (prov.id == this.chosenDistrict.id) {
+            prov.name = this.chosenDistrict.name
+            prov.slug = this.chosenDistrict.slug
+            prov.province_id = this.chosenDistrict.province_id
           }
         })
         this.edit=false
