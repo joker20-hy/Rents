@@ -2062,7 +2062,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'notice-modal',
   data: function data() {
-    return {};
+    return {
+      color: {
+        title: '',
+        message: ''
+      }
+    };
   },
   computed: {
     title: function title() {
@@ -2070,6 +2075,9 @@ __webpack_require__.r(__webpack_exports__);
     },
     message: function message() {
       return this.$store.state.notification.message;
+    },
+    colors: function colors() {
+      return this.$store.state.notification.colors;
     }
   },
   methods: {
@@ -2148,6 +2156,310 @@ __webpack_require__.r(__webpack_exports__);
   name: 'dash-board',
   data: function data() {
     return {};
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/pages/DistrictList.vue?vue&type=script&lang=js&":
+/*!*****************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/pages/DistrictList.vue?vue&type=script&lang=js& ***!
+  \*****************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _auth_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../auth.js */ "./resources/js/auth.js");
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  name: 'district-list',
+  data: function data() {
+    return {
+      chosenDistrict: '',
+      edit: false,
+      create: false,
+      destroy: false,
+      page: 1,
+      page_count: 1,
+      provinces: [],
+      districts: [],
+      district: {
+        name: '',
+        province_id: ''
+      }
+    };
+  },
+  mounted: function mounted() {
+    this.list();
+    this.getProvinces();
+  },
+  methods: {
+    getProvinces: function getProvinces() {
+      var _this = this;
+
+      _auth_js__WEBPACK_IMPORTED_MODULE_0__["$auth"].request.get('/api/province/all').then(function (res) {
+        _this.provinces = res.data;
+      })["catch"](function (err) {
+        _this.error(err.response.data.message);
+      });
+    },
+
+    /**
+     * Change page
+     * @param {Number} page target page
+     */
+    changePage: function changePage(page) {
+      this.page = page;
+      this.list(page);
+    },
+
+    /**
+     * Choose a province for the next action
+     * @param {Object} province
+     */
+    choose: function choose(district) {
+      this.chosenDistrict = {
+        id: district.id,
+        name: district.name,
+        slug: district.slug,
+        province_id: district.province_id
+      };
+    },
+
+    /**
+     * Success notification
+     * @param {String} message
+     */
+    success: function success(message) {
+      this.notification('Thành công', message, {
+        title: 'text-success',
+        message: ''
+      });
+    },
+
+    /**
+     * Error notification
+     * @param {String} message
+     */
+    error: function error(message) {
+      this.notification('Không thành công', message, {
+        title: 'text-danger',
+        message: ''
+      });
+    },
+
+    /**
+     * Show notification
+     * @param {String} title
+     * @param {String} message
+     * @param {Object} colors {title: {String},message: {String}}
+     * @param {Number} timeout in seconds
+     */
+    notification: function notification(title, message, colors) {
+      var _this2 = this;
+
+      var timeout = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 3000;
+      this.$store.commit('notification', {
+        title: title,
+        message: message,
+        colors: colors
+      });
+      this.$bvModal.show('notification');
+      setTimeout(function () {
+        _this2.$bvModal.hide('notification');
+      }, timeout);
+    },
+
+    /**
+     * Store a new province
+     */
+    store: function store() {
+      var _this3 = this;
+
+      _auth_js__WEBPACK_IMPORTED_MODULE_0__["$auth"].request.post('/api/district', {
+        province_id: this.district.province_id,
+        name: this.district.name
+      }).then(function (res) {
+        _this3.district.province_id = '';
+        _this3.district.name = '';
+        _this3.total = _this3.total + 1;
+
+        if (_this3.total % 10 == 1) {
+          _this3.changePage(_this3.page + 1);
+        } else {
+          _this3.districts.push(res.data);
+        }
+      })["catch"](function (err) {
+        _this3.error(err.response.data.message);
+      });
+    },
+
+    /**
+     * List all provinces
+     * @param {Number} page
+     */
+    list: function list() {
+      var _this4 = this;
+
+      var page = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
+      _auth_js__WEBPACK_IMPORTED_MODULE_0__["$auth"].request.get("/api/district?page=".concat(page)).then(function (res) {
+        _this4.districts = [];
+        _this4.page_count = res.data.last_page;
+        _this4.total = res.data.total;
+        res.data.data.forEach(function (district) {
+          return _this4.districts.push(district);
+        });
+      })["catch"](function (err) {
+        _this4.error('Không thể lấy được danh sách quận/huyện');
+      });
+    },
+
+    /**
+     * Confirm delete a district
+     */
+    destroyConfirm: function destroyConfirm() {
+      var _this5 = this;
+
+      _auth_js__WEBPACK_IMPORTED_MODULE_0__["$auth"].request["delete"]('/api/district/' + this.chosenDistrict.id).then(function (res) {
+        _this5.destroy = false;
+        _this5.districts = _this5.districts.filter(function (prov) {
+          return prov.id != _this5.chosenDistrict.id;
+        });
+
+        _this5.success('Xóa thành công');
+      })["catch"](function (err) {
+        _this5.destroy = false;
+
+        _this5.error(err.response.data.message);
+      });
+    },
+    update: function update() {
+      var _this6 = this;
+
+      _auth_js__WEBPACK_IMPORTED_MODULE_0__["$auth"].request.put('/api/district/' + this.chosenDistrict.id, {
+        name: this.chosenDistrict.name,
+        slug: this.chosenDistrict.slug,
+        province_id: this.chosenDistrict.province_id
+      }).then(function (res) {
+        _this6.districts.forEach(function (prov) {
+          if (prov.id == _this6.chosenDistrict.id) {
+            prov.name = _this6.chosenDistrict.name;
+            prov.slug = _this6.chosenDistrict.slug;
+            prov.province_id = _this6.chosenDistrict.province_id;
+          }
+        });
+
+        _this6.edit = false;
+
+        _this6.success('Chỉnh sửa thành công');
+      })["catch"](function (err) {
+        _this6.error(err.response.data.message);
+      });
+    }
   }
 });
 
@@ -2245,16 +2557,17 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'province-list',
   data: function data() {
     return {
-      chosenId: '',
+      chosenProvince: '',
       edit: false,
       create: false,
       destroy: false,
-      deleteConfirm: false,
       page: 1,
       page_count: 1,
       provinces: [],
@@ -2267,61 +2580,146 @@ __webpack_require__.r(__webpack_exports__);
     this.list();
   },
   methods: {
-    api: function api() {
-      var page = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
-      return '/api/province' + (page == null ? '' : '?page=' + page);
-    },
-    clickCallback: function clickCallback(page) {
+    /**
+     * Change page
+     * @param {Number} page target page
+     */
+    changePage: function changePage(page) {
       this.page = page;
       this.list(page);
     },
+
+    /**
+     * Choose a province for the next action
+     * @param {Object} province
+     */
+    choose: function choose(province) {
+      this.chosenProvince = {
+        id: province.id,
+        name: province.name,
+        slug: province.slug
+      };
+    },
+
+    /**
+     * Store a new province
+     */
     store: function store() {
       var _this = this;
 
-      _auth_js__WEBPACK_IMPORTED_MODULE_0__["$auth"].request.post(this.api(), {
+      _auth_js__WEBPACK_IMPORTED_MODULE_0__["$auth"].request.post('/api/province', {
         name: this.province.name
       }).then(function (res) {
         _this.province.name = '';
+        ++_this.total;
 
-        _this.list(_this.page);
+        if (_this.total % 10 == 1) {
+          _this.changePage(_this.page + 1);
+        } else {
+          _this.provinces.push(res.data);
+        }
       })["catch"](function (err) {
         return console.log(err);
       });
     },
+
+    /**
+     * List all provinces
+     * @param {Number} page
+     */
     list: function list() {
       var _this2 = this;
 
-      var page = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
-      _auth_js__WEBPACK_IMPORTED_MODULE_0__["$auth"].request.get(this.api(page)).then(function (res) {
+      var page = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
+      _auth_js__WEBPACK_IMPORTED_MODULE_0__["$auth"].request.get('/api/province?page=' + this.page).then(function (res) {
         _this2.provinces = [];
         _this2.page_count = res.data.last_page;
+        _this2.total = res.data.total;
         res.data.data.forEach(function (province) {
           return _this2.provinces.push(province);
         });
       })["catch"](function (err) {
-        _this2.$store.commit('setNotification', {
-          title: "Không thành công",
-          message: "Không thể lấy được danh sách tỉnh thành"
-        });
+        _this2.error('Không thể lấy được danh sách tỉnh thành');
       });
     },
+
+    /**
+     * Confirm delete a province
+     */
     destroyConfirm: function destroyConfirm() {
       var _this3 = this;
 
-      _auth_js__WEBPACK_IMPORTED_MODULE_0__["$auth"].request["delete"]('/api/province/' + this.chosenId).then(function (res) {
-        _this3.deleteConfirm = false;
-
-        _this3.list(_this3.page);
+      _auth_js__WEBPACK_IMPORTED_MODULE_0__["$auth"].request["delete"]('/api/province/' + this.chosenProvince.id).then(function (res) {
+        _this3.destroy = false;
+        _this3.provinces = _this3.provinces.filter(function (prov) {
+          return prov.id != _this3.chosenProvince.id;
+        });
       });
     },
-    notification: function notification(title, message) {
-      this.$store.commit('setNotification', {
+
+    /**
+     * Success notification
+     * @param {String} message
+     */
+    success: function success(message) {
+      this.notification('Thành công', message, {
+        title: 'text-success',
+        message: ''
+      });
+    },
+
+    /**
+     * Error notification
+     * @param {String} message
+     */
+    error: function error(message) {
+      this.notification('Không thành công', message, {
+        title: 'text-danger',
+        message: ''
+      });
+    },
+
+    /**
+     * Show notification
+     * @param {String} title
+     * @param {String} message
+     * @param {Object} colors {title: {String},message: {String}}
+     * @param {Number} timeout in seconds
+     */
+    notification: function notification(title, message, colors) {
+      var _this4 = this;
+
+      var timeout = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 3000;
+      this.$store.commit('notification', {
         title: title,
-        message: message
+        message: message,
+        colors: colors
       });
       this.$bvModal.show('notification');
+      setTimeout(function () {
+        _this4.$bvModal.hide('notification');
+      }, timeout);
     },
-    update: function update() {//
+    update: function update() {
+      var _this5 = this;
+
+      _auth_js__WEBPACK_IMPORTED_MODULE_0__["$auth"].request.put('/api/province/' + this.chosenProvince.id, {
+        name: this.chosenProvince.name,
+        slug: this.chosenProvince.slug
+      }).then(function (res) {
+        _this5.provinces.forEach(function (prov) {
+          if (prov.id == _this5.chosenProvince.id) {
+            prov.name = _this5.chosenProvince.name;
+            prov.slug = _this5.chosenProvince.slug;
+          }
+        });
+
+        _this5.edit = false;
+
+        _this5.success('Chỉnh sửa thành công');
+      })["catch"](function (err) {
+        _this5.error(err.response.data.message);
+      });
     }
   }
 });
@@ -47989,6 +48387,25 @@ var warnNoMutationObserverSupport = function warnNoMutationObserverSupport(sourc
 
 /***/ }),
 
+/***/ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/pages/DistrictList.vue?vue&type=style&index=0&id=3d77afe2&scoped=true&lang=css&":
+/*!************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/css-loader??ref--6-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--6-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/pages/DistrictList.vue?vue&type=style&index=0&id=3d77afe2&scoped=true&lang=css& ***!
+  \************************************************************************************************************************************************************************************************************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-loader/lib/css-base.js */ "./node_modules/css-loader/lib/css-base.js")(false);
+// imports
+
+
+// module
+exports.push([module.i, "\n.show-create-form[data-v-3d77afe2] {\n  width: 40px;\n  height:40px;\n}\n.show-create-form i[data-v-3d77afe2] {\n  transition: 0.2s;\n  color: var(--blue);\n}\n.cancel-create[data-v-3d77afe2] {\n  transform: rotate(45deg);\n  color: var(--red)!important;\n}\n.slide-fade-enter-active[data-v-3d77afe2] {\n  transition: all .3s ease;\n}\n.slide-fade-leave-active[data-v-3d77afe2] {\n  transition: all .3s cubic-bezier(1.0, 0.5, 0.8, 1.0);\n}\n.slide-fade-enter[data-v-3d77afe2], .slide-fade-leave-to[data-v-3d77afe2] {\n  transform: translateX(10px);\n  opacity: 0;\n}\n", ""]);
+
+// exports
+
+
+/***/ }),
+
 /***/ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/pages/ProvinceList.vue?vue&type=style&index=0&id=41c9e584&scoped=true&lang=css&":
 /*!************************************************************************************************************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/css-loader??ref--6-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--6-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/pages/ProvinceList.vue?vue&type=style&index=0&id=41c9e584&scoped=true&lang=css& ***!
@@ -48001,7 +48418,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\n.show-create-form[data-v-41c9e584] {\n  width: 40px;\n  height:40px;\n}\n.show-create-form i[data-v-41c9e584] {\n  transition: 0.2s;\n  color: var(--blue);\n}\n.cancel-create[data-v-41c9e584] {\n  transform: rotate(45deg);\n  color: var(--red)!important;\n}\n.slide-fade-enter-active[data-v-41c9e584] {\n  transition: all .3s ease;\n}\n.slide-fade-leave-active[data-v-41c9e584] {\n  transition: all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0);\n}\n.slide-fade-enter[data-v-41c9e584], .slide-fade-leave-to[data-v-41c9e584] {\n  transform: translateX(10px);\n  opacity: 0;\n}\n", ""]);
+exports.push([module.i, "\n.show-create-form[data-v-41c9e584] {\n  width: 40px;\n  height:40px;\n}\n.show-create-form i[data-v-41c9e584] {\n  transition: 0.2s;\n  color: var(--blue);\n}\n.cancel-create[data-v-41c9e584] {\n  transform: rotate(45deg);\n  color: var(--red)!important;\n}\n.slide-fade-enter-active[data-v-41c9e584] {\n  transition: all .3s ease;\n}\n.slide-fade-leave-active[data-v-41c9e584] {\n  transition: all .3s cubic-bezier(1.0, 0.5, 0.8, 1.0);\n}\n.slide-fade-enter[data-v-41c9e584], .slide-fade-leave-to[data-v-41c9e584] {\n  transform: translateX(10px);\n  opacity: 0;\n}\n", ""]);
 
 // exports
 
@@ -79746,6 +80163,36 @@ process.umask = function() { return 0; };
 
 /***/ }),
 
+/***/ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/pages/DistrictList.vue?vue&type=style&index=0&id=3d77afe2&scoped=true&lang=css&":
+/*!****************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/style-loader!./node_modules/css-loader??ref--6-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--6-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/pages/DistrictList.vue?vue&type=style&index=0&id=3d77afe2&scoped=true&lang=css& ***!
+  \****************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(/*! !../../../../node_modules/css-loader??ref--6-1!../../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../../node_modules/postcss-loader/src??ref--6-2!../../../../node_modules/vue-loader/lib??vue-loader-options!./DistrictList.vue?vue&type=style&index=0&id=3d77afe2&scoped=true&lang=css& */ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/pages/DistrictList.vue?vue&type=style&index=0&id=3d77afe2&scoped=true&lang=css&");
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(/*! ../../../../node_modules/style-loader/lib/addStyles.js */ "./node_modules/style-loader/lib/addStyles.js")(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(false) {}
+
+/***/ }),
+
 /***/ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/pages/ProvinceList.vue?vue&type=style&index=0&id=41c9e584&scoped=true&lang=css&":
 /*!****************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/style-loader!./node_modules/css-loader??ref--6-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--6-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/pages/ProvinceList.vue?vue&type=style&index=0&id=41c9e584&scoped=true&lang=css& ***!
@@ -80685,11 +81132,17 @@ var render = function() {
     [
       _c(
         "div",
-        { staticClass: "pb-2", staticStyle: { "font-weight": "600" } },
+        {
+          staticClass: "pb-2",
+          class: _vm.colors.title,
+          staticStyle: { "font-weight": "600" }
+        },
         [_vm._v("\n    " + _vm._s(_vm.title) + "\n  ")]
       ),
       _vm._v(" "),
-      _c("div", [_vm._v("\n    " + _vm._s(_vm.message) + "\n  ")])
+      _c("div", { class: _vm.colors.message }, [
+        _vm._v("\n    " + _vm._s(_vm.message) + "\n  ")
+      ])
     ]
   )
 }
@@ -80756,11 +81209,20 @@ var render = function() {
             1
           ),
           _vm._v(" "),
+          _c(
+            "li",
+            { staticClass: "list-group-item" },
+            [
+              _c("router-link", { attrs: { to: "/districts" } }, [
+                _vm._v("District list")
+              ])
+            ],
+            1
+          ),
+          _vm._v(" "),
           _vm._m(1),
           _vm._v(" "),
-          _vm._m(2),
-          _vm._v(" "),
-          _vm._m(3)
+          _vm._m(2)
         ])
       ])
     ]
@@ -80773,14 +81235,6 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("li", { staticClass: "list-group-item" }, [
       _c("a", { attrs: { href: "" } }, [_vm._v("User")])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("li", { staticClass: "list-group-item" }, [
-      _c("a", { attrs: { href: "" } }, [_vm._v("District")])
     ])
   },
   function() {
@@ -80830,6 +81284,496 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("div", { staticClass: "container" }, [
       _c("h1", [_vm._v("This is dashboard")])
+    ])
+  }
+]
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/pages/DistrictList.vue?vue&type=template&id=3d77afe2&scoped=true&":
+/*!*********************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/pages/DistrictList.vue?vue&type=template&id=3d77afe2&scoped=true& ***!
+  \*********************************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "div",
+    { staticClass: "container" },
+    [
+      _c(
+        "h1",
+        { staticClass: "d-flex align-items-end mt-5" },
+        [
+          _vm._v("\n      Danh sách quận/huyện\n      "),
+          _c(
+            "b-button",
+            {
+              staticClass: "show-create-form ml-auto",
+              class: _vm.create ? "" : "collapsed",
+              attrs: {
+                "aria-expanded": _vm.create ? "true" : "false",
+                "aria-controls": "create-form",
+                variant: "light"
+              },
+              on: {
+                click: function($event) {
+                  _vm.create = !_vm.create
+                }
+              }
+            },
+            [
+              _c("i", {
+                staticClass: "fas fa-plus",
+                class: _vm.create ? "cancel-create" : ""
+              })
+            ]
+          )
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c(
+        "b-collapse",
+        {
+          attrs: { id: "create-form" },
+          model: {
+            value: _vm.create,
+            callback: function($$v) {
+              _vm.create = $$v
+            },
+            expression: "create"
+          }
+        },
+        [
+          _c(
+            "form",
+            {
+              staticClass: "my-3",
+              on: {
+                submit: function($event) {
+                  $event.preventDefault()
+                  return _vm.store()
+                }
+              }
+            },
+            [
+              _c("div", { staticClass: "row form-group" }, [
+                _c("div", { staticClass: "col-md-3" }, [
+                  _c(
+                    "select",
+                    {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.district.province_id,
+                          expression: "district.province_id"
+                        }
+                      ],
+                      staticClass: "form-control",
+                      attrs: { required: "" },
+                      on: {
+                        change: function($event) {
+                          var $$selectedVal = Array.prototype.filter
+                            .call($event.target.options, function(o) {
+                              return o.selected
+                            })
+                            .map(function(o) {
+                              var val = "_value" in o ? o._value : o.value
+                              return val
+                            })
+                          _vm.$set(
+                            _vm.district,
+                            "province_id",
+                            $event.target.multiple
+                              ? $$selectedVal
+                              : $$selectedVal[0]
+                          )
+                        }
+                      }
+                    },
+                    [
+                      _c("option", { attrs: { value: "", selected: "" } }, [
+                        _vm._v("Tỉnh/thành")
+                      ]),
+                      _vm._v(" "),
+                      _vm._l(_vm.provinces, function(prov) {
+                        return _c(
+                          "option",
+                          { key: prov.id, domProps: { value: prov.id } },
+                          [_vm._v(_vm._s(prov.name))]
+                        )
+                      })
+                    ],
+                    2
+                  )
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "col-md-9" }, [
+                  _c("input", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.district.name,
+                        expression: "district.name"
+                      }
+                    ],
+                    staticClass: "form-control",
+                    attrs: {
+                      type: "text",
+                      placeholder: "Nhập tên quận huyện",
+                      required: ""
+                    },
+                    domProps: { value: _vm.district.name },
+                    on: {
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.$set(_vm.district, "name", $event.target.value)
+                      }
+                    }
+                  })
+                ])
+              ]),
+              _vm._v(" "),
+              _c("button", { staticClass: "btn btn-outline-primary" }, [
+                _vm._v("Create")
+              ])
+            ]
+          )
+        ]
+      ),
+      _vm._v(" "),
+      _c(
+        "table",
+        { staticClass: "table table-borderless" },
+        [
+          _vm._m(0),
+          _vm._v(" "),
+          _c(
+            "transition-group",
+            { attrs: { name: "slide-fade", tag: "tbody" } },
+            _vm._l(_vm.districts, function(dist) {
+              return _c("tr", { key: dist.id }, [
+                _c("td", [_vm._v(_vm._s(dist.id))]),
+                _vm._v(" "),
+                _c("td", [_vm._v(_vm._s(dist.name))]),
+                _vm._v(" "),
+                _c("td", [_vm._v(_vm._s(dist.slug))]),
+                _vm._v(" "),
+                _c("td", [_vm._v(_vm._s(dist.province.name))]),
+                _vm._v(" "),
+                _c("td", [
+                  _c(
+                    "button",
+                    {
+                      staticClass: "btn btn-outline-primary",
+                      on: {
+                        click: function($event) {
+                          ;(_vm.edit = true), _vm.choose(dist)
+                        }
+                      }
+                    },
+                    [_vm._v("Edit")]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "button",
+                    {
+                      staticClass: "btn text-danger",
+                      on: {
+                        click: function($event) {
+                          ;(_vm.destroy = true), _vm.choose(dist)
+                        }
+                      }
+                    },
+                    [_vm._v("Delete")]
+                  )
+                ])
+              ])
+            }),
+            0
+          )
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c("paginate", {
+        attrs: {
+          "page-count": _vm.page_count,
+          "page-range": 3,
+          "margin-pages": 2,
+          "click-handler": _vm.changePage,
+          "prev-text": "Prev",
+          "next-text": "Next",
+          "container-class": "pagination",
+          "page-class": "page-item"
+        },
+        model: {
+          value: _vm.page,
+          callback: function($$v) {
+            _vm.page = $$v
+          },
+          expression: "page"
+        }
+      }),
+      _vm._v(" "),
+      _c(
+        "b-modal",
+        {
+          attrs: { centered: "", "hide-header": "", "hide-footer": "" },
+          model: {
+            value: _vm.destroy,
+            callback: function($$v) {
+              _vm.destroy = $$v
+            },
+            expression: "destroy"
+          }
+        },
+        [
+          _c(
+            "div",
+            { staticClass: "p-2 text-center" },
+            [
+              _c("h3", [_vm._v("Xác nhận xóa")]),
+              _vm._v(" "),
+              _c("br"),
+              _vm._v(" "),
+              _c(
+                "b-button",
+                {
+                  attrs: { variant: "outline-primary" },
+                  on: {
+                    click: function($event) {
+                      return _vm.destroyConfirm()
+                    }
+                  }
+                },
+                [_vm._v("Confirm")]
+              ),
+              _vm._v(" "),
+              _c(
+                "b-button",
+                {
+                  attrs: { variant: "outline-danger" },
+                  on: {
+                    click: function($event) {
+                      _vm.destroy = false
+                    }
+                  }
+                },
+                [_vm._v("Cancel")]
+              )
+            ],
+            1
+          )
+        ]
+      ),
+      _vm._v(" "),
+      _c(
+        "b-modal",
+        {
+          attrs: { centered: "", "hide-header": "", "hide-footer": "" },
+          model: {
+            value: _vm.edit,
+            callback: function($$v) {
+              _vm.edit = $$v
+            },
+            expression: "edit"
+          }
+        },
+        [
+          _c(
+            "div",
+            { staticClass: "p-2 text-center" },
+            [
+              _c("h3", [_vm._v("Sửa thông tin quận huyện")]),
+              _vm._v(" "),
+              _c(
+                "form",
+                {
+                  staticClass: "py-3",
+                  attrs: { action: "" },
+                  on: {
+                    submit: function($event) {
+                      $event.preventDefault()
+                    }
+                  }
+                },
+                [
+                  _c("div", { staticClass: "row form-group" }, [
+                    _c("div", { staticClass: "col-md-6" }, [
+                      _c(
+                        "select",
+                        {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.chosenDistrict.province_id,
+                              expression: "chosenDistrict.province_id"
+                            }
+                          ],
+                          staticClass: "form-control",
+                          on: {
+                            change: function($event) {
+                              var $$selectedVal = Array.prototype.filter
+                                .call($event.target.options, function(o) {
+                                  return o.selected
+                                })
+                                .map(function(o) {
+                                  var val = "_value" in o ? o._value : o.value
+                                  return val
+                                })
+                              _vm.$set(
+                                _vm.chosenDistrict,
+                                "province_id",
+                                $event.target.multiple
+                                  ? $$selectedVal
+                                  : $$selectedVal[0]
+                              )
+                            }
+                          }
+                        },
+                        _vm._l(_vm.provinces, function(prov) {
+                          return _c(
+                            "option",
+                            { key: prov.id, domProps: { value: prov.id } },
+                            [
+                              _vm._v(
+                                "\n                " +
+                                  _vm._s(prov.name) +
+                                  "\n              "
+                              )
+                            ]
+                          )
+                        }),
+                        0
+                      )
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "col-md-6" }, [
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.chosenDistrict.name,
+                            expression: "chosenDistrict.name"
+                          }
+                        ],
+                        staticClass: "form-control",
+                        attrs: { type: "text" },
+                        domProps: { value: _vm.chosenDistrict.name },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.$set(
+                              _vm.chosenDistrict,
+                              "name",
+                              $event.target.value
+                            )
+                          }
+                        }
+                      })
+                    ])
+                  ]),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "form-group" }, [
+                    _c("input", {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.chosenDistrict.slug,
+                          expression: "chosenDistrict.slug"
+                        }
+                      ],
+                      staticClass: "form-control",
+                      attrs: { type: "text" },
+                      domProps: { value: _vm.chosenDistrict.slug },
+                      on: {
+                        input: function($event) {
+                          if ($event.target.composing) {
+                            return
+                          }
+                          _vm.$set(
+                            _vm.chosenDistrict,
+                            "slug",
+                            $event.target.value
+                          )
+                        }
+                      }
+                    })
+                  ])
+                ]
+              ),
+              _vm._v(" "),
+              _c(
+                "b-button",
+                {
+                  attrs: { variant: "outline-primary" },
+                  on: {
+                    click: function($event) {
+                      return _vm.update()
+                    }
+                  }
+                },
+                [_vm._v("Update")]
+              ),
+              _vm._v(" "),
+              _c(
+                "b-button",
+                {
+                  attrs: { variant: "outline-danger" },
+                  on: {
+                    click: function($event) {
+                      _vm.edit = false
+                    }
+                  }
+                },
+                [_vm._v("Cancel")]
+              )
+            ],
+            1
+          )
+        ]
+      )
+    ],
+    1
+  )
+}
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("thead", [
+      _c("th", [_vm._v("STT")]),
+      _vm._v(" "),
+      _c("th", [_vm._v("Tên")]),
+      _vm._v(" "),
+      _c("th", [_vm._v("Slug")]),
+      _vm._v(" "),
+      _c("th", [_vm._v("Tỉnh thành")]),
+      _vm._v(" "),
+      _c("th", [_vm._v("Hành động")])
     ])
   }
 ]
@@ -80975,7 +81919,7 @@ var render = function() {
                       staticClass: "btn btn-outline-primary",
                       on: {
                         click: function($event) {
-                          ;(_vm.edit = true), (_vm.chosenId = prov.id)
+                          ;(_vm.edit = true), _vm.choose(prov)
                         }
                       }
                     },
@@ -80988,7 +81932,7 @@ var render = function() {
                       staticClass: "btn text-danger",
                       on: {
                         click: function($event) {
-                          ;(_vm.destroy = true), (_vm.chosenId = prov.id)
+                          ;(_vm.destroy = true), _vm.choose(prov)
                         }
                       }
                     },
@@ -81008,7 +81952,7 @@ var render = function() {
           "page-count": _vm.page_count,
           "page-range": 3,
           "margin-pages": 2,
-          "click-handler": _vm.clickCallback,
+          "click-handler": _vm.changePage,
           "prev-text": "Prev",
           "next-text": "Next",
           "container-class": "pagination",
@@ -81108,15 +82052,57 @@ var render = function() {
                 [
                   _c("div", { staticClass: "form-group" }, [
                     _c("input", {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.chosenProvince.name,
+                          expression: "chosenProvince.name"
+                        }
+                      ],
                       staticClass: "form-control",
-                      attrs: { type: "text" }
+                      attrs: { type: "text" },
+                      domProps: { value: _vm.chosenProvince.name },
+                      on: {
+                        input: function($event) {
+                          if ($event.target.composing) {
+                            return
+                          }
+                          _vm.$set(
+                            _vm.chosenProvince,
+                            "name",
+                            $event.target.value
+                          )
+                        }
+                      }
                     })
                   ]),
                   _vm._v(" "),
                   _c("div", { staticClass: "form-group" }, [
                     _c("input", {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.chosenProvince.slug,
+                          expression: "chosenProvince.slug"
+                        }
+                      ],
                       staticClass: "form-control",
-                      attrs: { type: "text" }
+                      attrs: { type: "text" },
+                      domProps: { value: _vm.chosenProvince.slug },
+                      on: {
+                        input: function($event) {
+                          if ($event.target.composing) {
+                            return
+                          }
+                          _vm.$set(
+                            _vm.chosenProvince,
+                            "slug",
+                            $event.target.value
+                          )
+                        }
+                      }
                     })
                   ])
                 ]
@@ -97967,6 +98953,93 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/components/pages/DistrictList.vue":
+/*!********************************************************!*\
+  !*** ./resources/js/components/pages/DistrictList.vue ***!
+  \********************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _DistrictList_vue_vue_type_template_id_3d77afe2_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./DistrictList.vue?vue&type=template&id=3d77afe2&scoped=true& */ "./resources/js/components/pages/DistrictList.vue?vue&type=template&id=3d77afe2&scoped=true&");
+/* harmony import */ var _DistrictList_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./DistrictList.vue?vue&type=script&lang=js& */ "./resources/js/components/pages/DistrictList.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _DistrictList_vue_vue_type_style_index_0_id_3d77afe2_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./DistrictList.vue?vue&type=style&index=0&id=3d77afe2&scoped=true&lang=css& */ "./resources/js/components/pages/DistrictList.vue?vue&type=style&index=0&id=3d77afe2&scoped=true&lang=css&");
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__["default"])(
+  _DistrictList_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _DistrictList_vue_vue_type_template_id_3d77afe2_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _DistrictList_vue_vue_type_template_id_3d77afe2_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  "3d77afe2",
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/pages/DistrictList.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/pages/DistrictList.vue?vue&type=script&lang=js&":
+/*!*********************************************************************************!*\
+  !*** ./resources/js/components/pages/DistrictList.vue?vue&type=script&lang=js& ***!
+  \*********************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_DistrictList_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib??ref--4-0!../../../../node_modules/vue-loader/lib??vue-loader-options!./DistrictList.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/pages/DistrictList.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_DistrictList_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/pages/DistrictList.vue?vue&type=style&index=0&id=3d77afe2&scoped=true&lang=css&":
+/*!*****************************************************************************************************************!*\
+  !*** ./resources/js/components/pages/DistrictList.vue?vue&type=style&index=0&id=3d77afe2&scoped=true&lang=css& ***!
+  \*****************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_DistrictList_vue_vue_type_style_index_0_id_3d77afe2_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/style-loader!../../../../node_modules/css-loader??ref--6-1!../../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../../node_modules/postcss-loader/src??ref--6-2!../../../../node_modules/vue-loader/lib??vue-loader-options!./DistrictList.vue?vue&type=style&index=0&id=3d77afe2&scoped=true&lang=css& */ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/pages/DistrictList.vue?vue&type=style&index=0&id=3d77afe2&scoped=true&lang=css&");
+/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_DistrictList_vue_vue_type_style_index_0_id_3d77afe2_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_DistrictList_vue_vue_type_style_index_0_id_3d77afe2_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__);
+/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_DistrictList_vue_vue_type_style_index_0_id_3d77afe2_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__) if(__WEBPACK_IMPORT_KEY__ !== 'default') (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_DistrictList_vue_vue_type_style_index_0_id_3d77afe2_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__[key]; }) }(__WEBPACK_IMPORT_KEY__));
+ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_DistrictList_vue_vue_type_style_index_0_id_3d77afe2_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0___default.a); 
+
+/***/ }),
+
+/***/ "./resources/js/components/pages/DistrictList.vue?vue&type=template&id=3d77afe2&scoped=true&":
+/*!***************************************************************************************************!*\
+  !*** ./resources/js/components/pages/DistrictList.vue?vue&type=template&id=3d77afe2&scoped=true& ***!
+  \***************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_DistrictList_vue_vue_type_template_id_3d77afe2_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib??vue-loader-options!./DistrictList.vue?vue&type=template&id=3d77afe2&scoped=true& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/pages/DistrictList.vue?vue&type=template&id=3d77afe2&scoped=true&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_DistrictList_vue_vue_type_template_id_3d77afe2_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_DistrictList_vue_vue_type_template_id_3d77afe2_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
 /***/ "./resources/js/components/pages/ProvinceList.vue":
 /*!********************************************************!*\
   !*** ./resources/js/components/pages/ProvinceList.vue ***!
@@ -98068,6 +99141,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vue_router__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vue-router */ "./node_modules/vue-router/dist/vue-router.esm.js");
 /* harmony import */ var _components_pages_Dashboard_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./components/pages/Dashboard.vue */ "./resources/js/components/pages/Dashboard.vue");
 /* harmony import */ var _components_pages_ProvinceList_vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./components/pages/ProvinceList.vue */ "./resources/js/components/pages/ProvinceList.vue");
+/* harmony import */ var _components_pages_DistrictList_vue__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./components/pages/DistrictList.vue */ "./resources/js/components/pages/DistrictList.vue");
+
 
 
 
@@ -98082,6 +99157,10 @@ vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vue_router__WEBPACK_IMPORTED_MODU
     path: '/provinces',
     name: 'provinces',
     component: _components_pages_ProvinceList_vue__WEBPACK_IMPORTED_MODULE_3__["default"]
+  }, {
+    path: '/districts',
+    name: 'districts',
+    component: _components_pages_DistrictList_vue__WEBPACK_IMPORTED_MODULE_4__["default"]
   }]
 }));
 
@@ -98109,8 +99188,12 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
       show: true
     },
     notification: {
-      title: 'this is title',
-      message: 'this is message'
+      title: 'title',
+      message: 'message',
+      colors: {
+        title: '',
+        message: ''
+      }
     }
   },
   getters: {
@@ -98122,8 +99205,13 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
     toggleSideMenu: function toggleSideMenu(state) {
       state.sideMenu.show = !state.sideMenu.show;
     },
-    setNotification: function setNotification(state, notification) {
-      state.notification = notification;
+    notification: function notification(state, _notification) {
+      state.notification.title = _notification.title;
+      state.notification.message = _notification.message;
+      state.notification.colors = _notification.colors == null ? {
+        title: '',
+        message: ''
+      } : _notification.colors;
     }
   }
 });

@@ -12,7 +12,7 @@
           <router-link to="/provinces">Province list</router-link>
         </li>
         <li class="list-group-item">
-          <a href="">District</a>
+          <router-link to="/districts">District list</router-link>
         </li>
         <li class="list-group-item">
           <a href="">User</a>

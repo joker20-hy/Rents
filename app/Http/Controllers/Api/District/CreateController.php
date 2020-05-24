@@ -1,19 +1,19 @@
 <?php
 
-namespace App\Http\Controllers\Api\Province;
+namespace App\Http\Controllers\Api\District;
 
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Services\ProvinceServices;
+use App\Services\DistrictServices;
 
-class UpdateController extends Controller
+class CreateController extends Controller
 {
-    protected $provinceServices;
+    protected $districtServices;
 
-    public function __construct(ProvinceServices $provinceServices)
+    public function __construct(DistrictServices $districtServices)
     {
-        $this->provinceServices = $provinceServices;
+        $this->districtServices = $districtServices;
     }
 
     public function main(Request $request)
@@ -25,20 +25,20 @@ class UpdateController extends Controller
                 'message' => $validator->errors()->first()
             ], 422);
         }
-        $this->provinceServices->update($request->id, $params);
-        return response()->json([], 200);
+        $district = $this->districtServices->create($params);
+        return response()->json($district, 200);
     }
 
     public function getParams(Request $request)
     {
-        return $request->only('name', 'slug');
+        return $request->only('name', 'province_id');
     }
 
     public function validation(Array $params)
     {
         return Validator::make($params, [
-            'name' => 'required|string|max:255',
-            'slug' => 'required|string|max:255',
+            'province_id' => 'required|exists:provinces,id',
+            'name' => 'required|string|max:255'
         ]);
     }
 }

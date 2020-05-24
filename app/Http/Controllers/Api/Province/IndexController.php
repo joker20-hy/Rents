@@ -17,7 +17,7 @@ class IndexController extends Controller
 
     public function main(Request $request)
     {
-        $provinces = $this->provinceServices->index();
+        $provinces = $this->provinceServices->index($request->perpage);
         return response()->json($provinces, 200);
     }
 }

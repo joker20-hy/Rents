@@ -24,13 +24,27 @@ Route::group(['namespace' => 'Api'], function() {
 	], function() {
 		Route::post('/refresh', 'Auth\RefreshController@main');
 		Route::post('/logout', 'Auth\LoginController@logout');
+		/**
+		 * 
+		 */
 		Route::group([
 			'namespace' => 'Province',
 			'prefix' => 'province'
 		], function () {
+			Route::get('{perpage?}', 'IndexController@main');
+			Route::post('', 'CreateController@main')->middleware('admin-role');
+			Route::put('{id}', 'UpdateController@main')->middleware('admin-role');
+			Route::delete('{id}', 'DestroyController@main')->middleware('admin-role');
+		});
+		/**
+		 * 
+		 */
+		Route::group([
+			'namespace' => 'District',
+			'prefix' => 'district'
+		], function () {
 			Route::get('', 'IndexController@main');
 			Route::post('', 'CreateController@main')->middleware('admin-role');
-			// Route::get('{id}', 'ShowController@main');
 			Route::put('{id}', 'UpdateController@main')->middleware('admin-role');
 			Route::delete('{id}', 'DestroyController@main')->middleware('admin-role');
 		});

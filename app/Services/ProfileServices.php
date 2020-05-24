@@ -69,7 +69,8 @@ class ProfileServices
     public function update($params)
     {
         $profile = Auth::user()->profile;
-        return $profile->update($params);
+        $profile->update($params);
+        return $profile;
     }
 
     /**

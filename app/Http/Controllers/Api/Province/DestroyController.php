@@ -18,8 +18,6 @@ class DestroyController extends Controller
     public function main(Request $request)
     {
         $this->provinceServices->destroy($request->id);
-        return response()->json([
-            'message' => 'Delete successfully'
-        ], 204);
+        return response()->json([], 204);
     }
 }

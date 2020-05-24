@@ -9,8 +9,12 @@ export const store = new Vuex.Store({
       show: true
     },
     notification: {
-      title: 'this is title',
-      message: 'this is message'
+      title: 'title',
+      message: 'message',
+      colors: {
+        title: '',
+        message: ''
+      }
     }
   },
   getters: {
@@ -22,8 +26,10 @@ export const store = new Vuex.Store({
     toggleSideMenu (state) {
       state.sideMenu.show = !state.sideMenu.show
     },
-    setNotification (state, notification) {
-      state.notification = notification
+    notification (state, notification) {
+      state.notification.title = notification.title
+      state.notification.message = notification.message
+      state.notification.colors = notification.colors==null ? {title: '', message: ''} : notification.colors
     }
   }
 })
