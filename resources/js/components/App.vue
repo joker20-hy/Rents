@@ -5,20 +5,24 @@
       <header-bar/>
       <router-view/>
     </section>
+    <!-- utilities components -->
     <logout-confirm/>
+    <notice-modal/>
   </div>
 </template>
 <script>
 import SideMenu from './layouts/SideMenu'
 import HeaderBar from './layouts/HeaderBar'
 import LogoutConfirm from './layouts/LogoutConfirm'
+import NoticeModal from './layouts/NoticeModal'
 
 export default {
   name: 'App',
   components: {
     SideMenu,
     HeaderBar,
-    LogoutConfirm
+    LogoutConfirm,
+    NoticeModal
   },
   data () {
     return {}

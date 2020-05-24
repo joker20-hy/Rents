@@ -7,6 +7,10 @@ export const store = new Vuex.Store({
   state: {
     sideMenu: {
       show: true
+    },
+    notification: {
+      title: 'this is title',
+      message: 'this is message'
     }
   },
   getters: {
@@ -17,6 +21,9 @@ export const store = new Vuex.Store({
   mutations: {
     toggleSideMenu (state) {
       state.sideMenu.show = !state.sideMenu.show
+    },
+    setNotification (state, notification) {
+      state.notification = notification
     }
   }
 })

@@ -8,14 +8,17 @@ use Illuminate\Http\Request;
 
 class LoginController extends Controller
 {
-    public function main(Request $request)
+    /**
+     * @param Illuminate\Http\Request $request
+     */
+    public function login(Request $request)
     {
-        $validator = $request->validation($request);
+        $validator = $this->validation($request);
         if ($validator->fails()) {
-            return response()->json('', 422);
+            return response()->json('Your credentials are incorrect. Please try again', 400);
         }
         $http = new \GuzzleHttp\Client([
-            'base_uri' => 'http://192.168.0.200:8000',
+            'base_uri' => env('OAUTH_URL'),
             'headers'  => ['Accept' => 'application/json'],
             'timeout'  => 10
         ]);
@@ -40,11 +43,22 @@ class LoginController extends Controller
         }
     }
 
+    /**
+     * @param Illuminate\Http\Request $request
+     */
     public function validation(Request $request)
     {
         return Validator::make($request->all(), [
             'username' => 'required|string',
             'password' => 'required|string'
+        ]);
+    }
+
+    public function logout(Request $request)
+    {
+        $request->user()->token()->revoke();
+        return response()->json([
+            'message' => 'Successfully logged out'
         ]);
     }
 }

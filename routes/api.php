@@ -14,20 +14,25 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Route::middleware('auth:api')->get('/user', function (Request $request) {
-//     return $request->user();
-// });
-
 Route::group(['namespace' => 'Api'], function() {
 	Route::group(['namespace' => 'Auth'], function() {
-		Route::post('/login', 'LoginController@main');
+		Route::post('/login', 'LoginController@login');
 	});
 
 	Route::group([
 	    'middleware' => 'auth:api'
 	], function() {
-	    Route::get('user', function (Request $request) {
-	        return $request->user();
-	    });
+		Route::post('/refresh', 'Auth\RefreshController@main');
+		Route::post('/logout', 'Auth\LoginController@logout');
+		Route::group([
+			'namespace' => 'Province',
+			'prefix' => 'province'
+		], function () {
+			Route::get('', 'IndexController@main');
+			Route::post('', 'CreateController@main')->middleware('admin-role');
+			// Route::get('{id}', 'ShowController@main');
+			Route::put('{id}', 'UpdateController@main')->middleware('admin-role');
+			Route::delete('{id}', 'DestroyController@main')->middleware('admin-role');
+		});
 	});
 });
