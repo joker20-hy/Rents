@@ -23,7 +23,7 @@ class DistrictServices
 
     /**
      * Create a district
-     * @param Array $params ['name', 'province_id']
+     * @param array $params ['name', 'province_id']
      */
     public function create($params)
     {
@@ -35,8 +35,8 @@ class DistrictServices
     /**
      * Update a district
      *
-     * @param UnsignedBigInteger $id
-     * @param Array $params ['name' , 'slug', 'province_id']
+     * @param integer $id
+     * @param array $params ['name' , 'slug', 'province_id']
      *
      * @return \App\Models\District
      */
@@ -50,7 +50,7 @@ class DistrictServices
     /**
      * Delete a district
      *
-     * @param UnsignedBigInteger $id
+     * @param integer $id
      */
     public function destroy($id)
     {

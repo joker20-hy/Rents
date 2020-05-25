@@ -1,8 +1,10 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Dashboard from './components/pages/Dashboard.vue'
-import ProvinceList from './components/pages/ProvinceList.vue'
-import DistrictList from './components/pages/DistrictList.vue'
+import Dashboard from './components/pages/Dashboard'
+import ProvinceList from './components/pages/ProvinceList'
+import DistrictList from './components/pages/DistrictList'
+import AreaList from './components/pages/AreaList'
+import Userlist from './components/pages/Userlist'
 
 Vue.use(Router)
 
@@ -22,6 +24,16 @@ export default new Router({
       path: '/districts',
       name: 'districts',
       component: DistrictList
+    },
+    {
+      path: '/areas',
+      name: 'areas',
+      component: AreaList
+    },
+    {
+      path: '/users',
+      name: 'users',
+      component: Userlist
     }
   ]
 })

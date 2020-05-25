@@ -43,7 +43,17 @@ Route::group(['namespace' => 'Api'], function() {
 			'namespace' => 'District',
 			'prefix' => 'district'
 		], function () {
-			Route::get('', 'IndexController@main');
+			Route::get('{provinceId?}', 'IndexController@main');
+			Route::post('', 'CreateController@main')->middleware('admin-role');
+			Route::put('{id}', 'UpdateController@main')->middleware('admin-role');
+			Route::delete('{id}', 'DestroyController@main')->middleware('admin-role');
+		});
+
+		Route::group([
+			'namespace' => 'Area',
+			'prefix' => 'area'
+		], function () {
+			Route::get('/{type?}/{id?}', 'IndexController@main');
 			Route::post('', 'CreateController@main')->middleware('admin-role');
 			Route::put('{id}', 'UpdateController@main')->middleware('admin-role');
 			Route::delete('{id}', 'DestroyController@main')->middleware('admin-role');

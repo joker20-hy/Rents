@@ -114,6 +114,7 @@ export default {
       destroy: false,
       page: 1,
       page_count: 1,
+      per_page: 1,
       provinces: [],
       districts: [],
       district: {
@@ -206,7 +207,7 @@ export default {
         this.district.province_id = ''
         this.district.name = ''
         this.total = this.total + 1
-        if (this.total % 10==1) {
+        if (this.total % this.per_page==1) {
           this.changePage(this.page + 1)
         } else {
           this.districts.push(res.data)
@@ -223,10 +224,10 @@ export default {
     list (page=1) {
       $auth.request.get(`/api/district?page=${page}`)
       .then(res => {
-        this.districts = []
         this.page_count = res.data.last_page
         this.total = res.data.total
-        res.data.data.forEach(district => this.districts.push(district))
+        this.per_page = res.data.per_page
+        this.districts = res.data.data
       })
       .catch(err => {
         this.error('Không thể lấy được danh sách quận/huyện')
