@@ -22,6 +22,7 @@ class CreateAreasTable extends Migration
             $table->unsignedMediumInteger('district_id');
             $table->foreign('district_id')->references('id')->on('districts');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

@@ -80,6 +80,9 @@ const $auth = {
     .catch(err => {
       console.log(err)
     })
+  },
+  logout () {
+    //
   }
 }
 export { $auth }

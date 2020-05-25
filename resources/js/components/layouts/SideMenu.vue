@@ -6,7 +6,7 @@
     <div>
       <ul class="list-group list-group-flush">
         <li class="list-group-item">
-          <a href="">User</a>
+          <router-link to="/users">User list</router-link>
         </li>
         <li class="list-group-item">
           <router-link to="/provinces">Province list</router-link>
@@ -15,10 +15,7 @@
           <router-link to="/districts">District list</router-link>
         </li>
         <li class="list-group-item">
-          <a href="">User</a>
-        </li>
-        <li class="list-group-item">
-          <a href="">User</a>
+          <router-link to="/areas">Area list</router-link>
         </li>
       </ul>
     </div>

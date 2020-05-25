@@ -95,6 +95,7 @@ export default {
       destroy: false,
       page: 1,
       page_count: 1,
+      per_page: 1,
       provinces: [],
       province: {
         name: ''
@@ -134,7 +135,7 @@ export default {
       .then(res => {
         this.province.name = ''
         ++this.total
-        if (this.total % 10==1) {
+        if (this.total % this.per_page==1) {
           this.changePage(this.page + 1)
         } else {
           this.provinces.push(res.data)
@@ -149,10 +150,10 @@ export default {
     list (page=1) {
       $auth.request.get('/api/province?page='+this.page)
       .then(res => {
-        this.provinces = []
         this.page_count = res.data.last_page
         this.total = res.data.total
-        res.data.data.forEach(province => this.provinces.push(province))
+        this.per_page = res.data.per_page
+        this.provinces = res.data.data
       })
       .catch(err => {
         this.error('Không thể lấy được danh sách tỉnh thành')

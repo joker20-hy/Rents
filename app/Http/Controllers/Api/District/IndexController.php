@@ -17,7 +17,7 @@ class IndexController extends Controller
 
     public function main(Request $request)
     {
-        $districts = $this->districtServices->index($request->province_id);
+        $districts = $this->districtServices->index($request->provinceId);
         return response()->json($districts, 200);
     }
 }
