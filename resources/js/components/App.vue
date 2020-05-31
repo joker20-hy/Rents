@@ -6,23 +6,23 @@
       <router-view/>
     </section>
     <!-- utilities components -->
-    <logout-confirm/>
-    <notice-modal/>
+    <alert-box/>
+    <logout-form/>
   </div>
 </template>
 <script>
 import SideMenu from './layouts/SideMenu'
 import HeaderBar from './layouts/HeaderBar'
-import LogoutConfirm from './layouts/LogoutConfirm'
-import NoticeModal from './layouts/NoticeModal'
+import AlertBox from './utilities/AlertBox'
+import LogoutForm from './utilities/LogoutForm'
 
 export default {
   name: 'App',
   components: {
     SideMenu,
     HeaderBar,
-    LogoutConfirm,
-    NoticeModal
+    LogoutForm,
+    AlertBox
   },
   data () {
     return {}

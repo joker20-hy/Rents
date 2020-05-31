@@ -15,7 +15,7 @@
 
             <!-- Right Side Of Navbar -->
             <ul class="navbar-nav ml-auto">
-                <button class="btn font-weight-bold text-primary" data-toggle="modal" data-target="#logout-confirm">
+                <button class="btn font-weight-bold text-primary" @click="logout()">
                     <i class="fas fa-sign-out-alt"></i> Logout
                 </button>
             </ul>
@@ -30,7 +30,10 @@ export default {
   },
   methods: {
     toggleSidebar () {
-      this.$store.commit('toggleSideMenu')
+      $eventHub.$emit('show-sidemenu')
+    },
+    logout () {
+      $eventHub.$emit('show-logout-form')
     }
   }
 }

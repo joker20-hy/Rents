@@ -1,9 +1,19 @@
 <?php
 
 return [
-    'PLACE_TYPE' => [
-        'PROVINCE' => 1,
-        'DISTRICT' => 2,
-        'AREA' => 3
-    ]
+    'USER' => [
+        'ROLE' => [
+            'NORMAL' => 0,
+            'ADMIN' => 1,
+            'OWNER' => 2
+        ],
+        'ROLE_NAME' => [
+            0 => 'Normal user',
+            1 => 'Admin',
+            2 => 'House owner'
+        ],
+        'UNVERIFIED' => 0,
+        'VERIFIED' => 1
+    ],
+
 ];

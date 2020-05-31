@@ -2,48 +2,15 @@
   <div class="container">
     <h1 class="d-flex align-items-end mt-5">
       Danh sách khu vực
-      <b-button
-        :class="create ? '' : 'collapsed'"
-        :aria-expanded="create ? 'true' : 'false'"
-        aria-controls="create-form"
-        variant="light"
-        class="show-create-form ml-auto"
-        @click="create = !create"
-      >
-        <i class="fas fa-plus" :class="create ? 'cancel-create' : ''"></i>
-      </b-button>
+      <button class="btn ml-auto" @click="showCreate">Create</button>
     </h1>
-    <!-- create form -->
-    <b-collapse id="create-form" v-model="create">
-      <form class="my-3" @submit.prevent="store()">
-        <div class="row form-group">
-          <div class="col-md-3">
-            <select class="form-control" v-model="area.province_id" @change="getDistricts()" required>
-              <option value="" selected>Tỉnh/thành</option>
-              <option v-for="prov in provinces" :key="prov.id" :value="prov.id">{{ prov.name }}</option>
-            </select>
-          </div>
-          <div class="col-md-3">
-            <select class="form-control" v-model="area.district_id" required>
-              <option value="" selected>Quận/Huyện</option>
-              <option v-for="dist in districts" :key="dist.id" :value="dist.id">{{ dist.name }}</option>
-            </select>
-          </div>
-          <div class="col-md-6">
-            <input type="text" class="form-control" placeholder="Nhập tên quận huyện" v-model="area.name" required>
-          </div>
-        </div>
-        <button class="btn btn-outline-primary">Create</button>
-      </form>
-    </b-collapse>
-    <!-- end create form -->
-
-    <table class="table table-borderless">
+    <table class="table table-borderless text-center">
       <thead>
         <th>STT</th>
         <th>Tên</th>
         <th>Slug</th>
-        <th>Tỉnh thành</th>
+        <th>Tỉnh/Thành</th>
+        <th>Quận/Huyện</th>
         <th>Hành động</th>
       </thead>
       <transition-group name="slide-fade" tag="tbody">
@@ -54,12 +21,15 @@
           <td>{{ area.province.name }}</td>
           <td>{{ area.district.name }}</td>
           <td>
-            <button class="btn btn-outline-primary" @click="edit=true,choose(area)">Edit</button>
-            <button class="btn text-danger" @click="remove=true,choose(area)">Delete</button>
+            <button class="btn text-primary" @click="showEdit(),choose(area)">Edit</button>
+            <button class="btn text-danger" @click="showDestroy(),choose(area)">Delete</button>
           </td>
         </tr>
       </transition-group>
     </table>
+    <div class="py-4 text-center" v-show="loading">
+      <i class="fas fa-spinner fa-pulse fa-lg text-primary"></i>
+    </div>
     <paginate
       v-model="page"
       :page-count="page_count"
@@ -71,48 +41,78 @@
       :container-class="'pagination'"
       :page-class="'page-item'">
     </paginate>
-    <!-- edit area -->
-    <b-modal v-model="edit" centered hide-header hide-footer>
-      <div class="p-2 text-center">
-        <h3>Sửa thông tin quận huyện</h3>
-        <form action="" class="py-3" @submit.prevent>
-          <div class="row form-group">
-            <div class="col-md-6">
-              <select class="form-control" v-model="chosen.province_id" @change="getDistricts(chosen.province_id),chosen.district_id=''">
-                <option v-for="prov in provinces" :key="prov.id" :value="prov.id">
-                  {{ prov.name }}
-                </option>
-              </select>
-            </div>
-            <div class="col-md-6">
-              <select class="form-control" v-model="chosen.district_id">
-                <option value="" selected>Quận/Huyện</option>
-                <option v-for="dist in districts" :key="dist.id" :value="dist.id">
-                  {{ dist.name }}
-                </option>
-              </select>
-            </div>
+    <!-- create form -->
+    <modal name="create-form" :width="500">
+      <h3 class="px-3 py-4 text-primary">Create area</h3>
+      <form action="" class="p-2" @submit.prevent="store">
+        <div class="row form-group">
+          <div class="col-md-6">
+            <select class="input" v-model="area.province_id" @change="getDistricts(area.province_id)" required>
+              <option value="" selected>Tỉnh/thành</option>
+              <option v-for="prov in provinces" :key="prov.id" :value="prov.id">{{ prov.name }}</option>
+            </select>
           </div>
-          <div class="form-group">
-            <input type="text" class="form-control" v-model="chosen.name">
+          <div class="col-md-6">
+            <select class="input" v-model="area.district_id">
+              <option value="" selected>Quận/Huyện</option>
+              <option v-for="dist in districts" :key="dist.id" :value="dist.id">
+                {{ dist.name }}
+              </option>
+            </select>
           </div>
-          <div class="form-group">
-            <input type="text" class="form-control" v-model="chosen.slug">
+        </div>
+        <div class="form-group">
+          <input type="text" class="input" v-model="area.name" placeholder="Area name" required>
+        </div>
+        <div class="form-group pt-2 text-right">
+          <button type="button" class="btn text-danger" @click="hideCreate">Cancel</button>
+          <button class="btn text-primary">Create</button>
+        </div>
+      </form>
+    </modal>
+    <!-- edit form -->
+    <modal name="edit-form" :width="500">
+      <h3 class="px-3 py-4 text-primary">Edit area</h3>
+      <form action="" class="p-2" @submit.prevent="update">
+        <div class="row form-group">
+          <div class="col-md-6">
+            <select class="input" v-model="chosen.province_id" @change="getDistricts(chosen.province_id)" required>
+              <option value="" selected>Tỉnh/thành</option>
+              <option v-for="prov in provinces" :key="prov.id" :value="prov.id">{{ prov.name }}</option>
+            </select>
           </div>
-        </form>
-        <b-button variant="outline-primary" @click="update()">Update</b-button>
-        <b-button variant="outline-danger" @click="edit=false">Cancel</b-button>
-      </div>
-    </b-modal>
+          <div class="col-md-6">
+            <select class="input" v-model="chosen.district_id">
+              <option value="" selected>Quận/Huyện</option>
+              <option v-for="dist in districts" :key="dist.id" :value="dist.id">
+                {{ dist.name }}
+              </option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <input type="text" class="input" v-model="chosen.name" placeholder="Area name" required>
+        </div>
+        <div class="form-group">
+          <input type="text" class="input" v-model="chosen.slug" placeholder="Area slug name" required>
+        </div>
+        <div class="form-group pt-2 text-right">
+          <button type="button" class="btn text-danger" @click="hideEdit">Cancel</button>
+          <button class="btn text-primary">Update</button>
+        </div>
+      </form>
+    </modal>
     <!-- destroy confirm -->
-    <b-modal v-model="remove" centered hide-header hide-footer>
-      <div class="p-2 text-center">
-        <h3>Xác nhận xóa</h3>
-        <br>
-        <b-button variant="outline-primary" @click="destroy()">Confirm</b-button>
-        <b-button variant="outline-danger" @click="remove=false">Cancel</b-button>
+    <modal name="destroy-form" :width="300" :class="['text-center']">
+      <h3 class="px-3 py-4 text-danger">Delete confirm</h3>
+      <div>
+        Are you sure?
       </div>
-    </b-modal>
+      <div class="form-group pt-4">
+        <button class="btn text-primary" @click="hideDestroy">Cancel</button>
+        <button class="btn text-muted" @click="destroy">Confirm</button>
+      </div>
+    </modal>
   </div>
 </template>
 <script>
@@ -124,13 +124,11 @@ export default {
       page: 1,
       page_count: 1,
       per_page: 1,
-      areas: [],
       chosen: '',
-      create: false,
-      edit: false,
-      remove: false,
+      areas: [],
       districts: [],
       provinces: [],
+      loading: false,
       area: {
         province_id: '',
         district_id: '',
@@ -143,6 +141,27 @@ export default {
     this.list()
   },
   methods: {
+    showCreate () {
+      this.area.province_id = ''
+      this.area.district_id = ''
+      this.area.name = ''
+      this.$modal.show('create-form')
+    },
+    hideCreate () {
+      this.$modal.hide('create-form')
+    },
+    showEdit () {
+      this.$modal.show('edit-form')
+    },
+    hideEdit () {
+      this.$modal.hide('edit-form')
+    },
+    showDestroy () {
+      this.$modal.show('destroy-form')
+    },
+    hideDestroy () {
+      this.$modal.hide('destroy-form')
+    },
     getProvinces () {
       $auth.request.get('/api/province/all')
       .then(res => {
@@ -165,14 +184,17 @@ export default {
       this.page = page
     },
     list (page=1) {
+      this.loading = true
       $auth.request.get(`/api/area?page=${page}`)
       .then(res => {
         this.page_count = res.data.last_page
         this.total = res.data.total
         this.per_page = res.data.per_page
         this.areas = res.data.data
+        this.loading = false
       })
       .catch(err => {
+        this.loading = false
         this.error(err.response.data.message)
       })
     },
@@ -183,9 +205,6 @@ export default {
         name: this.area.name
       })
       .then(res => {
-        this.area.province_id = ''
-        this.area.district_id = ''
-        this.area.name = ''
         this.total = this.total + 1
         if (this.total % this.per_page==1) {
           this.changePage(this.page + 1)
@@ -247,9 +266,10 @@ export default {
      * @param {String} message
      */
     success (message) {
-      this.notification('Thành công', message, {
-        title: 'text-success',
-        message: ''
+      $eventHub.$emit('success-alert', {
+        title: 'Thành công',
+        message: message,
+        timeout: 3600
       })
     },
     /**
@@ -257,37 +277,22 @@ export default {
      * @param {String} message
      */
     error (message) {
-      this.notification('Không thành công', message, {
-        title: 'text-danger',
-        message: ''
+      $eventHub.$emit('error-alert', {
+        title: 'Không thành công',
+        message: message
       })
-    },
-    notification (title, message, colors, timeout = 3000) {
-      this.$store.commit('notification', {
-        title: title,
-        message: message,
-        colors: colors
-      })
-      this.$bvModal.show('notification')
-      setTimeout(() => {
-        this.$bvModal.hide('notification')
-      }, timeout)
     }
   }
 }
 </script>
 <style scoped>
-  .show-create-form {
-    width: 40px;
-    height:40px;
-  }
-  .show-create-form i {
-    transition: 0.2s;
-    color: var(--blue);
-  }
-  .cancel-create {
-    transform: rotate(45deg);
-    color: var(--red)!important;
+  .input {
+    display: block;
+    width: 100%;
+    border: none;
+    border-bottom: 2px solid #ccc;
+    padding: 8px 15px;
+    outline: unset!important;
   }
   .slide-fade-enter-active {
     transition: all .3s ease;

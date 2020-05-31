@@ -17,11 +17,12 @@ class CreateProfilesTable extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users');
-            $table->string('firstname');
-            $table->string('lastname');
-            $table->string('phone', 16);
-            $table->string('address');
-            $table->date('date_of_birth');
+            $table->string('firstname')->nullable();
+            $table->string('lastname')->nullable();
+            $table->string('image')->nullable();
+            $table->string('phone', 16)->nullable();
+            $table->string('address')->nullable();
+            $table->date('date_of_birth')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

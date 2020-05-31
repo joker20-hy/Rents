@@ -1,0 +1,73 @@
+<?php
+
+namespace App\Services;
+
+use Illuminate\Support\Facades\Auth;
+use App\Models\User;
+
+class UserServices
+{
+    protected $user;
+    protected $profileServices;
+
+    public function __construct(User $user, ProfileServices $profileServices)
+    {
+        $this->user = $user;
+        $this->profileServices = $profileServices;
+    }
+
+    public function index($paginate = 10)
+    {
+        return $this->user->paginate($paginate);
+    }
+
+    /**
+     * Update verify status of user
+     *
+     * @param integer $id
+     * @param integer $verifyStatus
+     *
+     * @return \App\Models\User
+     */
+    public function updateVerifyStatus($id, $verifyStatus)
+    {
+        $user = $this->user->findOrFail($id);
+        $user->update([
+            'verify' => $verifyStatus
+        ]);
+        return $user;
+    }
+
+    /**
+     * Get user profile
+     *
+     * @param integer $id
+     *
+     * @return \App\Models\Profile
+     */
+    public function showProfile($id)
+    {
+        if (Auth::user()->role != config('const.USER.ROLE.ADMIN')) {
+            return Auth::user()->profile;
+        }
+        $user = $this->user->findOrfail($id);
+        $profile = $user->profile;
+        $profile->avatar();
+        return $profile;
+    }
+
+    public function updateProfile($id, $params)
+    {
+        $authUser = Auth::user();
+        if ($authUser->role != config('const.USER.ROLE.ADMIN')) {
+            if ($authUser->id!=$id) {
+                return abort(403, 'You do not have permission to update this profile');
+            }
+            $authUser->profile->update($params);
+            return $authUser->profile;
+        }
+        $user = $this->user->findOrFail($id);
+        $user->profile->update($params);
+        return $user->profile;
+    }
+}
