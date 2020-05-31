@@ -1,38 +1,10 @@
 <template>
   <div class="container">
     <h1 class="d-flex align-items-end mt-5">
-        Danh sách quận/huyện
-        <b-button
-          :class="create ? '' : 'collapsed'"
-          :aria-expanded="create ? 'true' : 'false'"
-          aria-controls="create-form"
-          variant="light"
-          class="show-create-form ml-auto"
-          @click="create = !create"
-        >
-          <i class="fas fa-plus" :class="create ? 'cancel-create' : ''"></i>
-        </b-button>
+      Danh sách quận/huyện
+      <button class="btn ml-auto" @click="showCreate">Create</button>
     </h1>
-    <!-- create form -->
-    <b-collapse id="create-form" v-model="create">
-      <form class="my-3" @submit.prevent="store()">
-        <div class="row form-group">
-          <div class="col-md-3">
-            <select class="form-control" v-model="district.province_id" required>
-              <option value="" selected>Tỉnh/thành</option>
-              <option v-for="prov in provinces" :key="prov.id" :value="prov.id">{{ prov.name }}</option>
-            </select>
-          </div>
-          <div class="col-md-9">
-            <input type="text" class="form-control" placeholder="Nhập tên quận huyện" v-model="district.name" required>
-          </div>
-        </div>
-        <button class="btn btn-outline-primary">Create</button>
-      </form>
-    </b-collapse>
-    <!-- end create form -->
-    <!-- list province -->
-    <table class="table table-borderless">
+    <table class="table table-borderless text-center">
       <thead>
         <th>STT</th>
         <th>Tên</th>
@@ -47,12 +19,15 @@
           <td>{{ dist.slug }}</td>
           <td>{{ dist.province.name }}</td>
           <td>
-            <button class="btn btn-outline-primary" @click="edit=true,choose(dist)">Edit</button>
-            <button class="btn text-danger" @click="destroy=true,choose(dist)">Delete</button>
+            <button class="btn text-primary" @click="showEdit(),choose(dist)">Edit</button>
+            <button class="btn text-danger" @click="showDestroy(),choose(dist)">Delete</button>
           </td>
         </tr>
       </transition-group>
     </table>
+    <div class="py-4 text-center" v-show="loading">
+      <i class="fas fa-spinner fa-pulse fa-lg text-primary"></i>
+    </div>
     <paginate
       v-model="page"
       :page-count="page_count"
@@ -64,41 +39,61 @@
       :container-class="'pagination'"
       :page-class="'page-item'">
     </paginate>
-    <!-- end list province -->
-    <!-- delete province confirm -->
-    <b-modal v-model="destroy" centered hide-header hide-footer>
-      <div class="p-2 text-center">
-        <h3>Xác nhận xóa</h3>
-        <br>
-        <b-button variant="outline-primary" @click="destroyConfirm()">Confirm</b-button>
-        <b-button variant="outline-danger" @click="destroy=false">Cancel</b-button>
-      </div>
-    </b-modal>
-    <!-- edit province -->
-    <b-modal v-model="edit" centered hide-header hide-footer>
-      <div class="p-2 text-center">
-        <h3>Sửa thông tin quận huyện</h3>
-        <form action="" class="py-3" @submit.prevent>
-          <div class="row form-group">
-            <div class="col-md-6">
-              <select class="form-control" v-model="chosenDistrict.province_id">
-                <option v-for="prov in provinces" :key="prov.id" :value="prov.id">
-                  {{ prov.name }}
-                </option>
-              </select>
-            </div>
-            <div class="col-md-6">
-              <input type="text" class="form-control" v-model="chosenDistrict.name">
-            </div>
+    <modal name="create-form" :width="500">
+      <h3 class="px-3 py-4 text-primary">Create district</h3>
+      <form action="" class="p-2" @submit.prevent="store">
+        <div class="row form-group">
+          <div class="col-md-6">
+            <select class="input" v-model="district.province_id" required>
+              <option value="" selected>Tỉnh/thành</option>
+              <option v-for="prov in provinces" :key="prov.id" :value="prov.id">{{ prov.name }}</option>
+            </select>
           </div>
-          <div class="form-group">
-            <input type="text" class="form-control" v-model="chosenDistrict.slug">
+          <div class="col-md-6">
+            <input type="text" class="input" v-model="district.name" placeholder="Province name" required>
           </div>
-        </form>
-        <b-button variant="outline-primary" @click="update()">Update</b-button>
-        <b-button variant="outline-danger" @click="edit=false">Cancel</b-button>
+        </div>
+        <div class="form-group pt-2 text-right">
+          <button type="button" class="btn text-danger" @click="hideCreate">Cancel</button>
+          <button class="btn text-primary">Create</button>
+        </div>
+      </form>
+    </modal>
+    <!--  -->
+    <modal name="edit-form" :width="500">
+      <h3 class="px-3 py-4 text-primary">Create district</h3>
+      <form action="" class="p-2" @submit.prevent="update">
+        <div class="row form-group">
+          <div class="col-md-6">
+            <select class="input" v-model="chosen.province_id" required>
+              <option value="" selected>Tỉnh/thành</option>
+              <option v-for="prov in provinces" :key="prov.id" :value="prov.id">{{ prov.name }}</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <input type="text" class="input" v-model="chosen.name" placeholder="District name" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <input type="text" class="input" v-model="chosen.slug" placeholder="District slug name" required>
+        </div>
+        <div class="form-group pt-2 text-right">
+          <button type="button" class="btn text-danger" @click="hideEdit">Cancel</button>
+          <button class="btn text-primary">Create</button>
+        </div>
+      </form>
+    </modal>
+    <!--  -->
+    <modal name="destroy-form" :width="300" :class="['text-center']">
+      <h3 class="px-3 py-4 text-danger">Delete confirm</h3>
+      <div>
+        Are you sure?
       </div>
-    </b-modal>
+      <div class="form-group pt-4">
+        <button class="btn text-primary" @click="hideDestroy">Cancel</button>
+        <button class="btn text-muted" @click="destroy">Confirm</button>
+      </div>
+    </modal>
   </div>
 </template>
 <script>
@@ -108,15 +103,13 @@ export default {
   name: 'district-list',
   data () {
     return {
-      chosenDistrict: '',
-      edit: false,
-      create: false,
-      destroy: false,
+      chosen: '',
       page: 1,
       page_count: 1,
       per_page: 1,
       provinces: [],
       districts: [],
+      loading: true,
       district: {
         name: '',
         province_id: ''
@@ -128,6 +121,28 @@ export default {
     this.getProvinces()
   },
   methods: {
+    showCreate () {
+      this.$modal.show('create-form')
+      this.district = {
+        name: '',
+        province_id: ''
+      }
+    },
+    hideCreate () {
+      this.$modal.hide('create-form')
+    },
+    showEdit () {
+      this.$modal.show('edit-form')
+    },
+    hideEdit () {
+      this.$modal.hide('edit-form')
+    },
+    showDestroy () {
+      this.$modal.show('destroy-form')
+    },
+    hideDestroy () {
+      this.$modal.hide('destroy-form')
+    },
     getProvinces () {
       $auth.request.get('/api/province/all')
       .then(res => {
@@ -137,153 +152,109 @@ export default {
         this.error(err.response.data.message)
       })
     },
-    /**
-     * Change page
-     * @param {Number} page target page
-     */
     changePage (page) {
       this.page = page
       this.list(page)
     },
-    /**
-     * Choose a province for the next action
-     * @param {Object} province
-     */
     choose (district) {
-      this.chosenDistrict = {
+      this.chosen = {
         id: district.id,
         name: district.name,
         slug: district.slug,
         province_id: district.province_id
       }
     },
-    /**
-     * Success notification
-     * @param {String} message
-     */
     success (message) {
-      this.notification('Thành công', message, {
-        title: 'text-success',
-        message: ''
-      })
-    },
-    /**
-     * Error notification
-     * @param {String} message
-     */
-    error (message) {
-      this.notification('Không thành công', message, {
-        title: 'text-danger',
-        message: ''
-      })
-    },
-    /**
-     * Show notification
-     * @param {String} title
-     * @param {String} message
-     * @param {Object} colors {title: {String},message: {String}}
-     * @param {Number} timeout in seconds
-     */
-    notification (title, message, colors, timeout = 3000) {
-      this.$store.commit('notification', {
-        title: title,
+      $eventHub.$emit('success-alert', {
+        title: 'Success',
         message: message,
-        colors: colors
+        timeout: 3000
       })
-      this.$bvModal.show('notification')
-      setTimeout(() => {
-        this.$bvModal.hide('notification')
-      }, timeout)
     },
-    /**
-     * Store a new province
-     */
-    store () {
-      $auth.request.post('/api/district', {
-        province_id: this.district.province_id,
-        name: this.district.name
+    error (message) {
+      $eventHub.$emit('error-alert', {
+        title: 'Error',
+        message: message
       })
+    },
+    store () {
+      $auth.request.post('/api/district', this.district)
       .then(res => {
-        this.district.province_id = ''
-        this.district.name = ''
-        this.total = this.total + 1
-        if (this.total % this.per_page==1) {
-          this.changePage(this.page + 1)
+        if (this.districts.length==this.per_page) {
+          let target = Math.floor((this.total / this.per_page)) + 1
+          this.page_count = target
+          this.changePage(target)
         } else {
           this.districts.push(res.data)
         }
+        this.district.name = this.district.province_id = ''
+        this.hideCreate()
+        this.success('District has been created')
       })
       .catch(err => {
-        this.error(err.response.data.message)
+        const errorMessage = err.response.data.message
+        errorMessage = errorMessage==undefined ? 'Unable to create new district' : errorMessage
+        this.error(errorMessage)
       })
     },
-    /**
-     * List all provinces
-     * @param {Number} page
-     */
     list (page=1) {
+      this.loading = true
       $auth.request.get(`/api/district?page=${page}`)
       .then(res => {
         this.page_count = res.data.last_page
         this.total = res.data.total
         this.per_page = res.data.per_page
         this.districts = res.data.data
+        this.loading = false
       })
       .catch(err => {
-        this.error('Không thể lấy được danh sách quận/huyện')
+        this.loading = false
+        this.error('Unable to get district list')
       })
     },
-    /**
-     * Confirm delete a district
-     */
-    destroyConfirm () {
-      $auth.request.delete('/api/district/'+this.chosenDistrict.id)
+    destroy () {
+      $auth.request.delete('/api/district/'+this.chosen.id)
       .then(res => {
-        this.destroy=false
-        this.districts = this.districts.filter(prov => prov.id!=this.chosenDistrict.id)
-        this.success('Xóa thành công')
+        this.districts = this.districts.filter(prov => prov.id!=this.chosen.id)
+        this.success('District has been deleted')
+        this.hideDestroy()
       })
       .catch(err => {
-        this.destroy=false
-        this.error(err.response.data.message)
+        const errorMessage = err.response.data.message
+        errorMessage = errorMessage==undefined ? 'Unable to delete this district' : errorMessage
+        this.error(errorMessage)
       })
     },
     update () {
-      $auth.request.put('/api/district/'+this.chosenDistrict.id, {
-        name: this.chosenDistrict.name,
-        slug: this.chosenDistrict.slug,
-        province_id: this.chosenDistrict.province_id
-      })
+      $auth.request.put('/api/district/'+this.chosen.id, this.chosen)
       .then(res => {
         this.districts.forEach(prov => {
-          if (prov.id == this.chosenDistrict.id) {
-            prov.name = this.chosenDistrict.name
-            prov.slug = this.chosenDistrict.slug
-            prov.province_id = this.chosenDistrict.province_id
+          if (prov.id == this.chosen.id) {
+            prov.name = this.chosen.name
+            prov.slug = this.chosen.slug
+            prov.province_id = this.chosen.province_id
           }
         })
-        this.edit=false
-        this.success('Chỉnh sửa thành công')
+        this.success('District has been updated')
+        this.hideEdit()
       })
       .catch(err => {
-        this.error(err.response.data.message)
+        const errorMessage = err.response.data.message
+        errorMessage = errorMessage==undefined ? 'Unable to update this district' : errorMessage
+        this.error(errorMessage)
       })
     }
   }
 }
 </script>
 <style scoped>
-  .show-create-form {
-    width: 40px;
-    height:40px;
-  }
-  .show-create-form i {
-    transition: 0.2s;
-    color: var(--blue);
-  }
-  .cancel-create {
-    transform: rotate(45deg);
-    color: var(--red)!important;
+  .input {
+    display: block;
+    width: 100%;
+    border: none;
+    border-bottom: 2px solid #ccc;
+    padding: 8px 15px;
+    outline: unset!important;
   }
   .slide-fade-enter-active {
     transition: all .3s ease;

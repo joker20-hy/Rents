@@ -24,4 +24,9 @@ class Profile extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function avatar()
+    {
+        $this->image = is_null($this->image) ? asset('images/default.svg') : $this->image;
+    }
 }

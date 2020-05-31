@@ -16,14 +16,14 @@ use Illuminate\Support\Facades\Route;
 
 Route::group(['namespace' => 'Api'], function() {
 	Route::group(['namespace' => 'Auth'], function() {
-		Route::post('/login', 'LoginController@login');
+		Route::post('login', 'LoginController@login');
 	});
 
 	Route::group([
 	    'middleware' => 'auth:api'
 	], function() {
-		Route::post('/refresh', 'Auth\RefreshController@main');
-		Route::post('/logout', 'Auth\LoginController@logout');
+		Route::post('refresh', 'Auth\RefreshController@main');
+		Route::post('logout', 'Auth\LoginController@logout');
 		/**
 		 * 
 		 */
@@ -48,15 +48,29 @@ Route::group(['namespace' => 'Api'], function() {
 			Route::put('{id}', 'UpdateController@main')->middleware('admin-role');
 			Route::delete('{id}', 'DestroyController@main')->middleware('admin-role');
 		});
-
+		/**
+		 * 
+		 */
 		Route::group([
 			'namespace' => 'Area',
 			'prefix' => 'area'
 		], function () {
-			Route::get('/{type?}/{id?}', 'IndexController@main');
+			Route::get('{type?}/{id?}', 'IndexController@main');
 			Route::post('', 'CreateController@main')->middleware('admin-role');
 			Route::put('{id}', 'UpdateController@main')->middleware('admin-role');
 			Route::delete('{id}', 'DestroyController@main')->middleware('admin-role');
+		});
+		Route::group([
+			'namespace' => 'User',
+			'prefix' => 'user'
+		], function () {
+			Route::get('', 'IndexController@main');
+			// Route::post('', '');
+			// Route::put('', '');
+			// Route::delete('', '');
+			Route::get('{userId}/profile', 'ShowProfileController@main');
+			Route::put('{userId}/profile', 'UpdateProfileController@main');
+			Route::put('{userId}/verify', 'VerifyController@main')->middleware('admin-role');
 		});
 	});
 });

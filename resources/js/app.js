@@ -1,14 +1,14 @@
-window.Vue = require('vue');
-import VueRouter from 'vue-router';
-import router from './router.js'
-import App from './components/App'
-import { BootstrapVue } from 'bootstrap-vue'
-import { store } from './stores/store.js'
-import Paginate from 'vuejs-paginate'
+window.Vue = require('vue')
+window.$eventHub = new Vue()
 
+import router from './router.js'
+import VModal from 'vue-js-modal'
+import App from './components/App'
+import Paginate from 'vuejs-paginate'
+import { store } from './stores/store.js'
+
+Vue.use(VModal, { dialog: true })
 Vue.component('paginate', Paginate)
-Vue.use(BootstrapVue)
-window.Vue.use(VueRouter)
 
 const app = new Vue({
   el: '#app',

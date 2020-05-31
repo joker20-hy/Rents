@@ -1,5 +1,5 @@
 <template>
-  <section id="side-menu" v-show="isShow" class="float-left" style="min-width: 300px;max-width: 300px;min-height: 100vh">
+  <section id="side-menu" v-show="is_show" class="float-left" style="min-width: 300px;max-width: 300px;min-height: 100vh">
     <div style="height: 200px" class="bg-primary">
       joker
     </div>
@@ -25,11 +25,16 @@
 export default {
   name: 'side-menu',
   data () {
-    return {}
+    return {
+      is_show: true
+    }
   },
-  computed: {
-    isShow () {
-      return this.$store.getters.sideMenu
+  created () {
+    $eventHub.$on('show-sidemenu', this.show)
+  },
+  methods: {
+    show () {
+      this.is_show = !this.is_show
     }
   }
 }
