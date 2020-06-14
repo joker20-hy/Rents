@@ -7,10 +7,6 @@ use App\Models\Area;
 
 class AreaServices
 {
-    private const PLACE_TYPE = [
-        'PROVINCE' => 1,
-        'DISTRICT' => 2,
-    ];
     private $area;
 
     public function __construct(Area $area)
@@ -35,11 +31,12 @@ class AreaServices
      */
     public function index($type, $id, $paginate = 10)
     {
+        $placeType = config('const.PLACE_TYPE');
         switch ($type) {
-            case self::PLACE_TYPE['PROVINCE']:
+            case $placeType['PROVINCE']:
                 return $this->area->where('province_id', $id)->paginate($paginate);
                 break;
-            case self::PLACE_TYPE['DISTRICT']:
+            case $placeType['DISTRICT']:
                 return $this->area->where('district_id', $id)->paginate($paginate);
                 break;
             default:

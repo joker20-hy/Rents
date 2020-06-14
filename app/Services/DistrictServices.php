@@ -29,6 +29,7 @@ class DistrictServices
     {
         $params['slug'] = Str::slug($params['name'], '-');
         $district = $this->district->create($params);
+        $district->province;
         return $district;
     }
 
@@ -44,6 +45,7 @@ class DistrictServices
     {
         $district = $this->district->findOrFail($id);
         $district->update($params);
+        $district->province;
         return $district;
     }
 

@@ -1,16 +1,12 @@
 <template>
-  <div id="app" class="d-flex">
-    <side-menu/>
-    <section class="float-left w-100">
-      <header-bar/>
-      <router-view/>
-    </section>
-    <!-- utilities components -->
+  <div id="app">
+    <router-view/>
     <alert-box/>
     <logout-form/>
   </div>
 </template>
 <script>
+import { $auth } from '../auth'
 import SideMenu from './layouts/SideMenu'
 import HeaderBar from './layouts/HeaderBar'
 import AlertBox from './utilities/AlertBox'
@@ -24,8 +20,35 @@ export default {
     LogoutForm,
     AlertBox
   },
+  computed: {
+    auth () {
+      return $auth.check()
+    }
+  },
+  mounted () {
+    // this.getAuth()
+  },
   data () {
     return {}
+  },
+  methods: {
+    getAuth () {
+      $auth.request.get('/api/user/find')
+      .then(res => {
+        this.$store.commit('auth/user', res.data)
+      })
+      .catch(err => {
+        console.log(err)
+      })
+    }
   }
 }
 </script>
+<style scoped>
+  .dashboard-container {
+    background-image:url(/images/wave.svg);
+    background-position-x: center;
+    background-size:cover;
+    background-repeat:no-repeat;
+  }
+</style>

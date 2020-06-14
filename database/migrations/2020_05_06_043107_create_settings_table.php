@@ -17,7 +17,7 @@ class CreateSettingsTable extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users');
-            $table->boolean('2_step_verification')->default(false);
+            $table->boolean('verification_2_step')->default(false);
             $table->timestamps();
             $table->softDeletes();
         });

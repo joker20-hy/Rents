@@ -1,1 +1,3 @@
-logout = () => document.querySelector('#logout').submit()
+function clickTarget(id) {
+  document.querySelector(id).click()
+}

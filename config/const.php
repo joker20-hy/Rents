@@ -15,5 +15,17 @@ return [
         'UNVERIFIED' => 0,
         'VERIFIED' => 1
     ],
-
+    'PLACE_TYPE' => [
+        'PROVINCE' => 1,
+        'DISTRICT' => 2,
+        'AREA' => 3
+    ],
+    'FOLDER' => [
+        'PROFILE' => 'images',
+        'HOUSE' => 'houses'
+    ],
+    'FOLDER_TYPE' => [
+        'PROFILE' => 1,
+        'HOUSE' => 2
+    ]
 ];

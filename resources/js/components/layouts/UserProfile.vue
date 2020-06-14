@@ -8,7 +8,7 @@
     </h3>
     <form v-if="owner.profile" class="profile-detail" :class="edit ? 'edit': ''" @submit.prevent="update">
       <div class="form-group text-center">
-        <img v-if="owner.profile" :src="owner.profile.image" alt="">
+        <img :src="owner.profile.image==null?'/images/default.svg':owner.profile.image" alt="">
         <br>
         <button type="button" class="btn">
           <svg height="18" width="18" viewBox="0 -24 512.00046 512" xmlns="http://www.w3.org/2000/svg">

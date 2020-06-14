@@ -18,7 +18,24 @@ class UserServices
 
     public function index($paginate = 10)
     {
-        return $this->user->paginate($paginate);
+        return $this->user->with('profile')
+                    ->with('setting')
+                    ->paginate($paginate);
+    }
+
+    public function show($id=null)
+    {
+        $authUser = Auth::user();
+        if (is_null($id)) {
+            $authUser->profile;
+            return $authUser;
+        } elseif ($authUser->role != config('const.USER.ROLE.ADMIN') && $authUser->id != $id) {
+            return abort(403, 'You have no permission');
+        } else {
+            $user = $this->user->findOrFail($id);
+            $user->profile;
+            return $user;
+        }        
     }
 
     /**
