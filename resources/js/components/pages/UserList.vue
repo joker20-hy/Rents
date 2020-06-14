@@ -1,9 +1,9 @@
 <template>
   <div class="container">
-    <h1 class="d-flex align-items-end mt-5">
+    <h1 class="d-flex align-items-end mt-5 py-3">
       User list
     </h1>
-    <table class="table table-borderless text-center">
+    <table class="table table-borderless records-list">
       <thead>
         <th>Username</th>
         <th>Role</th>
@@ -19,16 +19,24 @@
           <td>{{ user.avg_rate }}</td>
           <td>{{ user.rate_count }}</td>
           <td>
-            <switch-input :status="user.verify===verified" @click="changeVerifyStatus(user)"/>
+            <switch-input class="m-auto" :status="user.verify===verified" @click="changeVerifyStatus(user)"/>
           </td>
           <td>
-            <button class="btn" @click="getProfile(user)">
+            <span class="text-primary mx-2" @click="showProfile(user)" style="cursor:pointer">
               Profile
-            </button>
+            </span>
+            <span class="text-primary mx-2" @click="showSetting(user)" style="cursor:pointer">
+              Settings
+            </span>
           </td>
         </tr>
       </transition-group>
     </table>
+    <div class="py-4 text-center mx-auto" v-if="loading">
+      <span class="p-2 bg-light rounded-circle">
+        <i class="fas fa-spinner fa-pulse fa-lg text-primary"></i>
+      </span>
+    </div>  
     <paginate
       v-model="query_params.page"
       :page-count="page_count"
@@ -41,18 +49,21 @@
       :page-class="'page-item'">
     </paginate>
     <user-profile :user="chosen"></user-profile>
+    <user-setting :user="chosen"></user-setting>
   </div>
 </template>
 <script>
 import { $auth } from '../../auth'
 import SwitchInput from '../utilities/SwitchInput'
 import UserProfile from '../layouts/UserProfile'
+import UserSetting from '../layouts/UserSetting'
 
 export default {
   name: 'user-list',
   components: {
     SwitchInput,
-    UserProfile
+    UserProfile,
+    UserSetting
   },
   data () {
     return {
@@ -62,7 +73,8 @@ export default {
       },
       page_count: 1,
       per_page: 1,
-      chosen: {}
+      chosen: {},
+      loading: false
     }
   },
   mounted () {
@@ -89,6 +101,9 @@ export default {
     choose (user) {
       this.chosen = user
     },
+    showSetting(user) {
+      $eventHub.$emit('show-user-setting', user)
+    },
     changeVerifyStatus (user) {
       this.$store.commit('users/changeVerify', user)
       $auth.request.put(`/api/user/${user.id}/verify`, {
@@ -113,29 +128,24 @@ export default {
       this.query_params.page = page
       this.list()
     },
-    getProfile (user) {
-      $auth.request.get(`/api/user/${user.id}/profile`)
-      .then(res => {
-        user.profile = res.data
-        $eventHub.$emit('show-user-profile', user)
-      })
-      .catch(err => {
-        let errMessage = err.response.data.message==undefined ? '' : err.response.data.message
-        $eventHub.$emit('error-alert', {
-          title: 'Error',
-          message: errMessage
-        })
-      })
+    showProfile (user) {
+      $eventHub.$emit('show-user-profile', user)
     },
     list () {
+      this.loading = true
       $auth.request.get(this.listUrl)
       .then(res => {
+        this.loading = false
         this.$store.commit('users/users', res.data.data)
         this.page_count = res.data.last_page
         this.total = res.data.total
       })
       .catch(err => {
-        console.log(err)
+        this.loading = false
+        $eventHub.$emit('error-alert', {
+          title: 'Error',
+          message: 'Unable to get user list'
+        })
       })
     }
   }

@@ -7,7 +7,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Services\DistrictServices;
 
-class CreateController extends Controller
+class StoreController extends Controller
 {
     protected $districtServices;
 

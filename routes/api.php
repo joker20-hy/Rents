@@ -32,7 +32,7 @@ Route::group(['namespace' => 'Api'], function() {
 			'prefix' => 'province'
 		], function () {
 			Route::get('{perpage?}', 'IndexController@main');
-			Route::post('', 'CreateController@main')->middleware('admin-role');
+			Route::post('', 'StoreController@main')->middleware('admin-role');
 			Route::put('{id}', 'UpdateController@main')->middleware('admin-role');
 			Route::delete('{id}', 'DestroyController@main')->middleware('admin-role');
 		});
@@ -44,7 +44,7 @@ Route::group(['namespace' => 'Api'], function() {
 			'prefix' => 'district'
 		], function () {
 			Route::get('{provinceId?}', 'IndexController@main');
-			Route::post('', 'CreateController@main')->middleware('admin-role');
+			Route::post('', 'StoreController@main')->middleware('admin-role');
 			Route::put('{id}', 'UpdateController@main')->middleware('admin-role');
 			Route::delete('{id}', 'DestroyController@main')->middleware('admin-role');
 		});
@@ -56,21 +56,62 @@ Route::group(['namespace' => 'Api'], function() {
 			'prefix' => 'area'
 		], function () {
 			Route::get('{type?}/{id?}', 'IndexController@main');
-			Route::post('', 'CreateController@main')->middleware('admin-role');
+			Route::post('', 'StoreController@main')->middleware('admin-role');
 			Route::put('{id}', 'UpdateController@main')->middleware('admin-role');
 			Route::delete('{id}', 'DestroyController@main')->middleware('admin-role');
+		});
+		/**
+		 * 
+		 */
+		Route::group([
+			'namespace' => 'Suggest',
+			'prefix' => 'sg'
+		], function () {
+			Route::get('provinces', 'ProvinceController@main');
+			Route::get('districts', 'DistrictController@main');
+			Route::get('areas', 'AreaController@main');
 		});
 		Route::group([
 			'namespace' => 'User',
 			'prefix' => 'user'
 		], function () {
 			Route::get('', 'IndexController@main');
+			Route::get('find/{userId?}', 'ShowControler@main');
 			// Route::post('', '');
 			// Route::put('', '');
 			// Route::delete('', '');
 			Route::get('{userId}/profile', 'ShowProfileController@main');
 			Route::put('{userId}/profile', 'UpdateProfileController@main');
+			Route::get('{userId}/setting', 'ShowSettingController@main');
+			Route::put('{userId}/setting', 'UpdateSettingController@main');
 			Route::put('{userId}/verify', 'VerifyController@main')->middleware('admin-role');
+		});
+
+		Route::group([
+			'namespace' => 'Direction',
+			'prefix' => 'direction'
+		], function () {
+			Route::get('', 'IndexController@main');
+			Route::post('', 'StoreController@main');
+			Route::put('{id}', 'UpdateController@main');
+			Route::delete('{id}', 'DestroyController@main');
+		});
+		Route::group([
+			'namespace' => 'House',
+			'prefix' => 'house'
+		], function () {
+			Route::get('', 'IndexController@main');
+			Route::post('', 'StoreController@main');
+			Route::post('{id}', 'UpdateController@main');
+			Route::post('{id}/images', 'UploadImagesController@main');
+			Route::put('{id}/images', 'UpdateImagesController@main');
+		});
+
+		Route::group([
+			'namespace' => 'Image',
+			'prefix' => 'image'
+		], function () {
+			Route::post('{folder_type?}', 'StoreController@main');
 		});
 	});
 });

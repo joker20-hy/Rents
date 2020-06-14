@@ -82,5 +82,6 @@ class RegisterController extends Controller
     protected function registered(Request $request, $user)
     {
         $user->profile->create([]);
+        $user->setting->create([]);
     }
 }

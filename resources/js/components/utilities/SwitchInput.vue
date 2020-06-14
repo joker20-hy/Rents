@@ -15,15 +15,24 @@ export default {
     status: {
       required: true,
       type: Boolean
+    },
+    locked: {
+      required: false,
+      type: Boolean
     }
   },
   watch: {
+    locked (val) {
+      this.locked=val
+    },
     status (val) {
+      if (this.locked) return false
       this.on = val
     }
   },
   methods: {
     toggle () {
+      if (this.locked) return false
       this.$emit('click')
     }
   }
@@ -33,7 +42,6 @@ export default {
   .switch-input {
     width: 42px;
     height: 24px;
-    margin: auto;
     display: flex;
     border-radius: 12px;
     background-color: var(--gray);

@@ -1,10 +1,37 @@
 <template>
   <div class="container">
-    <h1 class="d-flex align-items-end mt-5">
+    <h1 class="d-flex align-items-end mt-5 py-3">
       Danh sách khu vực
-      <button class="btn ml-auto" @click="showCreate">Create</button>
+      <button class="btn ml-auto text-light" @click="showCreate" style="font-weight: 600">
+        <i class="fas fa-plus"></i> Create
+      </button>
     </h1>
-    <table class="table table-borderless text-center">
+    <transition name="slide-fade">
+      <form @submit.prevent="store" class="bg-light rounded" v-show="create">
+        <div class="row form-group px-3 py-2">
+          <div class="col-md-3">
+            <select class="input" v-model="area.province_id" @change="getDistricts(area.province_id),area.district_id=''" required>
+              <option value="" selected>Tỉnh/thành</option>
+              <option v-for="prov in provinces" :key="prov.id" :value="prov.id">{{ prov.name }}</option>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <select class="input" v-model="area.district_id" required>
+              <option value="" selected>Quận/Huyện</option>
+              <option v-for="dist in districts" :key="dist.id" :value="dist.id">{{ dist.name }}</option>
+            </select>
+          </div>
+          <div class="col-md-4">
+            <input type="text" class="input" v-model="area.name" placeholder="Area name" required>
+          </div>
+          <div class="col-md-2 d-flex align-items-center">
+            <button class="btn text-primary">Create</button>
+            <button type="button" class="btn text-danger" @click="hideCreate">Cancel</button>
+          </div>
+        </div>
+      </form>
+    </transition>
+    <table class="table table-borderless records-list">
       <thead>
         <th>STT</th>
         <th>Tên</th>
@@ -14,21 +41,35 @@
         <th>Hành động</th>
       </thead>
       <transition-group name="slide-fade" tag="tbody">
-        <tr v-for="area in areas" :key="area.id">
-          <td>{{ area.id }}</td>
-          <td>{{ area.name }}</td>
-          <td>{{ area.slug }}</td>
-          <td>{{ area.province.name }}</td>
-          <td>{{ area.district.name }}</td>
+        <tr v-for="(area, index) in areas" :key="area.id">
+          <td>{{ index + 1 }}</td>
           <td>
-            <button class="btn text-primary" @click="showEdit(),choose(area)">Edit</button>
-            <button class="btn text-danger" @click="showDestroy(),choose(area)">Delete</button>
+            <div class="holder" v-show="!area.edit">{{ area.name }}</div>
+            <input type="text" class="input" v-model="area.name" v-show="area.edit">
+          </td>
+          <td>
+            <div class="holder" v-show="!area.edit">{{ area.slug }}</div>
+            <input type="text" class="input" v-model="area.slug" v-show="area.edit">
+          </td>
+          <td>
+            <div class="holder">{{ area.province.name }}</div>
+          </td>
+          <td>
+            <div class="holder">{{ area.district.name }}</div>
+          </td>
+          <td>
+            <button class="btn text-primary" @click="choose(area),area.edit=true" v-show="!area.edit">Edit</button>
+            <button class="btn text-primary" v-show="area.edit" @click="update(area)">Update</button>
+            <button class="btn text-danger" v-show="area.edit" @click="area.edit=false">Cancel</button>
+            <button class="btn text-danger" v-show="!area.edit" @click="showDestroy(),choose(area)">Delete</button>
           </td>
         </tr>
       </transition-group>
     </table>
-    <div class="py-4 text-center" v-show="loading">
-      <i class="fas fa-spinner fa-pulse fa-lg text-primary"></i>
+    <div class="py-4 text-center mx-auto" v-if="loading">
+      <span class="p-2 bg-light rounded-circle">
+        <i class="fas fa-spinner fa-pulse fa-lg text-primary"></i>
+      </span>
     </div>
     <paginate
       v-model="page"
@@ -41,67 +82,6 @@
       :container-class="'pagination'"
       :page-class="'page-item'">
     </paginate>
-    <!-- create form -->
-    <modal name="create-form" :width="500">
-      <h3 class="px-3 py-4 text-primary">Create area</h3>
-      <form action="" class="p-2" @submit.prevent="store">
-        <div class="row form-group">
-          <div class="col-md-6">
-            <select class="input" v-model="area.province_id" @change="getDistricts(area.province_id)" required>
-              <option value="" selected>Tỉnh/thành</option>
-              <option v-for="prov in provinces" :key="prov.id" :value="prov.id">{{ prov.name }}</option>
-            </select>
-          </div>
-          <div class="col-md-6">
-            <select class="input" v-model="area.district_id">
-              <option value="" selected>Quận/Huyện</option>
-              <option v-for="dist in districts" :key="dist.id" :value="dist.id">
-                {{ dist.name }}
-              </option>
-            </select>
-          </div>
-        </div>
-        <div class="form-group">
-          <input type="text" class="input" v-model="area.name" placeholder="Area name" required>
-        </div>
-        <div class="form-group pt-2 text-right">
-          <button type="button" class="btn text-danger" @click="hideCreate">Cancel</button>
-          <button class="btn text-primary">Create</button>
-        </div>
-      </form>
-    </modal>
-    <!-- edit form -->
-    <modal name="edit-form" :width="500">
-      <h3 class="px-3 py-4 text-primary">Edit area</h3>
-      <form action="" class="p-2" @submit.prevent="update">
-        <div class="row form-group">
-          <div class="col-md-6">
-            <select class="input" v-model="chosen.province_id" @change="getDistricts(chosen.province_id)" required>
-              <option value="" selected>Tỉnh/thành</option>
-              <option v-for="prov in provinces" :key="prov.id" :value="prov.id">{{ prov.name }}</option>
-            </select>
-          </div>
-          <div class="col-md-6">
-            <select class="input" v-model="chosen.district_id">
-              <option value="" selected>Quận/Huyện</option>
-              <option v-for="dist in districts" :key="dist.id" :value="dist.id">
-                {{ dist.name }}
-              </option>
-            </select>
-          </div>
-        </div>
-        <div class="form-group">
-          <input type="text" class="input" v-model="chosen.name" placeholder="Area name" required>
-        </div>
-        <div class="form-group">
-          <input type="text" class="input" v-model="chosen.slug" placeholder="Area slug name" required>
-        </div>
-        <div class="form-group pt-2 text-right">
-          <button type="button" class="btn text-danger" @click="hideEdit">Cancel</button>
-          <button class="btn text-primary">Update</button>
-        </div>
-      </form>
-    </modal>
     <!-- destroy confirm -->
     <modal name="destroy-form" :width="300" :class="['text-center']">
       <h3 class="px-3 py-4 text-danger">Delete confirm</h3>
@@ -121,6 +101,7 @@ import { $auth } from '../../auth.js'
 export default {
   data () {
     return {
+      create: false,
       page: 1,
       page_count: 1,
       per_page: 1,
@@ -142,19 +123,13 @@ export default {
   },
   methods: {
     showCreate () {
+      this.area.name = ''
       this.area.province_id = ''
       this.area.district_id = ''
-      this.area.name = ''
-      this.$modal.show('create-form')
+      this.create = true
     },
     hideCreate () {
-      this.$modal.hide('create-form')
-    },
-    showEdit () {
-      this.$modal.show('edit-form')
-    },
-    hideEdit () {
-      this.$modal.hide('edit-form')
+      this.create = false
     },
     showDestroy () {
       this.$modal.show('destroy-form')
@@ -168,34 +143,38 @@ export default {
         this.provinces = res.data
       })
       .catch(err => {
-        this.error(err.response.data.message)
+        console.log(err.response.data.message)
       })
     },
-    getDistricts (province_id=null) {
-      $auth.request.get(`/api/district/${province_id==null ? this.area.province_id : province_id}`)
+    getDistricts (province_id) {
+      $auth.request.get(`/api/district/${province_id}`)
       .then(res => {
         this.districts = res.data.data
       })
       .catch(err => {
-        this.error(err.response.data.message)
+        console.log(err.response.data.message)
       })
     },
     changePage (page) {
       this.page = page
+      this.list()
     },
-    list (page=1) {
+    list () {
       this.loading = true
-      $auth.request.get(`/api/area?page=${page}`)
+      $auth.request.get(`/api/area?page=${this.page}`)
       .then(res => {
         this.page_count = res.data.last_page
         this.total = res.data.total
         this.per_page = res.data.per_page
+        res.data.data.forEach(area => area.edit=false)
         this.areas = res.data.data
-        this.loading = false
       })
       .catch(err => {
+        console.log(err.response.data.message)
+        this.error('Unable to get area list')
+      })
+      .finally(() => {
         this.loading = false
-        this.error(err.response.data.message)
       })
     },
     store () {
@@ -209,11 +188,14 @@ export default {
         if (this.total % this.per_page==1) {
           this.changePage(this.page + 1)
         } else {
+          res.data.edit = false
           this.areas.push(res.data)
         }
+        this.success('New area has been created')
       })
       .catch(err => {
-        this.error(err.response.data.message)
+        console.log(err.response.data.message)
+        this.error('Unable to create new area')
       })
     },
     choose (area) {
@@ -221,32 +203,22 @@ export default {
         id: area.id,
         name: area.name,
         slug: area.slug,
-        province_id: area.province_id,
-        district_id: area.district_id
       }
-      if (this.edit) this.getDistricts(area.province_id)
     },
-    update () {
-      $auth.request.put(`/api/area/${this.chosen.id}`, {
-        name: this.chosen.name,
-        slug: this.chosen.slug,
-        province_id: this.chosen.province_id,
-        district_id: this.chosen.district_id
+    update (area) {
+      $auth.request.put(`/api/area/${area.id}`, {
+        name: area.name,
+        slug: area.slug
       })
       .then(res => {
-        this.areas.forEach(area => {
-          if (area.id == this.chosen.id) {
-            area.name = this.chosen.name
-            area.slug = this.chosen.slug
-            area.province_id = this.chosen.province_id
-            area.district_id = this.chosen.district_id
-          }
-        })
-        this.edit = false
+        area.edit = false
         this.success('Update successfully')
       })
       .catch(err => {
-        this.error(err.response.data.message)
+        area.name = this.chosen.name
+        area.slug = this.chosen.slug
+        console.log(err.response.data.message)
+        this.error('Unable to update this record')
       })
     },
     destroy () {
@@ -254,17 +226,13 @@ export default {
       .then(res => {
         this.areas = this.areas.filter(area => area.id!=this.chosen.id)
         this.success('Delete successfully')
-        this.remove = false
+        this.hideDestroy()
       })
       .catch(err => {
-        this.error(err.response.data.message)
-        this.remove = false
+        console.log(err.response.data.message)
+        this.error("Unable to delete this record")
       })
     },
-    /**
-     * Success notification
-     * @param {String} message
-     */
     success (message) {
       $eventHub.$emit('success-alert', {
         title: 'Thành công',
@@ -272,10 +240,6 @@ export default {
         timeout: 3600
       })
     },
-    /**
-     * Error notification
-     * @param {String} message
-     */
     error (message) {
       $eventHub.$emit('error-alert', {
         title: 'Không thành công',
@@ -285,23 +249,3 @@ export default {
   }
 }
 </script>
-<style scoped>
-  .input {
-    display: block;
-    width: 100%;
-    border: none;
-    border-bottom: 2px solid #ccc;
-    padding: 8px 15px;
-    outline: unset!important;
-  }
-  .slide-fade-enter-active {
-    transition: all .3s ease;
-  }
-  .slide-fade-leave-active {
-    transition: all .3s cubic-bezier(1.0, 0.5, 0.8, 1.0);
-  }
-  .slide-fade-enter, .slide-fade-leave-to {
-    transform: translateX(10px);
-    opacity: 0;
-  }
-</style>

@@ -1,10 +1,31 @@
 <template>
   <div class="container">
-    <h1 class="d-flex align-items-end mt-5">
+    <h1 class="d-flex align-items-end mt-5 py-3">
       Danh sách quận/huyện
-      <button class="btn ml-auto" @click="showCreate">Create</button>
+      <button class="btn ml-auto text-light" @click="showCreate" style="font-weight: 600">
+        <i class="fas fa-plus"></i> Create
+      </button>
     </h1>
-    <table class="table table-borderless text-center">
+    <transition name="slide-fade">
+      <form @submit.prevent="store" class="bg-light rounded" v-show="create">
+        <div class="row form-group px-3 py-2">
+          <div class="col-md-4">
+            <select class="input" v-model="district.province_id" required>
+              <option value="" selected>Tỉnh/thành</option>
+              <option v-for="prov in provinces" :key="prov.id" :value="prov.id">{{ prov.name }}</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <input type="text" class="input" v-model="district.name" placeholder="District name" required>
+          </div>
+          <div class="col-md-2 d-flex align-items-center">
+            <button class="btn text-primary">Create</button>
+            <button type="button" class="btn text-danger" @click="hideCreate">Cancel</button>
+          </div>
+        </div>
+      </form>
+    </transition>
+    <table class="table table-borderless records-list">
       <thead>
         <th>STT</th>
         <th>Tên</th>
@@ -15,18 +36,30 @@
       <transition-group name="slide-fade" tag="tbody">
         <tr v-for="dist in districts" :key="dist.id">
           <td>{{ dist.id }}</td>
-          <td>{{ dist.name }}</td>
-          <td>{{ dist.slug }}</td>
-          <td>{{ dist.province.name }}</td>
           <td>
-            <button class="btn text-primary" @click="showEdit(),choose(dist)">Edit</button>
-            <button class="btn text-danger" @click="showDestroy(),choose(dist)">Delete</button>
+            <div v-show="!dist.edit" class="holder">{{ dist.name }}</div>
+            <input type="text" class="input" v-model="dist.name" v-show="dist.edit">
+          </td>
+          <td>
+            <div v-show="!dist.edit" class="holder">{{ dist.slug }}</div>
+            <input type="text" class="input" v-model="dist.slug" v-show="dist.edit">
+          </td>
+          <td>
+            <div class="holder">{{ dist.province.name }}</div>
+          </td>
+          <td>
+            <button class="btn text-primary" @click="choose(dist),dist.edit=true" v-show="!dist.edit">Edit</button>
+            <button class="btn text-primary" v-show="dist.edit" @click="update(dist)">Update</button>
+            <button class="btn text-danger" v-show="dist.edit" @click="dist.edit=false">Cancel</button>
+            <button class="btn text-danger" @click="choose(dist),showDestroy()" v-show="!dist.edit">Delete</button>
           </td>
         </tr>
       </transition-group>
     </table>
-    <div class="py-4 text-center" v-show="loading">
-      <i class="fas fa-spinner fa-pulse fa-lg text-primary"></i>
+    <div class="py-4 text-center mx-auto" v-show="loading">
+      <span class="p-2 bg-light rounded-circle">
+        <i class="fas fa-spinner fa-pulse fa-lg text-primary"></i>
+      </span>
     </div>
     <paginate
       v-model="page"
@@ -39,50 +72,6 @@
       :container-class="'pagination'"
       :page-class="'page-item'">
     </paginate>
-    <modal name="create-form" :width="500">
-      <h3 class="px-3 py-4 text-primary">Create district</h3>
-      <form action="" class="p-2" @submit.prevent="store">
-        <div class="row form-group">
-          <div class="col-md-6">
-            <select class="input" v-model="district.province_id" required>
-              <option value="" selected>Tỉnh/thành</option>
-              <option v-for="prov in provinces" :key="prov.id" :value="prov.id">{{ prov.name }}</option>
-            </select>
-          </div>
-          <div class="col-md-6">
-            <input type="text" class="input" v-model="district.name" placeholder="Province name" required>
-          </div>
-        </div>
-        <div class="form-group pt-2 text-right">
-          <button type="button" class="btn text-danger" @click="hideCreate">Cancel</button>
-          <button class="btn text-primary">Create</button>
-        </div>
-      </form>
-    </modal>
-    <!--  -->
-    <modal name="edit-form" :width="500">
-      <h3 class="px-3 py-4 text-primary">Create district</h3>
-      <form action="" class="p-2" @submit.prevent="update">
-        <div class="row form-group">
-          <div class="col-md-6">
-            <select class="input" v-model="chosen.province_id" required>
-              <option value="" selected>Tỉnh/thành</option>
-              <option v-for="prov in provinces" :key="prov.id" :value="prov.id">{{ prov.name }}</option>
-            </select>
-          </div>
-          <div class="col-md-6">
-            <input type="text" class="input" v-model="chosen.name" placeholder="District name" required>
-          </div>
-        </div>
-        <div class="form-group">
-          <input type="text" class="input" v-model="chosen.slug" placeholder="District slug name" required>
-        </div>
-        <div class="form-group pt-2 text-right">
-          <button type="button" class="btn text-danger" @click="hideEdit">Cancel</button>
-          <button class="btn text-primary">Create</button>
-        </div>
-      </form>
-    </modal>
     <!--  -->
     <modal name="destroy-form" :width="300" :class="['text-center']">
       <h3 class="px-3 py-4 text-danger">Delete confirm</h3>
@@ -98,7 +87,6 @@
 </template>
 <script>
 import { $auth } from '../../auth.js'
-
 export default {
   name: 'district-list',
   data () {
@@ -109,7 +97,8 @@ export default {
       per_page: 1,
       provinces: [],
       districts: [],
-      loading: true,
+      create: false,
+      loading: false,
       district: {
         name: '',
         province_id: ''
@@ -122,22 +111,13 @@ export default {
   },
   methods: {
     showCreate () {
-      this.$modal.show('create-form')
-      this.district = {
-        name: '',
-        province_id: ''
-      }
+      this.create = true
+      this.district.name = this.district.province_id = ''
     },
     hideCreate () {
-      this.$modal.hide('create-form')
+      this.create = false
     },
-    showEdit () {
-      this.$modal.show('edit-form')
-    },
-    hideEdit () {
-      this.$modal.hide('edit-form')
-    },
-    showDestroy () {
+    showDestroy (dist) {
       this.$modal.show('destroy-form')
     },
     hideDestroy () {
@@ -149,20 +129,82 @@ export default {
         this.provinces = res.data
       })
       .catch(err => {
-        this.error(err.response.data.message)
+        console.log(err.response.data.message)
       })
     },
     changePage (page) {
       this.page = page
       this.list(page)
     },
-    choose (district) {
+    choose (dist) {
       this.chosen = {
-        id: district.id,
-        name: district.name,
-        slug: district.slug,
-        province_id: district.province_id
+        id: dist.id,
+        name: dist.name,
+        slug: dist.slug
       }
+    },
+    list (page=1) {
+      this.loading = true
+      $auth.request.get(`/api/district?page=${page}`)
+      .then(res => {
+        this.page_count = res.data.last_page
+        this.total = res.data.total
+        this.per_page = res.data.per_page
+        res.data.data.forEach(dist => dist.edit=false)
+        this.districts = res.data.data
+        this.loading = false
+      })
+      .catch(err => {
+        this.loading = false
+        this.error('Unable to get district list')
+      })
+    },
+    store () {
+      $auth.request.post('/api/district', this.district)
+      .then(res => {
+        if (this.districts.length==this.per_page) {
+          let target = Math.floor((this.total / this.per_page)) + 1
+          this.page_count = target
+          this.changePage(target)
+        } else {
+          res.data.edit = false
+          this.districts.push(res.data)
+        }
+        this.district.name = this.district.province_id = ''
+        this.success('District has been created')
+      })
+      .catch(err => {
+        console.log(err.response.data.message)
+        this.error('Unable to create new district')
+      })
+    },
+    update (dist) {
+      $auth.request.put(`/api/district/${dist.id}`, {
+        name: dist.name,
+        slug: dist.slug
+      })
+      .then(res => {
+        dist.edit = false
+        this.success('District has been updated')
+      })
+      .catch(err => {
+        dist.name = this.chosen.name
+        dist.slug = this.chosen.slug
+        console.log(err.response.data.message)
+        this.error('Unable to update this district')
+      })
+    },
+    destroy () {
+      $auth.request.delete('/api/district/'+this.chosen.id)
+      .then(res => {
+        this.districts = this.districts.filter(prov => prov.id!=this.chosen.id)
+        this.success('District has been deleted')
+        this.hideDestroy()
+      })
+      .catch(err => {
+        console.log(err.response.data.message)
+        this.error('Unable to delete this district')
+      })
     },
     success (message) {
       $eventHub.$emit('success-alert', {
@@ -176,94 +218,7 @@ export default {
         title: 'Error',
         message: message
       })
-    },
-    store () {
-      $auth.request.post('/api/district', this.district)
-      .then(res => {
-        if (this.districts.length==this.per_page) {
-          let target = Math.floor((this.total / this.per_page)) + 1
-          this.page_count = target
-          this.changePage(target)
-        } else {
-          this.districts.push(res.data)
-        }
-        this.district.name = this.district.province_id = ''
-        this.hideCreate()
-        this.success('District has been created')
-      })
-      .catch(err => {
-        const errorMessage = err.response.data.message
-        errorMessage = errorMessage==undefined ? 'Unable to create new district' : errorMessage
-        this.error(errorMessage)
-      })
-    },
-    list (page=1) {
-      this.loading = true
-      $auth.request.get(`/api/district?page=${page}`)
-      .then(res => {
-        this.page_count = res.data.last_page
-        this.total = res.data.total
-        this.per_page = res.data.per_page
-        this.districts = res.data.data
-        this.loading = false
-      })
-      .catch(err => {
-        this.loading = false
-        this.error('Unable to get district list')
-      })
-    },
-    destroy () {
-      $auth.request.delete('/api/district/'+this.chosen.id)
-      .then(res => {
-        this.districts = this.districts.filter(prov => prov.id!=this.chosen.id)
-        this.success('District has been deleted')
-        this.hideDestroy()
-      })
-      .catch(err => {
-        const errorMessage = err.response.data.message
-        errorMessage = errorMessage==undefined ? 'Unable to delete this district' : errorMessage
-        this.error(errorMessage)
-      })
-    },
-    update () {
-      $auth.request.put('/api/district/'+this.chosen.id, this.chosen)
-      .then(res => {
-        this.districts.forEach(prov => {
-          if (prov.id == this.chosen.id) {
-            prov.name = this.chosen.name
-            prov.slug = this.chosen.slug
-            prov.province_id = this.chosen.province_id
-          }
-        })
-        this.success('District has been updated')
-        this.hideEdit()
-      })
-      .catch(err => {
-        const errorMessage = err.response.data.message
-        errorMessage = errorMessage==undefined ? 'Unable to update this district' : errorMessage
-        this.error(errorMessage)
-      })
     }
   }
 }
 </script>
-<style scoped>
-  .input {
-    display: block;
-    width: 100%;
-    border: none;
-    border-bottom: 2px solid #ccc;
-    padding: 8px 15px;
-    outline: unset!important;
-  }
-  .slide-fade-enter-active {
-    transition: all .3s ease;
-  }
-  .slide-fade-leave-active {
-    transition: all .3s cubic-bezier(1.0, 0.5, 0.8, 1.0);
-  }
-  .slide-fade-enter, .slide-fade-leave-to {
-    transform: translateX(10px);
-    opacity: 0;
-  }
-</style>
