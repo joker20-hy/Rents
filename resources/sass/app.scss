@@ -51,10 +51,19 @@
   top: 0px!important;
 }
 .records-list {
-  background-color: var(--light);
-  box-shadow: 0px 2px 20px #212529;
-  border-radius: 5px;
+  background-color: var(--white);
+  box-shadow: 0px 2px 20px #21252921;
   text-align: center;
+  border-top: 3px solid var(--success);
+  width: 100%;
+  margin-bottom: 15px;
+}
+.records-list th {
+  font-weight: 600;
+  padding: 15px 0px;
+}
+.records-list td {
+  padding: 10px 0px;
 }
 .holder, .input {
   display: block;

@@ -22,10 +22,18 @@ return [
     ],
     'FOLDER' => [
         'PROFILE' => 'images',
-        'HOUSE' => 'houses'
+        'HOUSE' => 'houses',
+        'ROOM' => 'rooms'
     ],
     'FOLDER_TYPE' => [
         'PROFILE' => 1,
         'HOUSE' => 2
+    ],
+    'SERVICE_TYPE' => [
+        'PRICE_FIX' => 1
+    ],
+    'OWNER_ROLE' => [
+        'OWNER' => 1,
+        'TENANT' => 2
     ]
 ];

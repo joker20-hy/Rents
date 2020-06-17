@@ -31,18 +31,16 @@
         </div>
       </form>
     </transition>
-    <table class="table table-borderless records-list">
+    <table class="records-list">
       <thead>
-        <th>STT</th>
-        <th>Tên</th>
+        <th>Name</th>
         <th>Slug</th>
-        <th>Tỉnh/Thành</th>
-        <th>Quận/Huyện</th>
-        <th>Hành động</th>
+        <th>Province</th>
+        <th>District</th>
+        <th>Actions</th>
       </thead>
       <transition-group name="slide-fade" tag="tbody">
-        <tr v-for="(area, index) in areas" :key="area.id">
-          <td>{{ index + 1 }}</td>
+        <tr v-for="area in areas" :key="area.id">
           <td>
             <div class="holder" v-show="!area.edit">{{ area.name }}</div>
             <input type="text" class="input" v-model="area.name" v-show="area.edit">

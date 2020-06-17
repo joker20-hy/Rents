@@ -25,7 +25,10 @@
           <router-link :to="{name : 'direction-list'}">Direction list</router-link>
         </li>
         <li class="list-group-item">
-          <router-link :to="{name : 'houses'}">House list</router-link>
+          <router-link :to="{name : 'house-list'}">House list</router-link>
+        </li>
+        <li class="list-group-item">
+          <router-link :to="{name : 'room-list'}">Room list</router-link>
         </li>
       </ul>
     </div>

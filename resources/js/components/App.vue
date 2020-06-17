@@ -26,13 +26,13 @@ export default {
     }
   },
   mounted () {
-    // this.getAuth()
+    this.authUser()
   },
   data () {
     return {}
   },
   methods: {
-    getAuth () {
+    authUser () {
       $auth.request.get('/api/user/find')
       .then(res => {
         this.$store.commit('auth/user', res.data)

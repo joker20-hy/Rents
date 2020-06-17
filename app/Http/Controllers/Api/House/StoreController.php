@@ -28,7 +28,7 @@ class StoreController extends Controller
             'name' => 'required|string',
             'province_id' => 'required|integer|min:1',
             'district_id' => 'required|integer|min:1',
-            'area_id' => 'nullable|integer|min:1',
+            'area_id' => 'required|integer|min:1',
             'address' => 'required|string|min:2',
             'rent' => 'required|boolean',
             'images' => 'nullable|array',

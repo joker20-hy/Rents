@@ -25,17 +25,15 @@
         </div>
       </form>
     </transition>
-    <table class="table table-borderless records-list">
+    <table class="records-list">
       <thead>
-        <th>STT</th>
-        <th>Tên</th>
+        <th>Name</th>
         <th>Slug</th>
-        <th>Tỉnh thành</th>
-        <th>Hành động</th>
+        <th>Province</th>
+        <th>Actions</th>
       </thead>
       <transition-group name="slide-fade" tag="tbody">
         <tr v-for="dist in districts" :key="dist.id">
-          <td>{{ dist.id }}</td>
           <td>
             <div v-show="!dist.edit" class="holder">{{ dist.name }}</div>
             <input type="text" class="input" v-model="dist.name" v-show="dist.edit">

@@ -1,7 +1,7 @@
 <template>
   <div>
-    <label for="" style="font-weight: 600">{{ label }}</label>
-    <div class="d-flex align-items-center">
+    <label for="" style="font-weight: 600" v-show="label!=''">{{ label }}</label>
+    <div class="d-flex align-items-center pt-1">
       {{ photos_label }}
       <button type="button" class="btn text-primary px-1" onclick="clickTarget('#images')">
         <i class="fas fa-cloud-upload-alt"></i> Upload
@@ -18,9 +18,7 @@
     <div>
       <small class="text-muted">** Max size of image {{ maxSize }} **</small>
     </div>
-    <div v-show="bucket.length==0" class="text-center text-muted">
-      No images
-    </div>
+    <div v-show="bucket.length==0" class="text-center text-muted">No images</div>
     <transition-group name="slide-fade" tag="div" class="row photos-bucket">
       <div class="col-4 py-2" v-for="img in bucket" :key="img.id">
         <img :src="img.url" class="mw-100 mh-100" alt="">

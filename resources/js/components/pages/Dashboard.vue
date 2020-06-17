@@ -24,10 +24,11 @@ export default {
 </script>
 <style scoped>
   .dashboard-container {
-    background-image:url(/images/wave.svg);
+    background-color: #f0f0f0;
+    /* background-image:url(/images/wave.svg);
     background-position-x: center;
     background-size:cover;
-    background-repeat:no-repeat;
+    background-repeat:no-repeat; */
     min-height: 100vh;
   }
 </style>
