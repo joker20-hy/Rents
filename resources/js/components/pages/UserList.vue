@@ -3,7 +3,7 @@
     <h1 class="d-flex align-items-end mt-5 py-3">
       User list
     </h1>
-    <table class="table table-borderless records-list">
+    <table class="records-list">
       <thead>
         <th>Username</th>
         <th>Role</th>

@@ -70,6 +70,7 @@ Route::group(['namespace' => 'Api'], function() {
 			Route::get('provinces', 'ProvinceController@main');
 			Route::get('districts', 'DistrictController@main');
 			Route::get('areas', 'AreaController@main');
+			Route::get('houses', 'HouseController@main');
 		});
 		Route::group([
 			'namespace' => 'User',
@@ -102,16 +103,27 @@ Route::group(['namespace' => 'Api'], function() {
 		], function () {
 			Route::get('', 'IndexController@main');
 			Route::post('', 'StoreController@main');
-			Route::post('{id}', 'UpdateController@main');
+			Route::put('{id}', 'UpdateController@main');
 			Route::post('{id}/images', 'UploadImagesController@main');
 			Route::put('{id}/images', 'UpdateImagesController@main');
+			Route::delete('{id}', 'DestroyController@main');
 		});
-
+		Route::group([
+			'namespace' => 'Room',
+			'prefix' => 'room'
+		], function () {
+			Route::get('', 'IndexController@main');
+			Route::post('', 'StoreController@main');
+			Route::put('{id}', 'UpdateController@main');
+			Route::post('{id}/images', 'UploadImagesController@main');
+			Route::put('{id}/images', 'UpdateImagesController@main');
+			Route::delete('{id}', 'DestroyController@main');
+		});
 		Route::group([
 			'namespace' => 'Image',
 			'prefix' => 'image'
 		], function () {
-			Route::post('{folder_type?}', 'StoreController@main');
+			Route::post('', 'StoreController@main');
 		});
 	});
 });

@@ -2,16 +2,23 @@ import Vue from 'vue'
 import Router from 'vue-router'
 
 import { $auth } from './auth'
-
-import Dashboard from './components/pages/Dashboard'
-import ProvinceList from './components/pages/ProvinceList'
-import DistrictList from './components/pages/DistrictList'
-import AreaList from './components/pages/AreaList'
-import Userlist from './components/pages/Userlist'
+/** Auth component */
 import LoginForm from './components/pages/LoginForm'
-
-import DirectionList from './components/pages/DirectionList'
+/** Dashboard parent component */
+import Dashboard from './components/pages/Dashboard'
+import Users from './components/pages/Userlist'
+import Provinces from './components/pages/ProvinceList'
+import Districts from './components/pages/DistrictList'
+import Areas from './components/pages/AreaList'
+import Directions from './components/pages/DirectionList'
+/** house routes */
 import Houses from './components/pages/House/Index'
+import HouseList from './components/pages/House/List'
+import HouseCreate from './components/pages/House/Create'
+/** Room routes */
+import Rooms from './components/pages/Room/Index'
+import RoomList from './components/pages/Room/List'
+import RoomCreate from './components/pages/Room/Create'
 
 Vue.use(Router)
 
@@ -25,38 +32,65 @@ const router = new Router({
       component: LoginForm
     },
     {
-      path: '/au',
+      path: '/',
       component: Dashboard,
       children: [
         {
           path: 'users',
           name: 'user-list',
-          component: Userlist
+          component: Users
         },
         {
           path: 'provinces',
           name: 'province-list',
-          component: ProvinceList
+          component: Provinces
         },
         {
           path: 'districts',
           name: 'district-list',
-          component: DistrictList
+          component: Districts
         },
         {
           path: 'areas',
           name: 'area-list',
-          component: AreaList
+          component: Areas
         },
         {
           path: 'directions',
           name: 'direction-list',
-          component: DirectionList
+          component: Directions
         },
         {
           path: 'houses',
-          name: 'houses',
-          component: Houses
+          component: Houses,
+          children: [
+            {
+              path: '',
+              name: 'house-list',
+              component: HouseList
+            },
+            {
+              path: 'create',
+              name: 'house-create',
+              component: HouseCreate
+            }
+          ]
+        },
+        {
+          path: 'rooms',
+          component: Rooms,
+          children: [
+            {
+              path: '',
+              name: 'room-list',
+              component: RoomList
+            },
+            {
+              path: 'create',
+              name: 'room-create',
+              component: RoomCreate
+            }
+          ]
         }
       ],
       beforeEnter(to, from, next) {
@@ -64,65 +98,7 @@ const router = new Router({
         else router.push({name: 'login'})
       }
     }
-    // {
-    //   path: '/dashboard',
-    //   name: 'dashboard',
-    //   component: Dashboard,
-    //   meta: {
-    //     requireAuth: true
-    //   }
-    // },
-    // {
-    //   path: '/provinces',
-    //   name: 'provinces',
-    //   component: ProvinceList,
-    //   meta: {
-    //     requireAuth: true
-    //   }
-    // },
-    // {
-    //   path: '/districts',
-    //   name: 'districts',
-    //   component: DistrictList,
-    //   meta: {
-    //     requireAuth: true
-    //   }
-    // },
-    // {
-    //   path: '/areas',
-    //   name: 'areas',
-    //   component: AreaList,
-    //   meta: {
-    //     requireAuth: true
-    //   }
-    // },
-    // {
-    //   path: '/users',
-    //   name: 'users',
-    //   component: Userlist,
-    //   meta: {
-    //     requireAuth: true
-    //   }
-    // },
-    // {
-    //   path: '/house',
-    //   component: 
-    // }
   ]
 })
-// router guards
-// router.beforeEach((to, from, next) => {
-//   if (to.meta.requireAuth) {
-//     if (!$auth.check()) {
-//       window.location.href = '/a/login'
-//     } else {
-//       next()
-//     }
-//   } else if ($auth.check()) {
-//     history.go(-1);
-//   } else {
-//     next()
-//   }
-// })
 
 export default router

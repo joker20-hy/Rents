@@ -53,7 +53,9 @@
         <div class="form-group" v-show="house.rent">
           <label for="">Description</label>
           <div class="holder content-html" v-show="!edit" v-html="house.description"></div>
-          <ckeditor :editor="editor" v-model="house.description" :config="editorConfig" v-if="edit"></ckeditor>
+          <div v-show="edit">
+            <ckeditor :editor="editor" v-model="house.description" :config="editorConfig"></ckeditor>
+          </div>
         </div>
       </div>
     </form>
@@ -68,7 +70,7 @@ import SwitchInput from '../../utilities/SwitchInput'
 import ImageLibrary from '../../utilities/ImageLibrary'
 
 export default {
-  name: 'detail-house',
+  name: 'house-detail',
   components: {
     SuggestBox,
     SwitchInput,
@@ -98,9 +100,7 @@ export default {
         name: ''
       },
       house: {},
-      description: '',
-      addition_images: [],
-      addition_images_count: ''
+      description: ''
     }
   },
   created () {
@@ -120,8 +120,6 @@ export default {
     },
     leaveEdit () {
       this.edit=false
-      this.addition_images = []
-      this.addition_images_count = ''
     },
     getProvince (obj) {
       this.house.province_id = obj.id
@@ -142,29 +140,22 @@ export default {
       this.chosen_province.name = house.province.name
       this.chosen_district.id = house.district.id
       this.chosen_district.name = house.district.name
-      this.chosen_area.id = house.area==null? this.chosen_area : {
+
+      this.chosen_area = house.area==null? this.chosen_area : {
         id: house.area.id,
         name: house.area.name
       }
       this.$modal.show('detail-house')
     },
-    getData () {
-      let formdata = new FormData()
-      formdata.append('name', this.house.name)
-      formdata.append('province_id', this.house.province_id)
-      formdata.append('district_id', this.house.district_id)
-      formdata.append('area_id', this.house.area_id==null?'':this.house.area_id)
-      formdata.append('rent', this.house.rent?this.TRUE:this.FALSE)
-      formdata.append('price', this.house.price==null?'':this.house.price)
-      formdata.append('description', this.house.description)
-      for(let i=0;i<this.addition_images.length;i++) {
-        formdata.append(`addition_images[${i}]`, this.addition_images[i])
-      }
-      return formdata
-    },
     update () {
-      $auth.request.post(`/api/house/${this.house.id}`, this.getData(), {
-        headers: {'Content-Type': 'multipart/form-data'}
+      $auth.request.put(`/api/house/${this.house.id}`, {
+        name: this.house.name,
+        province_id: this.house.province_id,
+        district_id: this.house.district_id,
+        area_id: this.house.area_id,
+        rent: this.house.rent?this.TRUE:this.FALSE,
+        price: this.house.price==null?'':this.house.price,
+        description: this.house.description
       })
       .then(res => {
         this.leaveEdit()

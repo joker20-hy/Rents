@@ -20,7 +20,7 @@ class CreateHousesTable extends Migration
             $table->foreign('province_id')->references('id')->on('provinces');
             $table->unsignedMediumInteger('district_id');
             $table->foreign('district_id')->references('id')->on('districts');
-            $table->unsignedBigInteger('area_id')->nullable();
+            $table->unsignedBigInteger('area_id');
             $table->foreign('area_id')->references('id')->on('areas');
             $table->string('address');
             $table->double('latitude', 9, 6)->nullable();

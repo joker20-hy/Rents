@@ -15,16 +15,14 @@
         </div>
       </form>
     </transition>
-    <table class="table table-borderless records-list">
+    <table class="records-list">
       <thead>
-        <th>STT</th>
-        <th>Tên</th>
+        <th>Name</th>
         <th>Slug</th>
-        <th>Hành động</th>
+        <th>Actions</th>
       </thead>
       <transition-group name="slide-fade" tag="tbody" class="record-list">
         <tr v-for="prov in provinces" :key="prov.id">
-          <td>{{ prov.id }}</td>
           <td>
             <div v-show="!prov.edit" class="holder">{{ prov.name }}</div>
             <input type="text" class="input" v-model="prov.name" v-show="prov.edit">
