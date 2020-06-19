@@ -30,6 +30,9 @@
         <li class="list-group-item">
           <router-link :to="{name : 'room-list'}">Room list</router-link>
         </li>
+        <li class="list-group-item">
+          <router-link :to="{name : 'service-list'}">Service list</router-link>
+        </li>
       </ul>
     </div>
   </section>
@@ -41,7 +44,7 @@ export default {
   name: 'side-menu',
   data () {
     return {
-      is_show: true
+      is_show: false
     }
   },
   created () {

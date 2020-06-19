@@ -46,11 +46,14 @@ class AreaServices
     }
 
     /**
+     * Create area
+     *
      * @param array $params [
      *  'name',
      *  'province_id',
      *  'district_id'
      * ]
+     *
      * @return \App\Models\Area
      */
     public function create($params)
@@ -64,8 +67,11 @@ class AreaServices
     }
 
     /**
+     * Update service
+     *
      * @param integer $id
      * @param array $params [name, province_id, district_id]
+     *
      * @return \App\Models\Area
      */
     public function update($id, $params)
