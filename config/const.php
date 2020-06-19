@@ -30,7 +30,8 @@ return [
         'HOUSE' => 2
     ],
     'SERVICE_TYPE' => [
-        'PRICE_FIX' => 1
+        'PER_UNIT' => 1,
+        'PERIODIC' => 2
     ],
     'OWNER_ROLE' => [
         'OWNER' => 1,

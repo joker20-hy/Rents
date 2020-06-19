@@ -1,11 +1,15 @@
 <template>
   <div class="container">
-    <h1 class="d-flex align-items-end mt-5 py-3">
-      Direction list
-      <button class="btn ml-auto text-light" @click="create=true" style="font-weight: 600">
-        <i class="fas fa-plus"></i> Create
-      </button>
-    </h1>
+    <div class="row mx-0 justify-content-center">
+      <div class="col-8">
+        <h1 class="d-flex align-items-end mt-5 py-3">
+          Direction list
+          <button class="btn ml-auto text-primary" @click="create=true" style="font-weight: 600">
+            <i class="fas fa-plus"></i> Create
+          </button>
+        </h1>
+      </div>
+    </div>
     <transition name="slide-fade">
       <form class="row mx-0 my-4 justify-content-center" @submit.prevent="store" v-if="create">
         <div class="col-md-8 py-2 d-flex bg-white rounded">

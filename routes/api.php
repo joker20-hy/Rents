@@ -93,9 +93,9 @@ Route::group(['namespace' => 'Api'], function() {
 			'prefix' => 'direction'
 		], function () {
 			Route::get('', 'IndexController@main');
-			Route::post('', 'StoreController@main');
-			Route::put('{id}', 'UpdateController@main');
-			Route::delete('{id}', 'DestroyController@main');
+			Route::post('', 'StoreController@main')->middleware('admin-role');
+			Route::put('{id}', 'UpdateController@main')->middleware('admin-role');
+			Route::delete('{id}', 'DestroyController@main')->middleware('admin-role');
 		});
 		Route::group([
 			'namespace' => 'House',
@@ -117,6 +117,15 @@ Route::group(['namespace' => 'Api'], function() {
 			Route::put('{id}', 'UpdateController@main');
 			Route::post('{id}/images', 'UploadImagesController@main');
 			Route::put('{id}/images', 'UpdateImagesController@main');
+			Route::delete('{id}', 'DestroyController@main');
+		});
+		Route::group([
+			'namespace' => 'Service',
+			'prefix' => 'service'
+		], function () {
+			Route::get('', 'IndexController@main');
+			Route::post('', 'StoreController@main');
+			Route::put('{id}', 'UpdateController@main');
 			Route::delete('{id}', 'DestroyController@main');
 		});
 		Route::group([

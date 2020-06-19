@@ -19,6 +19,9 @@ import HouseCreate from './components/pages/House/Create'
 import Rooms from './components/pages/Room/Index'
 import RoomList from './components/pages/Room/List'
 import RoomCreate from './components/pages/Room/Create'
+/** Service routes */
+import Service from './components/pages/Service/Index'
+import ServiceList from './components/pages/Service/List'
 
 Vue.use(Router)
 
@@ -89,6 +92,17 @@ const router = new Router({
               path: 'create',
               name: 'room-create',
               component: RoomCreate
+            }
+          ]
+        },
+        {
+          path: 'services',
+          component: Service,
+          children: [
+            {
+              path: '',
+              name: 'service-list',
+              component: ServiceList
             }
           ]
         }
