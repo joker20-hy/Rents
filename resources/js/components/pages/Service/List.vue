@@ -6,7 +6,7 @@
         <i class="fas fa-plus"></i> Create
       </button>
     </h3>
-    <create-service v-show="create" @created="created" @hide="create=false"/>
+    <create-service v-show="create" @created="created" @cancel="create=false"/>
     <table class="records-list">
       <thead>
       	<th>Name</th>
@@ -24,16 +24,16 @@
       </span>
     </div>
     <paginate
-	  v-model="query.page"
-	  :page-count="page_count"
-	  :page-range="3"
-	  :margin-pages="2"
-	  :click-handler="changePage"
-	  :prev-text="'Prev'"
-	  :next-text="'Next'"
-	  :container-class="'pagination'"
-	  :page-class="'page-item'">
-	</paginate>
+  	  v-model="query.page"
+  	  :page-count="page_count"
+  	  :page-range="3"
+  	  :margin-pages="2"
+  	  :click-handler="changePage"
+  	  :prev-text="'Prev'"
+  	  :next-text="'Next'"
+  	  :container-class="'pagination'"
+  	  :page-class="'page-item'">
+  	</paginate>
 	<confirm-box :name="'delete-service'" :title="'Delete service'" :message="'Service gonna be deleted'" @confirm="destroy()"/>
   </div>
 </template>

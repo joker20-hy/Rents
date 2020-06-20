@@ -22,6 +22,9 @@ import RoomCreate from './components/pages/Room/Create'
 /** Service routes */
 import Service from './components/pages/Service/Index'
 import ServiceList from './components/pages/Service/List'
+/** Criteria routes */
+import Criteria from './components/pages/Criteria/Index'
+import CriteriaList from './components/pages/Criteria/List'
 
 Vue.use(Router)
 
@@ -103,6 +106,17 @@ const router = new Router({
               path: '',
               name: 'service-list',
               component: ServiceList
+            }
+          ]
+        },
+        {
+          path: 'criterias',
+          component: Criteria,
+          children: [
+            {
+              path: '',
+              name: 'criteria-list',
+              component: CriteriaList
             }
           ]
         }

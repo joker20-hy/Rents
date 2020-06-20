@@ -7,6 +7,7 @@ import directions from './directions'
 import houses from './houses'
 import rooms from './rooms'
 import services from './services'
+import criterias from './criterias'
 
 Vue.use(Vuex)
 
@@ -17,6 +18,7 @@ export const store = new Vuex.Store({
     houses,
     directions,
     rooms,
-    services
+    services,
+    criterias
   }
 })

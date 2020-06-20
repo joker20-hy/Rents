@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 use App\Models\Province;
 
 class ProvinceServices
@@ -63,6 +64,10 @@ class ProvinceServices
     public function destroy($id)
     {
         $province = $this->province->findOrfail($id);
-        $province->delete();
+        DB::transaction(function () use ($province) {
+            $province->delete();
+            $province->districts->delete();
+            $province->areas->delete();
+        });
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 use App\Models\Area;
 
 class AreaServices
@@ -92,6 +93,9 @@ class AreaServices
     public function destroy($id)
     {
         $area = $this->area->findOrFail($id);
-        $area->delete();
+        DB::transaction(function () use ($area) {
+            $area->delete();
+            $area->houses->delete();
+        });
     }
 }

@@ -129,6 +129,15 @@ Route::group(['namespace' => 'Api'], function() {
 			Route::delete('{id}', 'DestroyController@main');
 		});
 		Route::group([
+			'namespace' => 'Criteria',
+			'prefix' => 'criteria'
+		], function () {
+			Route::get('', 'IndexController@main');
+			Route::post('', 'StoreController@main');
+			Route::put('{id}', 'UpdateController@main');
+			Route::delete('{id}', 'DestroyController@main');
+		});
+		Route::group([
 			'namespace' => 'Image',
 			'prefix' => 'image'
 		], function () {
