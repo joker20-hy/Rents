@@ -14,13 +14,13 @@ class Province extends Model
         'slug'
     ];
 
-    public function district()
+    public function districts()
     {
         return $this->hasMany(District::class);
     }
 
-    public function area()
+    public function areas()
     {
-        return $this->belongsTo(Area::class);
+        return $this->hasMany(Area::class);
     }
 }

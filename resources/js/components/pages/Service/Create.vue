@@ -19,7 +19,7 @@
 	  	<button class="btn btn-outline-primary w-100 px-2">Create</button>
 	  </div>
 	  <div class="col-md-1 px-2">
-	  	<button type="button" class="btn btn-outline-danger w-100 px-2" @click="reset(),hide()">Cancel</button>
+	  	<button type="button" class="btn btn-outline-danger w-100 px-2" @click="cancel()">Cancel</button>
 	  </div>
 	</form>
   </transition>
@@ -73,8 +73,9 @@ export default {
   	  	price: ''
   	  }
   	},
-  	hide () {
-  	  this.$emit('hide')
+  	cancel () {
+      this.reset()
+  	  this.$emit('cancel')
   	}
   }
 }

@@ -33,6 +33,9 @@
         <li class="list-group-item">
           <router-link :to="{name : 'service-list'}">Service list</router-link>
         </li>
+        <li class="list-group-item">
+          <router-link :to="{name: 'criteria-list'}">Criteria list</router-link>
+        </li>
       </ul>
     </div>
   </section>

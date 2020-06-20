@@ -41,4 +41,14 @@ class House extends Model
     {
         return $this->belongsTo(Area::class);
     }
+
+    public function rooms()
+    {
+        return $this->hasMany(Room::class);
+    }
+
+    public function userHouses()
+    {
+        return $this->hasMany(UserHouse::class);
+    }
 }

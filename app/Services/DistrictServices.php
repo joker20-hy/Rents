@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 use App\Models\District;
 
 class DistrictServices
@@ -57,6 +58,9 @@ class DistrictServices
     public function destroy($id)
     {
         $district = $this->district->findOrFail($id);
-        $district->delete();
+        DB::transaction(function () use ($district) {
+            $district->delete();
+            $district->areas->delete();
+        });
     }
 }

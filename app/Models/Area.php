@@ -25,4 +25,9 @@ class Area extends Model
     {
         return $this->belongsTo(Province::class);
     }
+
+    public function houses()
+    {
+        return $this->hasMany(House::class);
+    }
 }

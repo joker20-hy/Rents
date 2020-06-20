@@ -157,7 +157,10 @@ class HouseServices
     {
         $house = $this->house->findOrFail($id);
         if ($this->permission($house->id)) {
-            $house->delete();
+            DB::transaction(function () use ($house) {
+                $house->delete();
+                $house->rooms()->delete();
+            });
         } else {
             return abort(403, "You have no permission to delete this house");
         }

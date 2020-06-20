@@ -100,4 +100,10 @@ const $auth = {
     })
   }
 }
-export { $auth, $token }
+const $request = axios.create({
+  baseURL: 'http://rent.joker.com/',
+  headers: {
+    Authorization: 'Bearer '+$token.access_token
+  }
+})
+export { $auth, $token, $request }
