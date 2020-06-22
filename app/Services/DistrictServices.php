@@ -60,7 +60,9 @@ class DistrictServices
         $district = $this->district->findOrFail($id);
         DB::transaction(function () use ($district) {
             $district->delete();
-            $district->areas->delete();
+            if (count($district->areas)>0) {
+                $district->areas->delete();
+            }
         });
     }
 }

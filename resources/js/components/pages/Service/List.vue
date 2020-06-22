@@ -7,6 +7,9 @@
       </button>
     </h3>
     <create-service v-show="create" @created="created" @cancel="create=false"/>
+	<div class="pb-2 text-right">
+	  <small class="text-muted">** Price in vnđ **</small>
+	</div>
     <table class="records-list">
       <thead>
       	<th>Name</th>

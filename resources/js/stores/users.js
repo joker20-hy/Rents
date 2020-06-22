@@ -11,6 +11,9 @@ const users = {
     verified (state) {
       return state.config.VERIFIED
     },
+    unverified () {
+      return state.config.UNVERIFIED
+    },
     roles (state) {
       return state.config.ROLE
     },

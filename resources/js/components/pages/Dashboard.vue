@@ -8,6 +8,7 @@
   </div>
 </template>
 <script>
+import { $request } from '../../auth'
 import SideMenu from '../layouts/SideMenu'
 import HeaderBar from '../layouts/HeaderBar'
 
@@ -19,16 +20,26 @@ export default {
   },
   data () {
     return {}
+  },
+  mounted () {
+    this.authUser()
+  },
+  methods: {
+    authUser () {
+      $request.get('/api/user/find')
+      .then(res => {
+        this.$store.commit('auth/user', res.data)
+      })
+      .catch(err => {
+        console.log(err)
+      })
+    }
   }
 }
 </script>
 <style scoped>
   .dashboard-container {
     background-color: #f0f0f0;
-    /* background-image:url(/images/wave.svg);
-    background-position-x: center;
-    background-size:cover;
-    background-repeat:no-repeat; */
     min-height: 100vh;
   }
 </style>

@@ -6,11 +6,10 @@
   </div>
 </template>
 <script>
-import { $auth } from '../auth'
 import SideMenu from './layouts/SideMenu'
 import HeaderBar from './layouts/HeaderBar'
 import AlertBox from './utilities/AlertBox'
-import LogoutForm from './utilities/LogoutForm'
+import LogoutForm from './pages/Auth/Logout'
 
 export default {
   name: 'App',
@@ -20,27 +19,8 @@ export default {
     LogoutForm,
     AlertBox
   },
-  computed: {
-    auth () {
-      return $auth.check()
-    }
-  },
-  mounted () {
-    this.authUser()
-  },
   data () {
     return {}
-  },
-  methods: {
-    authUser () {
-      $auth.request.get('/api/user/find')
-      .then(res => {
-        this.$store.commit('auth/user', res.data)
-      })
-      .catch(err => {
-        console.log(err)
-      })
-    }
   }
 }
 </script>
