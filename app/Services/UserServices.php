@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use App\Models\User;
 
 class UserServices
@@ -86,5 +87,18 @@ class UserServices
         $user = $this->user->findOrFail($id);
         $user->profile->update($params);
         return $user->profile;
+    }
+
+    public function destroy($id)
+    {
+        if (Auth::user()->role==config('const.USER.ROLE.ADMIN')) {
+            $user = $this->user->findOrFail($id);
+            DB::transaction(function () use ($user) {
+                $user->delete();
+                $user->profile->delete();
+            });
+        } else {
+            return abort(403, "You have no permission to do this action");
+        }
     }
 }

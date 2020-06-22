@@ -5,7 +5,8 @@ return [
         'ROLE' => [
             'NORMAL' => 0,
             'ADMIN' => 1,
-            'OWNER' => 2
+            'OWNER' => 2,
+            'RENTER' => 3
         ],
         'ROLE_NAME' => [
             0 => 'Normal user',
@@ -36,5 +37,12 @@ return [
     'OWNER_ROLE' => [
         'OWNER' => 1,
         'TENANT' => 2
+    ],
+    'REVIEW' => [
+        'RECEIVER_TYPE' => [
+            'RENTER' => 1,
+            'HOUSE' => 2,
+            'ROOM' => 3
+        ]
     ]
 ];

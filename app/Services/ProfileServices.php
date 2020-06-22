@@ -7,11 +7,14 @@ use App\Models\Profile;
 
 class ProfileServices
 {
-    private $profile;
+    private const FOLDER = 'avatar';
+    protected $profile;
+    protected $imageServices;
 
-    public function __construct(Profile $profile)
+    public function __construct(Profile $profile, ImageServices $imageServices)
     {
         $this->profile = $profile;
+        $this->imageServices = $imageServices;
     }
 
     public function list()
@@ -74,11 +77,38 @@ class ProfileServices
     }
 
     /**
-     * Delete profile
+     * Update profile image
+     *
+     * @param file $image
+     *
+     * @return string
      */
-    public function destroy()
+    public function updateAvatar($id, $image)
     {
-        $profile = Auth::user()->profile;
-        $profile->delete();
+        if ($this->permissible($id)) {
+            $profile = $this->profile->where('user_id', $id)->first();
+            if (is_null($profile)) {
+                return abort(404, 'User not found');
+            }
+            $url = $this->imageServices->store([$image], self::FOLDER);
+            $profile->update(['image' => $url]);
+            return $url;
+        }
+    }
+
+    /**
+     * Check if user has permission
+     *
+     * @param integer $userId
+     *
+     * @return boolean
+     */
+    private function permissible($userId)
+    {
+        $authUser = Auth::user();
+        if ($authUser->role==config('USER.ROLE.ADMIN') || $authUser->id==$userId) {
+            return true;
+        }
+        return false;
     }
 }

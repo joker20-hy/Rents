@@ -95,7 +95,9 @@ class AreaServices
         $area = $this->area->findOrFail($id);
         DB::transaction(function () use ($area) {
             $area->delete();
-            $area->houses->delete();
+            if (count($area->houses)>0) {
+                $area->houses->delete();
+            }
         });
     }
 }

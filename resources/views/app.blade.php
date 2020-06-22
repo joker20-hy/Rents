@@ -25,22 +25,23 @@
     <div id="app"></div>
     <!-- built files will be auto injected -->
     <script>
-        const $config = {
-            user: {!! json_encode(config('const.USER')) !!},
-            TRUE: 1,
-            FALSE: 0,
-            MAX_SIZE_IMAGE: '2MB',
-            SERVICE_TYPE: {
-              PER_UNIT: {
-                value: {{ config('const.SERVICE_TYPE.PER_UNIT') }},
-                name: 'Theo đơn vị'
-              },
-              PERIODIC: {
-                value: {{ config('const.SERVICE_TYPE.PERIODIC') }},
-                name: 'Định kỳ'
-              }
-            }
-        }
+      const $config = {
+        user: {!! json_encode(config('const.USER')) !!},
+        TRUE: 1,
+        FALSE: 0,
+        MAX_SIZE_IMAGE: '2MB',
+        SERVICE_TYPE: {
+          PER_UNIT: {
+            value: {!! config('const.SERVICE_TYPE.PER_UNIT') !!},
+            name: 'Theo đơn vị'
+          },
+          PERIODIC: {
+            value: {!! config('const.SERVICE_TYPE.PERIODIC') !!},
+            name: 'Định kỳ'
+          }
+        },
+        REVIEW: {!! json_encode(config('const.REVIEW')) !!}
+      }
     </script>
 </body>
 </html>

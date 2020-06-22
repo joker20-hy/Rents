@@ -3,14 +3,27 @@ import Router from 'vue-router'
 
 import { $auth } from './auth'
 /** Auth component */
-import LoginForm from './components/pages/LoginForm'
+import LoginForm from './components/pages/Auth/Login'
 /** Dashboard parent component */
 import Dashboard from './components/pages/Dashboard'
-import Users from './components/pages/Userlist'
-import Provinces from './components/pages/ProvinceList'
-import Districts from './components/pages/DistrictList'
-import Areas from './components/pages/AreaList'
-import Directions from './components/pages/DirectionList'
+/** */
+import Users from './components/pages/User/Index'
+import UserList from './components/pages/User/List'
+
+// import Provinces from './components/pages/ProvinceList'
+
+import Provinces from './components/pages/Province/Index'
+import ProvinceList from './components/pages/Province/List'
+
+import Districts from './components/pages/District/Index'
+import DistrictList from './components/pages/District/List'
+
+
+/** area routes */
+import Areas from './components/pages/Area/Index'
+import AreaList from './components/pages/Area/List'
+
+import Directions from './components/pages/Directions/List'
 /** house routes */
 import Houses from './components/pages/House/Index'
 import HouseList from './components/pages/House/List'
@@ -25,6 +38,9 @@ import ServiceList from './components/pages/Service/List'
 /** Criteria routes */
 import Criteria from './components/pages/Criteria/Index'
 import CriteriaList from './components/pages/Criteria/List'
+/** Review routes */
+import Review from './components/pages/Review/Index'
+import ReviewList from './components/pages/Review/List'
 
 Vue.use(Router)
 
@@ -43,23 +59,47 @@ const router = new Router({
       children: [
         {
           path: 'users',
-          name: 'user-list',
-          component: Users
+          component: Users,
+          children: [
+            {
+              path: '',
+              name: 'user-list',
+              component: UserList
+            }
+          ]
         },
         {
           path: 'provinces',
-          name: 'province-list',
-          component: Provinces
+          component: Provinces,
+          children: [
+            {
+              path: '',
+              name: 'province-list',
+              component: ProvinceList
+            }
+          ]
         },
         {
           path: 'districts',
-          name: 'district-list',
-          component: Districts
+          component: Districts,
+          children: [
+            {
+              path: '',
+              name: 'district-list',
+              component: DistrictList
+            }
+          ]
         },
         {
           path: 'areas',
-          name: 'area-list',
-          component: Areas
+          component: Areas,
+          children: [
+            {
+              path: '',
+              name: 'area-list',
+              component: AreaList
+            }
+          ]
         },
         {
           path: 'directions',
@@ -117,6 +157,17 @@ const router = new Router({
               path: '',
               name: 'criteria-list',
               component: CriteriaList
+            }
+          ]
+        },
+        {
+          path: 'reviews',
+          component: Review,
+          children: [
+            {
+              path: '',
+              name: 'review-list',
+              component: ReviewList
             }
           ]
         }

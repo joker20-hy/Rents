@@ -66,8 +66,9 @@ class ProvinceServices
         $province = $this->province->findOrfail($id);
         DB::transaction(function () use ($province) {
             $province->delete();
-            $province->districts->delete();
-            $province->areas->delete();
+            if (count($province->districts) > 0) {
+                $province->districts->delete();
+            }
         });
     }
 }
