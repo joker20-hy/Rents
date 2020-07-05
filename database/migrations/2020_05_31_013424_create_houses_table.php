@@ -23,6 +23,7 @@ class CreateHousesTable extends Migration
             $table->unsignedBigInteger('area_id');
             $table->foreign('area_id')->references('id')->on('areas');
             $table->string('address');
+            $table->string('address_detail');
             $table->double('latitude', 9, 6)->nullable();
             $table->double('longitude', 9, 6)->nullable();
             $table->float('avg_rate', 4, 2)->default(0.00);

@@ -25,9 +25,7 @@ class StoreController extends Controller
     public function validation(Request $request)
     {
         return $request->validate([
-            'name' => 'required|string',
-            'price' => 'required|numeric',
-            'type' => 'required|integer'
+            'name' => 'required|string'
         ]);
     }
 }

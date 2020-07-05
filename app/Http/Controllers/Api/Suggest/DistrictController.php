@@ -17,7 +17,7 @@ class DistrictController extends Controller
 
     public function main(Request $request)
     {
-        $districts = $this->suggestServices->districts($request->keywords, $request->province);
+        $districts = $this->suggestServices->districts($request->keywords, $request->province, $request->limit);
         return \response()->json($districts, 200);
     }
 }

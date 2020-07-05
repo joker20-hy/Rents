@@ -5,14 +5,18 @@ namespace App\Services;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use App\Models\Area;
+use App\Models\District;
+use App\Models\Province;
 
 class AreaServices
 {
     private $area;
 
-    public function __construct(Area $area)
+    public function __construct(Area $area, Province $province, District $district)
     {
         $this->area = $area;
+        $this->province = $province;
+        $this->district = $district;
     }
 
     /**

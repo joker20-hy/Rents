@@ -17,13 +17,20 @@ class IndexController extends Controller
 
     public function main(Request $request)
     {
-        $rooms = $this->roomServices->index([
-            'province' => $request->province,
-            'district' => $request->district,
-            'area' => $request->area,
-            'address' => $request->address,
-            'house' => $request->house
-        ]);
+        $params = $this->validation($request);
+        $rooms = $this->roomServices->index($params);
         return response()->json($rooms, 200);
+    }
+
+    public function validation(Request $request)
+    {
+        return $request->validate([
+            'province' => 'nullable||string',
+            'district' => 'nullable||string',
+            'area' => 'nullable||string',
+            'lat' => 'nullable||double',
+            'lng' => 'nullable||double',
+            'address' => 'nullable||string'
+        ]);
     }
 }

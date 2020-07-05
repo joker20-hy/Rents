@@ -15,6 +15,7 @@ class House extends Model
         'district_id',
         'area_id',
         'address',
+        'address_detail',
         'latitude',
         'longitude',
         'avg_rate',
@@ -50,5 +51,10 @@ class House extends Model
     public function userHouses()
     {
         return $this->hasMany(UserHouse::class);
+    }
+
+    public function services()
+    {
+        return $this->belongsToMany(Service::class, 'house_services');
     }
 }

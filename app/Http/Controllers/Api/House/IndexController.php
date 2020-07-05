@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Api\House;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Services\HouseServices;
+use Illuminate\Http\Request;
 
 class IndexController extends Controller
 {
@@ -17,7 +17,20 @@ class IndexController extends Controller
 
     public function main(Request $request)
     {
-        $houses = $this->houseServices->index($request->province, $request->district, $request->area);
+        $params = $this->validation($request);
+        $houses = $this->houseServices->index($params);
         return response()->json($houses, 200);
+    }
+
+    public function validation(Request $request)
+    {
+        return $request->validate([
+            'province' => 'nullable||string',
+            'district' => 'nullable||string',
+            'area' => 'nullable||string',
+            'lat' => 'nullable||double',
+            'lng' => 'nullable||double',
+            'address' => 'nullable||string'
+        ]);
     }
 }

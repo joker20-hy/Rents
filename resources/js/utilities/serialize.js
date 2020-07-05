@@ -1,10 +1,10 @@
-const serialize = {
+const $serialize = {
   fromObj (obj) {
-    let str = [];
+    let str = []
     for (var p in obj) {
-      if (obj.hasOwnProperty(p) && obj[p]!='') str.push(`${encodeURIComponent(p)}=${encodeURIComponent(obj[p])}`);
+      if (obj.hasOwnProperty(p) && obj[p]!='' && obj[p]!=undefined) str.push(`${encodeURIComponent(p)}=${encodeURIComponent(obj[p])}`)
     }
-    return str.join("&");
+    return str.join("&")
   }
 }
-export default serialize
+export default $serialize

@@ -25,7 +25,12 @@ class HouseServices
         $this->folder = config('const.FOLDER.HOUSE');
     }
 
-    public function index($province = null, $district = null, $area = null)
+    public function index($params = [], $paginate = 10)
+    {
+
+    }
+
+    public function list($province = null, $district = null, $area = null)
     {
         $houses = $this->house;
         if (!is_null($province)) {
@@ -58,6 +63,11 @@ class HouseServices
         if (isset($params['description'])) {
             $params['description'] = utf8_encode($params['description']);
         }
+        $province = DB::table('provinces')->select(['id', 'name'])->where('id', $params['province_id'])->first();
+        $district = DB::table('districts')->select(['id', 'name'])->where('id', $params['district_id'])->first();
+        $area = DB::table('areas')->select(['id', 'name'])->where('id', $params['area_id'])->first();
+        $params['address_detail'] = [$params['address'], $area->name, $district->name, $province->name];
+        $params['address_detail'] = implode(", ", $params['address_detail']);
         $house = DB::transaction(function () use ($params) {
             $house = $this->house->create($params);
             $this->userHouseServices->store([

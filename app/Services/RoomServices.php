@@ -5,18 +5,59 @@ namespace App\Services;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Models\Room;
+use App\Models\RoomCriteria;
 
 class RoomServices
 {
     private $folder;
     protected $room;
     protected $imageServices;
+    protected $roomCriteria;
 
-    public function __construct(Room $room, ImageServices $imageServices)
+    public function __construct(Room $room, RoomCriteria $roomCriteria, ImageServices $imageServices)
     {
         $this->folder = config('const.FOLDER.ROOM');
         $this->room = $room;
+        $this->roomCriteria = $roomCriteria;
         $this->imageServices = $imageServices;
+    }
+
+    /**
+     * List rooms
+     *
+     * @param array $params
+     * @param integer $paginate
+     */
+    public function index($conditions = [], $paginate = 10)
+    {
+        $rooms = $this->room->selectRaw(
+            "rooms.*, houses.address_detail as address"
+        )->join("houses", "rooms.house_id", "=", "houses.id")
+        ->join("provinces", "houses.province_id", "=", "provinces.id")
+        ->join("districts", "houses.district_id", "=", "districts.id")
+        ->join("areas", "houses.area_id", "=", "areas.id");
+        $rooms = $this->filter($rooms, $conditions);
+        $rooms = $rooms->paginate($paginate);
+        foreach($rooms as $room) {
+            $room->criterias;
+        }
+        return $rooms;
+    }
+
+    private function filter($query, $conditions)
+    {
+        if (isset($conditions['lat']) && isset($conditions['lng'])) {
+            //
+        } elseif (isset($conditions['area'])) {
+            return $query->where('areas.slug', $conditions['area']);
+        } elseif (isset($conditions['district'])) {
+            return $query->where('districts.slug', $conditions['district']);
+        } elseif (isset($conditions['province'])) {
+            return $query->where('provinces.slug', $conditions['province']);
+        } elseif (isset($conditions['address'])) {
+            return $query->where('houses.address_detail', 'like', "%".$conditions['address']."%");
+        }
+        return $query;
     }
 
     /**
@@ -25,16 +66,14 @@ class RoomServices
      * @param array $conditions
      * @param integer $paginate
      */
-    public function index($conditions = [], $paginate = 10)
+    public function list($conditions = [], $paginate = 10)
     {
-        $rooms = DB::table('rooms')->selectRaw(
-            "rooms.*,
-            concat(houses.address,', ',districts.name, ', ', provinces.name)  as address"
+        $rooms = $this->room->selectRaw(
+            "rooms.*, concat(houses.address,', ',districts.name, ', ', provinces.name)  as address"
         )->join("houses", "rooms.house_id", "=", "houses.id")
         ->join("provinces", "houses.province_id", "=", "provinces.id")
         ->join("districts", "houses.district_id", "=", "districts.id");
-        $rooms = $this->filter($rooms, $conditions);
-        $rooms = $rooms->whereNull('rooms.deleted_at');
+        $rooms = $this->listFilter($rooms, $conditions);
         return $rooms->paginate($paginate);
     }
 
@@ -44,7 +83,7 @@ class RoomServices
      * @param mixed $query
      * @param array $conditions []
      */
-    private function filter($query, $conditions)
+    private function listFilter($query, $conditions)
     {
         if (!is_null($conditions['house'])) {
             $query = $query->where("houses.id", $conditions['house']);
@@ -73,8 +112,25 @@ class RoomServices
         $params['description'] = utf8_encode($params['description']);
         $room = DB::transaction(function () use ($params) {
             $room = $this->room->create($params);
+            $criterias = [];
+            foreach ($params['criterias'] as $criteria) {
+                $roomCriteria = $this->roomCriteria->create([
+                    'room_id' => $room->id,
+                    'criteria_id' => $criteria
+                ]);
+                array_push($criterias, $roomCriteria->criteria);
+            }
+            $room['criterias'] = $criterias;
             return $room;
         });
+        return $room;
+    }
+
+    public function show($id)
+    {
+        $room = $this->room->find($id);
+        $room->criterias;
+        $room->house;
         return $room;
     }
 
