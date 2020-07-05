@@ -27,7 +27,9 @@ class UpdateController extends Controller
         return $request->validate([
             'name' => 'required|string',
             'acreage' => 'required|numeric|min:0',
-            'description' => 'required|string'
+            'description' => 'required|string',
+            'price' => 'required|numeric|min:1000',
+            'cycle' => 'required|numeric|min:1'
         ]);
     }
 }

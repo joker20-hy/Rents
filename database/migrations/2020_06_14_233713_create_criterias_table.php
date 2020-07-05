@@ -16,6 +16,7 @@ class CreateCriteriasTable extends Migration
         Schema::create('criterias', function (Blueprint $table) {
             $table->smallIncrements('id');
             $table->string('name');
+            $table->text('icon');
             $table->timestamps();
             $table->softDeletes();
         });

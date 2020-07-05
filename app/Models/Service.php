@@ -9,9 +9,10 @@ class Service extends Model
 {
     use SoftDeletes;
 
-    protected $fillable = [
-    	'name',
-    	'price',
-    	'type'
-    ];
+    protected $fillable = ['name'];
+
+    public function houses()
+    {
+        return $this->belongsToMany(House::class, 'house_services');
+    }
 }

@@ -28,9 +28,12 @@ class StoreController extends Controller
             'house_id' => 'required|exists:houses,id',
             'name' => 'required|string',
             'acreage' => 'required|numeric|min:0',
+            'criterias' => 'required|array',
             'images' => 'required|array',
             'images.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'description' => 'required|string'
+            'description' => 'required|string',
+            'price' => 'required|numeric|min:1000',
+            'cycle' => 'required|numeric|min:1'
         ]);
     }
 }

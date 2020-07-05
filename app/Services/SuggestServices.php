@@ -7,14 +7,17 @@ use Illuminate\Support\Facades\Auth;
 
 class SuggestServices
 {
-    public function provinces($keywords, $limit = 10)
+    public function provinces($keywords, $limit = null)
     {
-        $query = "select id,name from provinces where name like '%$keywords%' limit $limit";
+        $query = "select id, name, slug from provinces where name like '%$keywords%' and deleted_at is null";
+        if (!is_null($limit)) {
+            $query = "$query limit $limit";
+        }
         $provinces = DB::select($query);
         return $provinces;
     }
 
-    public function districts($keywords, $province=null, $limit = 10)
+    public function districts($keywords, $province = null, $limit = null)
     {
         $where = [];
         if (!is_null($province)) {
@@ -22,7 +25,10 @@ class SuggestServices
         }
         array_push($where, "name like '%$keywords%'");
         $where = implode(" and ", $where);
-        $query = "select id,name from districts where $where limit $limit";
+        $query = "select id, name, slug from districts where $where and deleted_at is null";
+        if (!is_null($limit)) {
+            $query = "$query limit $limit";
+        }
         $districts = DB::select($query);
         return $districts;
     }
@@ -37,7 +43,7 @@ class SuggestServices
         }
         array_push($where, "name like '%$keywords%'");
         $where = implode(" and ", $where);
-        $query = "select id, name from areas where $where limit $limit";
+        $query = "select id, name, slug from areas where $where and deleted_at is null limit $limit";
         $areas = DB::select($query);
         return $areas;
     }
@@ -76,5 +82,30 @@ class SuggestServices
             limit $limit";
         $houses = DB::select($query);
         return $houses;
+    }
+
+    public function address($keywords)
+    {
+        $areas = DB::select("
+        select
+            a.id as id,
+            a.slug as slug,
+            d.slug as d_slug,
+            p.slug as p_slug,
+            concat(a.name, ', ', d.name, ', ', p.name) as name
+        from
+            areas a join provinces p on a.province_id = p.id
+            join districts d on a.district_id = d.id
+        where a.name like '%$keywords%' and a.deleted_at is null limit 8");
+        $districts = DB::select("
+        select
+            d.id as id,
+            d.slug as slug,
+            p.slug as p_slug,
+            concat(d.name, ', ', p.name) as name
+        from
+            districts d join provinces p on d.province_id = p.id
+        where d.name like '%$keywords%' and d.deleted_at is null limit 8");
+        return array_merge($areas, $districts);
     }
 }

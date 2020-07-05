@@ -11,20 +11,22 @@
 
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}" defer></script>
-    <script src="{{ asset('.dev/js/main.js') }}"></script>
 
     <!-- Styles -->
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     <style>
-        .content-html img {
-            max-width: 100%!important;
-        }
+      .content-html img {
+        max-width: 100%!important;
+      }
     </style>
 </head>
 <body>
     <div id="app"></div>
     <!-- built files will be auto injected -->
     <script>
+      function clickTarget(id) {
+        document.querySelector(id).click()
+      }
       const $config = {
         user: {!! json_encode(config('const.USER')) !!},
         TRUE: 1,

@@ -15,13 +15,24 @@ class UserSeeder extends Seeder
     public function run()
     {
         DB::table('users')->insert([
-            'name' => 'joker',
-            'email' => 'phamtienmanh20@gmail.com',
-            'email_verified_at' => Carbon::now(),
-            'password' => Hash::make('20011998'),
-            'role' => config('roles.ADMIN'),
-            'created_at' => Carbon::now(),
-            'updated_at' => Carbon::now()
+            [
+                'name' => 'joker',
+                'email' => 'phamtienmanh20@gmail.com',
+                'email_verified_at' => Carbon::now(),
+                'password' => Hash::make('20011998'),
+                'role' => config('const.USER.ROLE.ADMIN'),
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now()
+            ],
+            [
+                'name' => 'batman',
+                'email' => 'phamtienmanh198@gmail.com',
+                'email_verified_at' => Carbon::now(),
+                'password' => Hash::make('12345678'),
+                'role' => config('const.USER.ROLE.NORMAL'),
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now()
+            ]
         ]);
     }
 }

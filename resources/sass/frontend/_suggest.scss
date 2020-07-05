@@ -1,0 +1,47 @@
+@import './variables';
+
+$option-list: 300px;
+.suggest-wrap {
+  flex-wrap: wrap;
+  position: relative;
+}
+.suggest {
+  top: 72px;
+  z-index: 2;
+  width: 100%;
+  display: none;
+  position: absolute;
+}
+.suggest.show {
+  display: block;
+}
+.pre-space {
+  height: 10px;
+}
+.list-arrow {
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 10px solid #f8f9fa;
+  display: block;
+  transform: translateX(10px);
+}
+.option-list {
+  position: relative;
+  background-color: $light;
+  box-shadow: 0px 3px 3px #666;
+  max-height: 300px;
+  overflow-y: scroll;
+}
+.option-list .option {
+  padding: 10px;
+  cursor: pointer;
+  transition: .3s;
+  font-weight: 600;
+  color: $dark;
+}
+.option-list .option:hover {
+  background-color: #3490dcab;
+  color: $light;
+}

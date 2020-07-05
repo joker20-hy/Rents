@@ -14,10 +14,10 @@ use Illuminate\Support\Facades\Auth;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Route::get('/', 'HomeController@index');
+// Route::get('/tim-kiem', 'HomeController@search');
 
-Auth::routes();
+// Auth::routes();
 
-Route::any('/a/{all}', 'HomeController@index')->where(['all' => '.*']);
+Route::any('/{all}', 'HomeController@admin')->where(['all' => '.*']);
+

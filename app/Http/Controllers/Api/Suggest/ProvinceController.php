@@ -17,7 +17,7 @@ class ProvinceController extends Controller
 
     public function main(Request $request)
     {
-        $provinces = $this->suggestServices->provinces($request->keywords);
+        $provinces = $this->suggestServices->provinces($request->keywords, $request->limit);
         return \response()->json($provinces, 200);
     }
 }

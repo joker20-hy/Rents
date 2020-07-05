@@ -10,6 +10,12 @@ class Criteria extends Model
 	use SoftDeletes;
 
     protected $fillable = [
-    	'name'
+		'name',
+		'icon'
     ];
+
+    public function rooms()
+	{
+		return $this->belongsToMany(Room::class, 'room_criterias');
+	}
 }

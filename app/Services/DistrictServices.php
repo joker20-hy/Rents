@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Models\District;
 
@@ -15,11 +16,17 @@ class DistrictServices
         $this->district = $district;
     }
 
-    public function index($provinceId = null, $paginate = 10)
+    public function index($provinceId = null)
     {
-        return is_null($provinceId) ? $this->district->with('province')->paginate($paginate)
-                                    : $this->district->where('province_id', $provinceId)
-                                                    ->paginate($paginate);
+        return is_null($provinceId) ? $this->district->get()
+                                    : $this->district->where('province_id', $provinceId)->get();
+    }
+
+    public function list($provinceId = null, $paginate = 10)
+    {
+        $query = is_null($provinceId) ? $this->district->with('province')
+                                    : $this->district->where('province_id', $provinceId);
+        return $query->paginate($paginate);
     }
 
     /**

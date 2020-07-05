@@ -13,7 +13,13 @@ class CriteriaServices
         $this->criteria = $criteria;
     }
 
-    public function index($paginate = 10)
+    public function index($type = 1)
+    {
+        $criterias = $this->criteria->get();
+        return $criterias;
+    }
+
+    public function list($paginate = 10)
     {
         $criterias = $this->criteria->paginate($paginate);
         return $criterias;

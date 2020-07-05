@@ -16,11 +16,18 @@ class Room extends Model
     	'rate_count',
     	'acreage',
     	'images',
-    	'description'
+		'description',
+		'price',
+        'cycle'
     ];
 
     public function house()
     {
-    	return $this->belongTo(House::class);
-    }
+    	return $this->belongsTo(House::class);
+	}
+
+	public function criterias()
+	{
+		return $this->belongsToMany(Criteria::class, 'room_criterias');
+	}
 }

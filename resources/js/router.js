@@ -2,60 +2,91 @@ import Vue from 'vue'
 import Router from 'vue-router'
 
 import { $auth } from './auth'
+import Home from './pages/frontend/home/Index'
+// import Search from './pages/frontend/search/Index'
+import SearchRoom from './pages/frontend/search/room/Index'
+import Detail from './pages/frontend/detail/Index'
+import DetailHouse from './pages/frontend/detail/house/Index'
+import DetailRoom from './pages/frontend/detail/room/Index'
 /** Auth component */
-import LoginForm from './components/pages/Auth/Login'
+import Login from './pages/auth/Login'
 /** Dashboard parent component */
-import Dashboard from './components/pages/Dashboard'
+import Admin from './pages/admin/Index'
 /** */
-import Users from './components/pages/User/Index'
-import UserList from './components/pages/User/List'
-
-// import Provinces from './components/pages/ProvinceList'
-
-import Provinces from './components/pages/Province/Index'
-import ProvinceList from './components/pages/Province/List'
-
-import Districts from './components/pages/District/Index'
-import DistrictList from './components/pages/District/List'
-
-
+import Users from './pages/admin/user/Index'
+import UserList from './pages/admin/user/List'
+/** */
+import Provinces from './pages/admin/province/Index'
+import ProvinceList from './pages/admin/province/List'
+/** */
+import Districts from './pages/admin/district/Index'
+import DistrictList from './pages/admin/district/List'
 /** area routes */
-import Areas from './components/pages/Area/Index'
-import AreaList from './components/pages/Area/List'
+import Areas from './pages/admin/area/Index'
+import AreaList from './pages/admin/area/List'
 
-import Directions from './components/pages/Directions/List'
+import Directions from './pages/admin/directions/List'
 /** house routes */
-import Houses from './components/pages/House/Index'
-import HouseList from './components/pages/House/List'
-import HouseCreate from './components/pages/House/Create'
+import Houses from './pages/admin/house/Index'
+import HouseList from './pages/admin/house/List'
+import HouseCreate from './pages/admin/house/Create'
 /** Room routes */
-import Rooms from './components/pages/Room/Index'
-import RoomList from './components/pages/Room/List'
-import RoomCreate from './components/pages/Room/Create'
+import Rooms from './pages/admin/room/Index'
+import RoomList from './pages/admin/room/List'
+import RoomCreate from './pages/admin/room/Create'
 /** Service routes */
-import Service from './components/pages/Service/Index'
-import ServiceList from './components/pages/Service/List'
+import Service from './pages/admin/service/Index'
+import ServiceList from './pages/admin/service/List'
 /** Criteria routes */
-import Criteria from './components/pages/Criteria/Index'
-import CriteriaList from './components/pages/Criteria/List'
+import Criteria from './pages/admin/criteria/Index'
+import CriteriaList from './pages/admin/criteria/List'
 /** Review routes */
-import Review from './components/pages/Review/Index'
-import ReviewList from './components/pages/Review/List'
+import Review from './pages/admin/review/Index'
+import ReviewList from './pages/admin/review/List'
 
 Vue.use(Router)
 
 const router = new Router({
   mode: 'history',
-  base: '/a',
   routes: [
+    {
+      path: '/',
+      name: 'home',
+      component: Home
+    },
+    {
+      path: '/phong-tro/:province?/:district?/:area?',
+      name: 'search-room',
+      component: SearchRoom
+    },
+    {
+      path: '/chi-tiet',
+      component: Detail,
+      children: [
+        {
+          path: 'nha-cho-thue/:house?',
+          name: 'house-for-rent',
+          component: DetailHouse
+        },
+        {
+          path: 'phong-tro/:room?',
+          name: 'room-for-rent',
+          component: DetailRoom
+        }
+      ]
+    },
     {
       path: '/login',
       name: 'login',
-      component: LoginForm
+      component: Login,
+      beforeEnter(to, from, next) {
+        if ($auth.check()) router.push({name: 'home'})
+        else next()
+      }
     },
     {
-      path: '/',
-      component: Dashboard,
+      path: '/a',
+      component: Admin,
       children: [
         {
           path: 'users',
