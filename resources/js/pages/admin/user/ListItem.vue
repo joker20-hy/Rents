@@ -20,7 +20,6 @@
   </transition>
 </template>
 <script>
-import { $auth } from '../../../utilities/request/request'
 import SwitchInput from '../../utilities/SwitchInput'
 export default {
   name: 'list-item',

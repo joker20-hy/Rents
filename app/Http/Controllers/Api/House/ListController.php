@@ -17,7 +17,17 @@ class ListController extends Controller
 
     public function main(Request $request)
     {
-        $houses = $this->houseServices->list($request->province, $request->district, $request->area);
+        $conditions = $this->validation($request);
+        $houses = $this->houseServices->list($conditions);
         return response()->json($houses, 200);
+    }
+
+    private function validation(Request $request)
+    {
+        return $request->validate([
+            'province' => 'nullable|integer',
+            'district' => 'nullable|integer',
+            'area' => 'nullable|integer'
+        ]);
     }
 }

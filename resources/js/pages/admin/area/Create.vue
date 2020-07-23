@@ -28,7 +28,6 @@
   </transition>
 </template>
 <script>
-import { $auth } from '../../../utilities/request/request'
 export default {
   name: 'area-create',
   data () {

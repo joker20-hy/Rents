@@ -4,21 +4,21 @@
     <div class="d-flex align-items-center pt-1">
       {{ photos_label }}
       <button type="button" class="btn text-primary px-1" onclick="clickTarget('#images')">
-        <i class="fas fa-cloud-upload-alt"></i> Upload
+        <i class="fas fa-cloud-upload-alt"></i> Thêm ảnh
       </button>
       <input type="file" id="images" class="d-none" ref="images" @change="getImages" accept="image/*" multiple>
       <div class="ml-auto" v-show="editable">
-        <button type="button" class="btn text-primary" v-show="!edit" @click="enterEdit">Select</button>
+        <button type="button" class="btn text-primary" v-show="!edit" @click="enterEdit">Chọn</button>
         <button type="button" class="btn text-danger" v-show="edit" @click="showDelete()">
           <i class="far fa-trash-alt"></i>
         </button>
-        <button type="button" class="btn text-primary" v-show="edit" @click="leaveEdit">Cancel</button>
+        <button type="button" class="btn text-primary" v-show="edit" @click="leaveEdit">Hủy</button>
       </div>
     </div>
     <div>
-      <small class="text-muted">** Max size of image {{ maxSize }} **</small>
+      <small class="text-muted">** Kích thước ảnh không thể lớn hơn {{ maxSize }} **</small>
     </div>
-    <div v-show="bucket.length==0" class="text-center text-muted">No images</div>
+    <div v-show="bucket.length==0" class="text-center text-muted">Hiện chưa có ảnh</div>
     <transition-group name="slide-fade" tag="div" class="row photos-bucket">
       <div class="col-4 py-2" v-for="img in bucket" :key="img.id">
         <img :src="img.url" class="mw-100 mh-100" alt="">
@@ -32,7 +32,6 @@
   </div>
 </template>
 <script>
-import { $auth } from '../../utilities/request/request'
 import ConfirmBox from './ConfirmBox'
 
 export default {

@@ -47,7 +47,6 @@
   </div>
 </template>
 <script>
-import { $auth } from '../../../utilities/request/request'
 import serialize from '../../../utilities/serialize'
 import ConfirmBox from '../../utilities/ConfirmBox'
 import ReviewDetail from './Detail'

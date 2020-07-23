@@ -1,6 +1,10 @@
 window.Vue = require('vue')
 window.$eventHub = new Vue()
 window.utf8 = require('utf8')
+import { $auth } from './utilities/request/request'
+window.$auth = $auth
+import serialize from './utilities/serialize'
+window.serialize = serialize
 
 import router from './router.js'
 import VModal from 'vue-js-modal'

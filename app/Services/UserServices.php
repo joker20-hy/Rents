@@ -3,40 +3,35 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use App\Models\User;
+use App\Repositories\UserRepository;
 
 class UserServices
 {
-    protected $user;
-    protected $profileServices;
+    private const FOLDER = 'avatar';
+    protected $userRepository;
 
-    public function __construct(User $user, ProfileServices $profileServices)
+    public function __construct(UserRepository $userRepository)
     {
-        $this->user = $user;
-        $this->profileServices = $profileServices;
+        $this->userRepository = $userRepository;
     }
 
     public function index($paginate = 10)
     {
-        return $this->user->with('profile')
-                    ->with('setting')
-                    ->paginate($paginate);
+        return $this->userRepository->list($paginate);
     }
 
-    public function show($id=null)
+    public function show($id = null)
     {
         $authUser = Auth::user();
         if (is_null($id)) {
-            $authUser->profile;
-            return $authUser;
-        } elseif ($authUser->role != config('const.USER.ROLE.ADMIN') && $authUser->id != $id) {
-            return abort(403, 'You have no permission');
+            $user = $authUser;
+        } elseif (!$this->permissible($id)) {
+            return abort(403, 'Bạn khồng có quyền thực hiện hành động này');
         } else {
-            $user = $this->user->findOrFail($id);
-            $user->profile;
-            return $user;
-        }        
+            $user = $this->userRepository->findById($id);
+        }
+        $user->profile;
+        return $user;      
     }
 
     /**
@@ -49,11 +44,7 @@ class UserServices
      */
     public function updateVerifyStatus($id, $verifyStatus)
     {
-        $user = $this->user->findOrFail($id);
-        $user->update([
-            'verify' => $verifyStatus
-        ]);
-        return $user;
+        return $this->userRepository->update($id, ['verify' => $verifyStatus]);
     }
 
     /**
@@ -65,40 +56,60 @@ class UserServices
      */
     public function showProfile($id)
     {
-        if (Auth::user()->role != config('const.USER.ROLE.ADMIN')) {
-            return Auth::user()->profile;
+        if (!$this->permissible($id)) {
+            return abort(403, 'Bạn khồng có quyền thực hiện hành động này');
         }
-        $user = $this->user->findOrfail($id);
-        $profile = $user->profile;
-        $profile->avatar();
-        return $profile;
+        return $this->userRepository->showProfile($id);
     }
 
     public function updateProfile($id, $params)
     {
-        $authUser = Auth::user();
-        if ($authUser->role != config('const.USER.ROLE.ADMIN')) {
-            if ($authUser->id!=$id) {
-                return abort(403, 'You do not have permission to update this profile');
-            }
-            $authUser->profile->update($params);
-            return $authUser->profile;
+        if (!$this->permissible($id)) {
+            return abort(403, 'Bạn khồng có quyền thực hiện hành động này');
         }
-        $user = $this->user->findOrFail($id);
-        $user->profile->update($params);
-        return $user->profile;
+        return $this->userRepository->updateProfile($id, $params);
+    }
+
+    public function updateSetting($id, $params)
+    {
+        if (!$this->permissible($id)) {
+            return abort(403, 'Bạn khồng có quyền thực hiện hành động này');
+        }
+        return $this->userRepository->updateSetting($id, $params);
+    }
+
+    /**
+     * Update profile image
+     *
+     * @param file $image
+     *
+     * @return string
+     */
+    public function updateAvatar($id, $image)
+    {
+        if (!$this->permissible($id)) {
+            return abort(403, 'Bạn khồng có quyền thực hiện hành động này');
+        }
+        $url = $this->imageServices->store([$image], self::FOLDER)[0];
+        $this->userRepository->updateProfile($id, ['image' => $url]);
+        return $url;
     }
 
     public function destroy($id)
     {
-        if (Auth::user()->role==config('const.USER.ROLE.ADMIN')) {
-            $user = $this->user->findOrFail($id);
-            DB::transaction(function () use ($user) {
-                $user->delete();
-                $user->profile->delete();
-            });
-        } else {
-            return abort(403, "You have no permission to do this action");
-        }
+        $this->userRepository->destroy($id);
+    }
+
+    /**
+     * Check if user has permission
+     *
+     * @param integer $id
+     *
+     * @return boolean
+     */
+    private function permissible($id)
+    {
+        $authUser = Auth::user();
+        return $authUser->role==config('const.USER.ROLE.ADMIN')||$authUser->id==$id;
     }
 }

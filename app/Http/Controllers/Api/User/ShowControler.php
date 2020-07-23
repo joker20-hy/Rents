@@ -17,7 +17,7 @@ class ShowControler extends Controller
 
     public function main(Request $request)
     {
-        $user = $this->userServices->show($request->userId);
+        $user = $this->userServices->show($request->id);
         return response()->json($user, 200);
     }
 }

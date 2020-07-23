@@ -30,12 +30,14 @@ class RoomServices
      */
     public function index($conditions = [], $paginate = 10)
     {
-        $rooms = $this->room->selectRaw(
-            "rooms.*, houses.address_detail as address"
+        $rooms = $this->room->selectRaw("
+            rooms.*,
+            houses.address_detail as address"
         )->join("houses", "rooms.house_id", "=", "houses.id")
         ->join("provinces", "houses.province_id", "=", "provinces.id")
         ->join("districts", "houses.district_id", "=", "districts.id")
         ->join("areas", "houses.area_id", "=", "areas.id");
+        $rooms = $this->search($rooms, $conditions);
         $rooms = $this->filter($rooms, $conditions);
         $rooms = $rooms->paginate($paginate);
         foreach($rooms as $room) {
@@ -44,7 +46,7 @@ class RoomServices
         return $rooms;
     }
 
-    private function filter($query, $conditions)
+    private function search($query, $conditions)
     {
         if (isset($conditions['lat']) && isset($conditions['lng'])) {
             //
@@ -60,6 +62,33 @@ class RoomServices
         return $query;
     }
 
+    private function filter($query, $conditions)
+    {
+        if (array_key_exists('price', $conditions)) {
+            $price_condition = config('const.ROOM_FILTER.PRICE')[$conditions['price']];
+            $query = $query->whereBetween("rooms.price", [$price_condition['min'], $price_condition['max']]);
+        }
+        if (array_key_exists('acreage', $conditions)) {
+            $acreage_condition = config('const.ROOM_FILTER.ACREAGE')[$conditions['acreage']];
+            $query = $query->whereBetween("rooms.acreage", [$acreage_condition['min'], $acreage_condition['max']]);
+        }
+        if (array_key_exists('infras', $conditions)) {
+            $query = $query->whereRaw("(
+                select
+                    count(*)
+                from room_criterias
+                where
+                    room_id=rooms.id and criteria_id in (".$conditions['infras'].") > 0
+            )");
+        }
+        return $query;
+    }
+
+    private function sort($query, $conditions)
+    {
+        //
+    }
+
     /**
      * List rooms
      *
@@ -68,11 +97,16 @@ class RoomServices
      */
     public function list($conditions = [], $paginate = 10)
     {
+        $authUser = Auth::user();
         $rooms = $this->room->selectRaw(
             "rooms.*, concat(houses.address,', ',districts.name, ', ', provinces.name)  as address"
         )->join("houses", "rooms.house_id", "=", "houses.id")
         ->join("provinces", "houses.province_id", "=", "provinces.id")
         ->join("districts", "houses.district_id", "=", "districts.id");
+        if ($authUser->role==config('USER.ROLE.OWNER')) {
+            $rooms = $rooms->join("user_houses", "user_houses.house_id", "=", "houses.id")
+                        ->where('user_houses.user_id', $authUser->id);
+        }
         $rooms = $this->listFilter($rooms, $conditions);
         return $rooms->paginate($paginate);
     }

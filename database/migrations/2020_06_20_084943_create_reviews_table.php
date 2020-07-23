@@ -17,8 +17,6 @@ class CreateReviewsTable extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users');
-            $table->unsignedTinyInteger('receiver_type');
-            $table->unsignedBigInteger('receiver_id');
             $table->string('title')->nullable();
             $table->unsignedTinyInteger('rate');
             $table->text('description')->nullable();

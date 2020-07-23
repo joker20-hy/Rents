@@ -32,6 +32,15 @@ class UserSeeder extends Seeder
                 'role' => config('const.USER.ROLE.NORMAL'),
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now()
+            ],
+            [
+                'name' => 'chu nha 1',
+                'email' => 'manhpt@hblab.vn',
+                'email_verified_at' => Carbon::now(),
+                'password' => Hash::make('20011998'),
+                'role' => config('const.USER.ROLE.OWNER'),
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now()
             ]
         ]);
     }

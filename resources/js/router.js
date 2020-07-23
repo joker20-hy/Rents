@@ -1,47 +1,49 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 
-import { $auth } from './auth'
+import { $auth } from './utilities/request/request'
 import Home from './pages/frontend/home/Index'
-// import Search from './pages/frontend/search/Index'
 import SearchRoom from './pages/frontend/search/room/Index'
 import Detail from './pages/frontend/detail/Index'
 import DetailHouse from './pages/frontend/detail/house/Index'
 import DetailRoom from './pages/frontend/detail/room/Index'
-/** Auth component */
+import Review from './pages/frontend/review/Index'
+import ReviewHouse from './pages/frontend/review/House'
+import ReviewRoom from './pages/frontend/review/Room'
+import ReviewRenter from './pages/frontend/review/Renter'
+/** Auth components */
 import Login from './pages/auth/Login'
-/** Dashboard parent component */
+/** Owner components */
+import Owner from './pages/owner/Index'
+import OwnerHouse from './pages/owner/house/Index'
+import OwnerListHouse from './pages/owner/house/List'
+import OwnerDetailHouse from './pages/owner/house/Detail'
+import OwnerCreateHouse from './pages/owner/house/Create'
+import OwnerRoom from './pages/owner/room/Index'
+import OwnerListRoom from './pages/owner/room/List'
+import OwnerCreateRoom from './pages/owner/room/Create'
+/** Dashboard parent components */
 import Admin from './pages/admin/Index'
-/** */
 import Users from './pages/admin/user/Index'
 import UserList from './pages/admin/user/List'
-/** */
 import Provinces from './pages/admin/province/Index'
 import ProvinceList from './pages/admin/province/List'
-/** */
 import Districts from './pages/admin/district/Index'
 import DistrictList from './pages/admin/district/List'
-/** area routes */
 import Areas from './pages/admin/area/Index'
 import AreaList from './pages/admin/area/List'
-
 import Directions from './pages/admin/directions/List'
-/** house routes */
 import Houses from './pages/admin/house/Index'
 import HouseList from './pages/admin/house/List'
 import HouseCreate from './pages/admin/house/Create'
-/** Room routes */
 import Rooms from './pages/admin/room/Index'
 import RoomList from './pages/admin/room/List'
 import RoomCreate from './pages/admin/room/Create'
-/** Service routes */
 import Service from './pages/admin/service/Index'
 import ServiceList from './pages/admin/service/List'
-/** Criteria routes */
 import Criteria from './pages/admin/criteria/Index'
 import CriteriaList from './pages/admin/criteria/List'
-/** Review routes */
-import Review from './pages/admin/review/Index'
+import Reviews from './pages/admin/review/Index'
 import ReviewList from './pages/admin/review/List'
 
 Vue.use(Router)
@@ -64,25 +66,93 @@ const router = new Router({
       component: Detail,
       children: [
         {
-          path: 'nha-cho-thue/:house?',
+          path: 'nha-cho-thue/:id?',
           name: 'house-for-rent',
           component: DetailHouse
         },
         {
-          path: 'phong-tro/:room?',
+          path: 'phong-tro/:id?',
           name: 'room-for-rent',
           component: DetailRoom
         }
       ]
     },
     {
+      path: '/danh-gia',
+      component: Review,
+      children: [
+        {
+          path: 'nha/:id',
+          name: 'review-house',
+          component: ReviewHouse
+        },
+        {
+          path: 'phong-tro/:id',
+          name: 'review-room',
+          component: ReviewRoom
+        },
+        {
+          path: 'nguoi-thue-nha/:id',
+          name: 'review-renter',
+          component: ReviewRenter
+        }
+      ],
+      beforeEnter(to, from, next) {
+        if ($auth.check) next()
+        else router.push({name: 'login'})
+      }
+    },
+    {
       path: '/login',
       name: 'login',
       component: Login,
       beforeEnter(to, from, next) {
-        if ($auth.check()) router.push({name: 'home'})
+        if ($auth.check) router.push({name: 'home'})
         else next()
       }
+    },
+    {
+      path: '/owner',
+      component: Owner,
+      children: [
+        {
+          path: 'houses',
+          component: OwnerHouse,
+          children: [
+            {
+              path: '',
+              name: 'owner-list-house',
+              component: OwnerListHouse
+            },
+            {
+              path: ':id',
+              name: 'owner-detail-house',
+              component: OwnerDetailHouse
+            },
+            {
+              path: 'create',
+              name: 'owner-create-house',
+              component: OwnerCreateHouse
+            }
+          ]
+        },
+        {
+          path: 'rooms',
+          component: OwnerRoom,
+          children: [
+            {
+              path: ':house_id/list',
+              name: 'owner-list-room',
+              component: OwnerListRoom
+            },
+            {
+              path: ':house_id/create',
+              name: 'owner-create-room',
+              component: OwnerCreateRoom
+            }
+          ]
+        }
+      ]
     },
     {
       path: '/a',
@@ -193,7 +263,7 @@ const router = new Router({
         },
         {
           path: 'reviews',
-          component: Review,
+          component: Reviews,
           children: [
             {
               path: '',
@@ -204,7 +274,7 @@ const router = new Router({
         }
       ],
       beforeEnter(to, from, next) {
-        if ($auth.check()) next()
+        if ($auth.check) next()
         else router.push({name: 'login'})
       }
     }

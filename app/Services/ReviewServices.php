@@ -3,16 +3,45 @@
 namespace App\Services;
 
 use App\Models\Review;
+use App\Models\ReviewRenter;
+use App\Models\ReviewHouse;
+use App\Models\ReviewOwner;
+use App\Models\ReviewRoom;
+use App\Models\House;
+use App\Models\Room;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Repositories\ReviewRepository;
 
 class ReviewServices
 {
     protected $review;
+    protected $reviewRenter;
+    protected $reviewOwner;
+    protected $reviewHouse;
+    protected $reviewRoom;
+    protected $house;
+    protected $room;
+    protected $reviewRepository;
 
-    public function __construct(Review $review)
-    {
+    public function __construct(
+        Review $review,
+        ReviewRenter $reviewRenter,
+        ReviewHouse $reviewHouse,
+        ReviewOwner $reviewOwner,
+        ReviewRoom $reviewRoom,
+        House $house,
+        Room $room,
+        ReviewRepository $reviewRepository
+    ) {
         $this->review = $review;
+        $this->reviewRenter = $reviewRenter;
+        $this->reviewHouse = $reviewHouse;
+        $this->reviewOwner = $reviewOwner;
+        $this->reviewRoom = $reviewRoom;
+        $this->house = $house;
+        $this->room = $room;
+        $this->reviewRepository = $reviewRepository;
     }
 
     public function index($type, $paginate = 10)
@@ -86,13 +115,21 @@ class ReviewServices
      * Create review
      *
      * @param array $params
+     * @param integer $type
      *
      * @return \App\Models\Review
      */
-    public function store(array $params)
+    public function store(array $params, $type)
     {
-        $review = $this->review->create($params);
+        $authUser = Auth::user();
+        $params['user_id'] = $authUser->id;
+        $review = $this->reviewRepository->store($type, $params);
         return $review;
+    }
+
+    private function storeForHouse()
+    {
+        //
     }
 
     /**

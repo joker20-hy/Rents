@@ -2,21 +2,20 @@
 
 namespace App\Services;
 
-use App\Models\Service;
+use App\Repositories\ServiceRepository;
 
 class ServiceServices
 {
     protected $service;
 
-    public function __construct(Service $service)
+    public function __construct(ServiceRepository $serviceRepository)
     {
-        $this->service = $service;
+        $this->serviceRepository = $serviceRepository;
     }
 
     public function index($paginate = 10)
     {
-        $services = $this->service->paginate($paginate);
-        return $services;
+        return $this->serviceRepository->list($paginate);
     }
 
     /**
@@ -28,8 +27,7 @@ class ServiceServices
      */
     public function store(array $params)
     {
-        $service = $this->service->create($params);
-        return $service;
+        return $this->serviceRepository->store($params);
     }
 
     /**
@@ -42,9 +40,7 @@ class ServiceServices
      */
     public function update($id, array $params)
     {
-        $service = $this->service->findOrFail($id);
-        $service->update($params);
-        return $service;
+        return $this->serviceRepository->update($id, $params);
     }
 
     /**
@@ -54,7 +50,6 @@ class ServiceServices
      */
     public function destroy($id)
     {
-        $service = $this->service->findOrFail($id);
-        $service->delete($id);
+        $this->serviceRepository->destroy($id);
     }
 }

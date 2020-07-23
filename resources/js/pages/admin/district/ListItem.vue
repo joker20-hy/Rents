@@ -22,7 +22,6 @@
   </transition>
 </template>
 <script>
-import { $auth } from '../../../utilities/request/request'
 export default {
   name: 'list-item',
   props: {

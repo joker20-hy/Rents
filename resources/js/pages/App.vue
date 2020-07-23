@@ -6,7 +6,6 @@
   </div>
 </template>
 <script>
-import { $auth } from '../utilities/request/request'
 import AlertBox from './utilities/AlertBox'
 import LogoutForm from './auth/Logout'
 

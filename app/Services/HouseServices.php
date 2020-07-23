@@ -3,47 +3,49 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use App\Models\House;
+use App\Repositories\ProvinceRepository;
+use App\Repositories\DistrictRepository;
+use App\Repositories\AreaRepository;
+use App\Repositories\HouseRepository;
 
 class HouseServices
 {
-    private const PAGINATE = 10;
-    private $folder;
-    protected $house;
+    protected $folder;
     protected $imageServices;
-    protected $userHouseServices;
+    protected $provinceRepository;
+    protected $districtRepository;
+    protected $areaRepository;
+    protected $houseRepository;
 
     public function __construct(
-        House $house,
         ImageServices $imageServices,
-        UserHouseServices $userHouseServices
+        ProvinceRepository $provinceRepository,
+        DistrictRepository $districtRepository,
+        AreaRepository $areaRepository,
+        HouseRepository $houseRepository
     ) {
-        $this->house = $house;
         $this->imageServices = $imageServices;
-        $this->userHouseServices = $userHouseServices;
         $this->folder = config('const.FOLDER.HOUSE');
+        $this->provinceRepository = $provinceRepository;
+        $this->districtRepository = $districtRepository;
+        $this->areaRepository = $areaRepository;
+        $this->houseRepository = $houseRepository;
     }
 
     public function index($params = [], $paginate = 10)
     {
-
+        // 
     }
 
-    public function list($province = null, $district = null, $area = null)
+    public function list($conditions, $paginate = 10)
     {
-        $houses = $this->house;
-        if (!is_null($province)) {
-            $houses = $houses->where('province_id', $province);
+        $authUser = Auth::user();
+        if ($authUser->role==config('const.USER.ROLE.OWNER')) {
+            $ids = $authUser->houses->pluck('id');
+            $houses = $this->houseRepository->ownerList($ids, $conditions, $paginate);
+        } else {
+            $houses = $this->houseRepository->adminList($conditions, $paginate);
         }
-        if (!is_null($district)) {
-            $houses = $houses->where('district_id', $district);
-        }
-        if (!is_null($area)) {
-            $houses = $houses->where('area_id', $area);
-        }
-        $houses = $houses->with('province')->with('district')->with('area')
-                        ->paginate(self::PAGINATE);
         return $houses;
     }
 
@@ -57,26 +59,17 @@ class HouseServices
     public function store(array $params)
     {
         if (isset($params['images'])) {
-            $images = $this->imageServices->store($params['images']);
+            $images = $this->imageServices->store($params['images'], $this->folder);
             $params['images'] = json_encode($images);
         }
         if (isset($params['description'])) {
             $params['description'] = utf8_encode($params['description']);
         }
-        $province = DB::table('provinces')->select(['id', 'name'])->where('id', $params['province_id'])->first();
-        $district = DB::table('districts')->select(['id', 'name'])->where('id', $params['district_id'])->first();
-        $area = DB::table('areas')->select(['id', 'name'])->where('id', $params['area_id'])->first();
-        $params['address_detail'] = [$params['address'], $area->name, $district->name, $province->name];
-        $params['address_detail'] = implode(", ", $params['address_detail']);
-        $house = DB::transaction(function () use ($params) {
-            $house = $this->house->create($params);
-            $this->userHouseServices->store([
-                'user_id' => Auth::user()->id,
-                'house_id' => $house->id,
-                'role' => config('const.OWNER_ROLE.OWNER')
-            ]);
-            return $house;
-        });
+        $province = $this->provinceRepository->findById($params['province_id']);
+        $district = $this->districtRepository->findById($params['district_id']);
+        $area = $this->areaRepository->findById($params['area_id']);
+        $params['address_detail'] = implode(", ", [$params['address'], $area->name, $district->name, $province->name]);
+        $house = $this->houseRepository->store($params, Auth::user()->id);
         return $house;
     }
 
@@ -89,10 +82,10 @@ class HouseServices
      */
     public function show($id)
     {
-        $house = $this->house->findOrfail($id);
-        if (is_null($house)) {
-            return abort(404, 'Could not find this house');
-        }
+        $house = $this->houseRepository->findById($id);
+        $house->province;
+        $house->district;
+        $house->area;
         return $house;
     }
 
@@ -106,14 +99,13 @@ class HouseServices
      */
     public function update($id, array $params)
     {
-        $house = $this->house->findOrfail($id);
-        $this->permission($house);
-        if (is_null($house)) {
-            return abort(404, 'Could not find this house');
-        } elseif (!$this->permission($house)) {
+        if (!$this->permission($id)) {
             return abort(403, "You have no permission to update house");
         }
-        $house->update($params);
+        if (isset($params['description'])) {
+            $params['description'] = utf8_encode($params['description']);
+        }
+        $house = $this->houseRepository->update($id, $params);
         return $house;
     }
 
@@ -127,18 +119,12 @@ class HouseServices
      */
     public function uploadImages($id, array $images)
     {
-        $house = $this->house->findOrFail($id);
-        if ($this->permission($house)) {
-            $oldImages = json_decode($house->images);
-            $oldImages = is_null($oldImages) ? [] : $oldImages;
-            $newImages = $this->imageServices->store($images, $this->folder);
-            $urls = array_merge($newImages, $oldImages);
-            $house->images = json_encode($urls);
-            $house->save();
-            return $urls;
-        } else {
+        if (!$this->permission($id)) {
             return abort(403, "You have no permission to add house's images");
         }
+        $images = $this->imageServices->store($images, $this->folder, 'h');
+        $images = $this->houseRepository->addImages($id, $images);
+        return $images;
     }
 
     /**
@@ -149,13 +135,14 @@ class HouseServices
      */
     public function updateImages($id, array $images)
     {
-        $house = $this->house->findOrFail($id);
-        if ($this->permission($house)) {
-            $house->images = json_encode($images);
-            $house->save();
-        } else {
+        if (!$this->permission($id)) {
             return abort(403, "You have no permission to update house's images");
         }
+        $images = $this->imageServices->store($images, $this->folder, 'h');
+        $house = $this->houseRepository->update($id, [
+            'images' => json_encode($images)
+        ]);
+        return $house;
     }
 
     /**
@@ -165,28 +152,28 @@ class HouseServices
      */
     public function destroy($id)
     {
-        $house = $this->house->findOrFail($id);
-        if ($this->permission($house->id)) {
-            DB::transaction(function () use ($house) {
-                $house->delete();
-                $house->rooms()->delete();
-            });
-        } else {
+        if (!$this->permission($id)) {
             return abort(403, "You have no permission to delete this house");
         }
+        $this->houseRepository->destroy($id);
     }
 
-    private function permission($house)
+    /**
+     * Check if user has permission
+     *
+     * @param integer $id
+     *
+     * @return boolean
+     */
+    private function permission($id)
     {
         $authUser = Auth::user();
         if ($authUser->role==config('const.USER.ROLE.ADMIN')) {
             return true;
-        } elseif ($authUser->role==config('const.USER.ROLE.MANAGER')) {
-            $selectRaw = DB::table('user_houses')->selectRaw("count(*) as sum")
-                            ->where('house_id', $house->id)
-                            ->where('user_id', $authUser->id)
-                            ->first();
-            return $selectRaw->sum > 0;
+        } elseif ($authUser->role==config('const.USER.ROLE.OWNER')) {
+            $houseIds = $authUser->houses->pluck('id');
+            return $houseIds->contains($id);
+            return in_array($id, $houseIds);
         }
         return false;
     }

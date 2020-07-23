@@ -93,7 +93,6 @@ export default {
         this.loading = false
         res.data.data.forEach(dat => {
           dat.images = dat.images==null?[]:JSON.parse(dat.images)
-          dat.rent = dat.rent==this.TRUE
           dat.description = dat.description==null?'':utf8.decode(dat.description)
         })
         this.$store.commit('houses/houses', res.data.data)

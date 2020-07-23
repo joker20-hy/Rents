@@ -52,7 +52,6 @@
   </modal>
 </template>
 <script>
-import { $auth } from '../../../utilities/request/request'
 import ImageLibrary from '../../utilities/ImageLibrary'
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
 import adapter from '../../../utilities/CKImageAdapter'

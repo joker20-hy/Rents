@@ -2,41 +2,29 @@
 
 namespace App\Http\Controllers\Api\User;
 
-use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Controller;
+use App\Services\UserServices;
 use Illuminate\Http\Request;
-use App\Services\SettingServices;
 
 class UpdateSettingController extends Controller
 {
-    protected $settingServices;
+    protected $userServices;
 
-    public function __construct(SettingServices $settingServices)
+    public function __construct(UserServices $userServices)
     {
-        $this->settingServices = $settingServices;
+        $this->userServices = $userServices;
     }
 
     public function main(Request $request)
     {
-        $params = $this->getParams($request);
-        $validator = $this->validation($params);
-        if ($validator->fails()) {
-            return response()->json([
-                'message' => $validator->errors()->first()
-            ], 422);
-        }
-        $this->settingServices->update($request->userId, $params);
+        $params = $this->validation($request);
+        $this->userServices->updateSetting($request->id, $params);
         return response()->json([], 204);
     }
 
-    public function getParams(Request $request)
+    public function validation(Request $request)
     {
-        return $request->only('verification_2_step');
-    }
-
-    public function validation(array $params)
-    {
-        return Validator::make($params, [
+        return $request->validate([
             'verification_2_step' => 'required|boolean'
         ]);
     }

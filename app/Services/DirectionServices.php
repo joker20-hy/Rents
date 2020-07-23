@@ -2,21 +2,20 @@
 
 namespace App\Services;
 
-use App\Models\Direction;
+use App\Repositories\DirectionRepository;
 
 class DirectionServices
 {
-    protected $direction;
+    protected $directionRepository;
 
-    public function __construct(Direction $direction)
+    public function __construct(DirectionRepository $directionRepository)
     {
-        $this->direction = $direction;
+        $this->directionRepository = $directionRepository;
     }
 
     public function index()
     {
-        $directions = $this->direction->get();
-        return $directions;
+        return $this->directionRepository->all();
     }
 
     /**
@@ -28,8 +27,7 @@ class DirectionServices
      */
     public function store(array $params)
     {
-        $direction = $this->direction->create($params);
-        return $direction;
+        return $this->directionRepository->store($params);
     }
 
     /**
@@ -42,14 +40,16 @@ class DirectionServices
      */
     public function update($id, array $params)
     {
-        $direction = $this->direction->findOrFail($id);
-        $direction->update($params);
-        return $direction;
+        return $this->directionRepository->update($id, $params);
     }
 
+    /**
+     * Delete direction
+     *
+     * @param integer $id
+     */
     public function destroy($id)
     {
-        $direction = $this->direction->findOrFail($id);
-        $direction->delete();
+        $this->directionRepository->destroy($id);
     }
 }

@@ -36,20 +36,21 @@ Route::group(['namespace' => 'Api'], function() {
 		Route::get('{provinceId?}', 'IndexController@main');
 	});
 	Route::group([
+		'namespace' => 'House',
+		'prefix' => 'house'
+	], function () {
+		Route::get('', 'IndexController@main');
+		Route::get('list', 'ListController@main')->middleware(['auth:api', 'admin-owner-role']);
+		Route::get('{id}', 'ShowController@main');
+	});
+	Route::group([
 		'namespace' => 'Room',
 		'prefix' => 'room'
 	], function () {
 		Route::get('', 'IndexController@main');
-		Route::get('list', 'ListController@main')->middleware(['auth:api']);
+		Route::get('list', 'ListController@main')->middleware(['auth:api', 'admin-owner-role']);
 		Route::get('{id}', 'ShowController@main');
 	});
-	// Route::group([
-	// 	'namespace' => 'House',
-	// 	'prefix' => 'house'
-	// ], function () {
-	// 	Route::get('', 'IndexController@main');
-	// 	Route::get('{id}', '');
-	// });
 	Route::group([
 		'namespace' => 'Criteria',
 		'prefix' => 'criteria'
@@ -57,13 +58,16 @@ Route::group(['namespace' => 'Api'], function() {
 		Route::get('', 'IndexController@main');
 	});
 	Route::group([
+		'namespace' => 'Review',
+		'prefix' => 'review'
+	], function () {
+		Route::post('{type}', 'StoreController@main')->middleware('auth:api');
+	});
+	Route::group([
 	    'middleware' => 'auth:api'
 	], function() {
 		Route::post('refresh', 'Auth\RefreshController@main');
 		Route::post('logout', 'Auth\LoginController@logout');
-		/**
-		 * 
-		 */
 		Route::group([
 			'namespace' => 'Province',
 			'prefix' => 'province'
@@ -73,9 +77,6 @@ Route::group(['namespace' => 'Api'], function() {
 			Route::put('{id}', 'UpdateController@main')->middleware('admin-role');
 			Route::delete('{id}', 'DestroyController@main')->middleware('admin-role');
 		});
-		/**
-		 * 
-		 */
 		Route::group([
 			'namespace' => 'District',
 			'prefix' => 'district'
@@ -84,9 +85,6 @@ Route::group(['namespace' => 'Api'], function() {
 			Route::put('{id}', 'UpdateController@main')->middleware('admin-role');
 			Route::delete('{id}', 'DestroyController@main')->middleware('admin-role');
 		});
-		/**
-		 * 
-		 */
 		Route::group([
 			'namespace' => 'Area',
 			'prefix' => 'area'
@@ -101,18 +99,14 @@ Route::group(['namespace' => 'Api'], function() {
 			'prefix' => 'user'
 		], function () {
 			Route::get('', 'IndexController@main');
-			Route::get('find/{userId?}', 'ShowControler@main');
-			// Route::post('', '');
-			// Route::put('', '');
-			// Route::delete('', '');
-			Route::get('{userId}/avatar', 'UpdateAvatarController@main');
-			Route::get('{userId}/profile', 'ShowProfileController@main');
-			Route::put('{userId}/profile', 'UpdateProfileController@main');
-			Route::get('{userId}/setting', 'ShowSettingController@main');
-			Route::put('{userId}/setting', 'UpdateSettingController@main');
-			Route::put('{userId}/verify', 'VerifyController@main')->middleware('admin-role');
+			Route::get('find/{id?}', 'ShowControler@main');
+			Route::get('{id}/avatar', 'UpdateAvatarController@main');
+			Route::get('{id}/profile', 'ShowProfileController@main');
+			Route::put('{id}/profile', 'UpdateProfileController@main');
+			Route::get('{id}/setting', 'ShowSettingController@main');
+			Route::put('{id}/setting', 'UpdateSettingController@main');
+			Route::put('{id}/verify', 'VerifyController@main')->middleware('admin-role');
 		});
-
 		Route::group([
 			'namespace' => 'Direction',
 			'prefix' => 'direction'
@@ -126,8 +120,6 @@ Route::group(['namespace' => 'Api'], function() {
 			'namespace' => 'House',
 			'prefix' => 'house'
 		], function () {
-			Route::get('', 'IndexController@main');
-			Route::get('list', 'ListController@main');
 			Route::post('', 'StoreController@main')->middleware('admin-owner-role');
 			Route::put('{id}', 'UpdateController@main')->middleware('admin-owner-role');
 			Route::post('{id}/images', 'UploadImagesController@main')->middleware('admin-owner-role');

@@ -60,7 +60,6 @@
   </modal>
 </template>
 <script>
-import { $auth } from '../../../utilities/request/request'
 export default {
   name: 'user-profile',
   data () {

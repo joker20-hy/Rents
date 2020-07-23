@@ -6,6 +6,9 @@ const houses = {
   getters: {
     houses (state) {
       return state.houses
+    },
+    find: state => id => {
+      return state.houses.find(house => house.id==id)
     }
   },
   mutations: {

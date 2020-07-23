@@ -2,27 +2,28 @@
 
 namespace App\Services;
 
+use App\Repositories\CriteriaRepository;
 use App\Models\Criteria;
 
 class CriteriaServices
 {
     protected $criteria;
+    protected $criteriaRepository;
 
-    public function __construct(Criteria $criteria)
+    public function __construct(Criteria $criteria, CriteriaRepository $criteriaRepository)
     {
         $this->criteria = $criteria;
+        $this->criteriaRepository = $criteriaRepository;
     }
 
-    public function index($type = 1)
+    public function index()
     {
-        $criterias = $this->criteria->get();
-        return $criterias;
+        return $this->criteriaRepository->all();
     }
 
     public function list($paginate = 10)
     {
-        $criterias = $this->criteria->paginate($paginate);
-        return $criterias;
+        return $this->criteriaRepository->listAll($paginate);
     }
 
     /**
@@ -34,8 +35,7 @@ class CriteriaServices
      */
     public function store($params)
     {
-        $criteria = $this->criteria->create($params);
-        return $criteria;
+        return $this->criteriaRepository->store($params);
     }
 
     /**
@@ -48,8 +48,7 @@ class CriteriaServices
      */
     public function update($id, $params)
     {
-        $criteria = $this->criteria->findOrFail($id);
-        $criteria->update($params);
+        $criteria = $this->criteriaRepository->update($id, $params);
         return $criteria;
     }
 
@@ -60,7 +59,6 @@ class CriteriaServices
      */
     public function destroy($id)
     {
-        $criteria = $this->criteria->findOrFail($id);
-        $criteria->delete();
+        $this->criteriaRepository->destroy($id);
     }
 }
