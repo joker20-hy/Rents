@@ -46,7 +46,6 @@
   </div>
 </template>
 <script>
-import { $auth } from '../../../utilities/request/request'
 import ClickOutside from 'vue-click-outside'
 import SuggestBox from './Suggest'
 export default {

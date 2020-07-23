@@ -32,7 +32,6 @@
   </div>
 </template>
 <script>
-import { $auth } from '../../../utilities/request/request'
 import ConfirmBox from '../../utilities/ConfirmBox'
 import CreateCriteria from './Create'
 import ListItem from './ListItem'

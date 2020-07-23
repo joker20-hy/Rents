@@ -67,7 +67,6 @@
     </div>
 </template>
 <script>
-import { $auth } from '../../../utilities/request/request'
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
 import adapter from '../../../utilities/CKImageAdapter'
 import SuggestBox from '../../utilities/SuggestBox'
@@ -163,9 +162,7 @@ export default {
         res.data.forEach(cri => cri.checked = false);
         this.criterias = res.data
       })
-      .catch(err => {
-        console.log(err.response.data)
-      })
+      .catch(err => console.log(err.response.data) )
     }
   }
 }

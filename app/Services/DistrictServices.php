@@ -6,37 +6,42 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Models\District;
+use App\Repositories\DistrictRepository;
 
 class DistrictServices
 {
     protected $district;
+    protected $districtRepository;
 
-    public function __construct(District $district)
+    public function __construct(DistrictRepository $districtRepository, District $district)
     {
         $this->district = $district;
+        $this->districtRepository = $districtRepository;
     }
 
+    /**
+     * List all district records
+     */
     public function index($provinceId = null)
     {
-        return is_null($provinceId) ? $this->district->get()
-                                    : $this->district->where('province_id', $provinceId)->get();
+        return $this->districtRepository->all($provinceId);
     }
 
+    /**
+     * List and paginate district records
+     */
     public function list($provinceId = null, $paginate = 10)
     {
-        $query = is_null($provinceId) ? $this->district->with('province')
-                                    : $this->district->where('province_id', $provinceId);
-        return $query->paginate($paginate);
+        return $this->districtRepository->list($provinceId, $paginate);
     }
 
     /**
      * Create a district
      * @param array $params ['name', 'province_id']
      */
-    public function create($params)
+    public function create(array $params)
     {
-        $params['slug'] = Str::slug($params['name'], '-');
-        $district = $this->district->create($params);
+        $district = $this->districtRepository->store($params);
         $district->province;
         return $district;
     }
@@ -51,8 +56,7 @@ class DistrictServices
      */
     public function update($id, $params)
     {
-        $district = $this->district->findOrFail($id);
-        $district->update($params);
+        $district = $this->districtRepository->update($id, $params);
         $district->province;
         return $district;
     }
@@ -64,12 +68,6 @@ class DistrictServices
      */
     public function destroy($id)
     {
-        $district = $this->district->findOrFail($id);
-        DB::transaction(function () use ($district) {
-            $district->delete();
-            if (count($district->areas)>0) {
-                $district->areas->delete();
-            }
-        });
+        $this->districtRepository->destroy($id);
     }
 }

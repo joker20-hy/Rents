@@ -15,7 +15,6 @@
 </template>
 <script>
 import SwitchInput from '../../utilities/SwitchInput'
-import { $auth } from '../../../utilities/request/request'
 
 export default {
   name: 'user-setting',

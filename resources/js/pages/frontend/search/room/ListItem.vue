@@ -26,7 +26,7 @@
     </div>
     <div class="col-8 col-md-9 pr-0">
       <h5>
-        <router-link :to="{name: 'room-for-rent', params: {room: room.id}}">{{ room.name }}</router-link>
+        <router-link :to="{name: 'room-for-rent', params: {id: room.id}}">{{ room.name }}</router-link>
       </h5>
       <div class="address">
         {{ room.address }}
@@ -44,8 +44,13 @@
           <u>{{ criteria.name }}</u>
         </div>
       </div>
-      <div class="row mx-0 justify-content-end py-2">
-        {{ room.price }} vnđ/tháng
+      <div class="row pt-3 pb-2">
+        <div class="col-4">
+          {{ room.acreage }} m2
+        </div>
+        <div class="col-8 text-right">
+          {{ room.price }} vnđ/tháng
+        </div>
       </div>
     </div>
   </div>
@@ -58,6 +63,9 @@ export default {
       required: true,
       type: Object
     }
+  },
+  mounted () {
+    console.log(this.room.id)
   },
   computed: {
     images () {

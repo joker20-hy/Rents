@@ -48,6 +48,11 @@ class House extends Model
         return $this->hasMany(Room::class);
     }
 
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'user_houses');
+    }
+
     public function userHouses()
     {
         return $this->hasMany(UserHouse::class);

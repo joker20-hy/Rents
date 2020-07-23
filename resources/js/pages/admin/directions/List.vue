@@ -54,8 +54,6 @@
   </div>
 </template>
 <script>
-import { $auth } from '../../../utilities/request/request'
-
 export default {
   name: 'direction-list',
   data () {

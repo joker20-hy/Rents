@@ -18,19 +18,14 @@ class VerifyController extends Controller
 
     public function main(Request $request)
     {
-        $validator = $this->validation($request);
-        if ($validator->fails()) {
-            return response()->json([
-                'message' => $validator->errors()->first()
-            ], 422);
-        }
-        $this->userServices->updateVerifyStatus($request->userId, $request->verify);
+        $params = $this->validation($request);
+        $this->userServices->updateVerifyStatus($request->id, $params['verify']);
         return response()->json([], 204);
     }
 
     public function validation(Request $request)
     {
-        return Validator::make($request->all(), [
+        return $request->validate([
             'verify' => 'required|integer|min:0',
         ]);
     }

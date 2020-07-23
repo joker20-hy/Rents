@@ -17,7 +17,7 @@ class ShowProfileController extends Controller
 
     public function main(Request $request)
     {
-        $profile = $this->userServices->showProfile($request->userId);
+        $profile = $this->userServices->showProfile($request->id);
         return response()->json($profile, 200);
     }
 }

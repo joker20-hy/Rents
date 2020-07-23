@@ -10,7 +10,7 @@ const $auth = {
   get check() {
     if (token.access_token==null) return false
     let now = new Date()
-    return now.valueOf() <= token.expires
+    return now.getTime() <= token.expires
   },
   request: axios.create({
     baseURL: 'http://rent.joker.com/',

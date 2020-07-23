@@ -6,7 +6,7 @@
 	  </div>
 	  {{ auth.name }}
 	</header>
-	<main>
+	<main class="px-2">
     <div item v-if="auth.id!=undefined">
       <i class="fas fa-user"></i> Tài khoản
     </div>
@@ -15,6 +15,10 @@
     </router-link>
     <div item v-if="auth.id!=undefined" @click="logout()">
       <i class="fas fa-sign-out-alt"></i> Đăng xuất
+    </div>
+    <hr>
+    <div item class="text-danger" @click="hide">
+      <i class="far fa-times-circle"></i> Đóng
     </div>
 	</main>
   </div>
@@ -44,8 +48,8 @@ export default {
       this.isShow=!this.isShow
     },
     hide () {
-      this.isShow = false
       this.$emit('close')
+      this.isShow = false
     },
     logout () {
       $eventHub.$emit('show-logout-form')

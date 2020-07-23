@@ -29,7 +29,7 @@ class ImageServices
                 array_push($urls, Storage::url($rs));
             }
         } catch (Exception $e) {
-            return [];
+            return abort(400, "Không thể upload ảnh");
         }
         return $urls;
     }

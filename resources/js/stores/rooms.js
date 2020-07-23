@@ -6,6 +6,9 @@ const rooms = {
     getters: {
       rooms (state) {
         return state.rooms
+      },
+      first (state) {
+        return state.rooms[0]
       }
     },
     mutations: {

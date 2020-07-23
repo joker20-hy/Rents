@@ -5,27 +5,30 @@ namespace App\Services;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use App\Models\Province;
+use App\Repositories\ProvinceRepository;
 
 class ProvinceServices
 {
     private const LIST_ALL = 'all';
     protected $province;
+    protected $provinceRepository;
 
-    public function __construct(Province $province)
+    public function __construct(ProvinceRepository $provinceRepository, Province $province)
     {
+        $this->provinceRepository = $provinceRepository;
         $this->province = $province;
     }
 
     /**
      * Get all province
      */
-    public function index($perPage = 10)
+    public function index($paginate = 10)
     {
-        if ($perPage == self::LIST_ALL) {
-            return $this->province->select(['id', 'name'])->get();
+        if ($paginate == self::LIST_ALL) {
+            return $this->provinceRepository->all();
         }
-        $perPage = is_null($perPage) ? 10 : $perPage;
-        return $this->province->paginate($perPage);
+        $paginate = is_null($paginate) ? 10 : $paginate;
+        return $this->provinceRepository->list($paginate);
     }
 
     /**
@@ -38,7 +41,7 @@ class ProvinceServices
     public function create($params)
     {
         $params['slug'] = Str::slug($params['name'], '-');
-        return $this->province->create($params);
+        return $this->provinceRepository->store($params);
     }
 
     /**
@@ -51,9 +54,7 @@ class ProvinceServices
      */
     public function update($id, $params)
     {
-        $province = $this->province->findOrFail($id);
-        $province->update($params);
-        return $province;
+        return $this->provinceRepository->update($id, $params);
     }
 
     /**
@@ -63,12 +64,6 @@ class ProvinceServices
      */
     public function destroy($id)
     {
-        $province = $this->province->findOrfail($id);
-        DB::transaction(function () use ($province) {
-            $province->delete();
-            if (count($province->districts) > 0) {
-                $province->districts->delete();
-            }
-        });
+        $this->provinceRepository->destroy($id);
     }
 }

@@ -38,7 +38,6 @@
   </div>
 </template>
 <script>
-import { $auth } from '../../../utilities/request/request'
 import DistrictCreate from './Create'
 import ListItem from './ListItem'
 import ConfirmBox from '../../utilities/ConfirmBox'

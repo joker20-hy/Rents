@@ -22,18 +22,18 @@
         <div class="form-group row">
           <div class="col-md-4">
             <label for="">Province</label>
-            <div class="holder" v-show="!edit">{{ chosen_province.name }}</div>
-            <suggest-box :api="'/api/sg/provinces'" :placeholder="'Tỉnh thành'" :value="chosen_province" :required="true" @change="getProvince" v-show="edit"/>
+            <div class="holder" v-show="!edit">{{ house.province?house.province.name:'' }}</div>
+            <suggest-box :api="'/api/sg/provinces'" :placeholder="'Tỉnh thành'" :value="house.province" :required="true" @change="getProvince" v-show="edit"/>
           </div>
           <div class="col-md-4">
             <label for="">District</label>
-            <div class="holder" v-show="!edit">{{ chosen_district.name }}</div>
-            <suggest-box :api="'/api/sg/districts'" :params="{province: house.province_id}" :value="chosen_district" :placeholder="'Quận huyện'" :required="true" @change="getDistrict" v-show="edit"/>
+            <div class="holder" v-show="!edit">{{ house.district?house.district.name:'' }}</div>
+            <suggest-box :api="'/api/sg/districts'" :params="{province: house.province_id}" :value="house.district" :placeholder="'Quận huyện'" :required="true" @change="getDistrict" v-show="edit"/>
           </div>
           <div class="col-md-4">
             <label for="">Area</label>
-            <div class="holder" :class="chosen_area.name==''?'text-muted':''" v-show="!edit">{{ chosen_area.name==''? 'Chưa rõ':chosen_area.name }}</div>
-            <suggest-box :api="'/api/sg/areas'" :params="{province: house.province_id,district: house.district_id}" :value="chosen_area" :placeholder="'Khu vực'" @change="getArea" v-show="edit"/>
+            <div class="holder" v-show="!edit">{{ house.area?house.area.name:'' }}</div>
+            <suggest-box :api="'/api/sg/areas'" :params="{province: house.province_id,district: house.district_id}" :value="house.area" :placeholder="'Khu vực'" @change="getArea" v-show="edit"/>
           </div>
         </div>
         <div class="form-group">
@@ -43,7 +43,16 @@
         </div>
         <div class="form-group d-flex">
           <label for="">House for rent?</label>
-          <switch-input class="ml-auto" :status="house.rent" @click="house.rent=!house.rent" :locked="!edit"/>
+          <switch-box class="ml-auto" v-model="house.rent" :class="house.rent?'on':''" :locked="!edit"></switch-box>
+          <!-- <switch-input class="ml-auto" :status="house.rent" @click="house.rent=!house.rent" :locked="!edit"/> -->
+        </div>
+        <div class="form-group" v-show="house.rent">
+          <label for="">Direction</label>
+          <div class="holder" v-show="!edit">{{ direction?direction.name:'Chưa rõ' }}</div>
+          <select class="input" v-model="house.direction" v-show="edit">
+            <option value="">Hướng nhà</option>
+            <option v-for="dir in directions" :value="dir.id" :key="dir.id">{{ dir.name }}</option>
+          </select>
         </div>
         <div class="form-group" v-show="house.rent">
           <label for="">Price</label>
@@ -66,15 +75,15 @@ import { $auth } from '../../../utilities/request/request'
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
 import adapter from '../../../utilities/CKImageAdapter'
 import SuggestBox from '../../utilities/SuggestBox'
-import SwitchInput from '../../utilities/SwitchInput'
 import ImageLibrary from '../../utilities/ImageLibrary'
+import SwitchBox from '../../utilities/SwitchBox'
 
 export default {
   name: 'house-detail',
   components: {
     SuggestBox,
-    SwitchInput,
-    ImageLibrary
+    ImageLibrary,
+    SwitchBox
   },
   data () {
     return {
@@ -85,26 +94,15 @@ export default {
       },
       directions: [],
       provinces: [],
-      chosen_province: {
-        id: '',
-        name: ''
-      },
       districts: [],
-      chosen_district: {
-        id: '',
-        name: ''
-      },
       areas: [],
-      chosen_area: {
-        id: '',
-        name: ''
-      },
       house: {},
       description: ''
     }
   },
   created () {
     $eventHub.$on('show-detail-house', this.show)
+    this.getDirection()
   },
   computed: {
     TRUE () {
@@ -112,6 +110,9 @@ export default {
     },
     FALSE () {
       return $config.FALSE
+    },
+    direction () {
+      return this.directions.find(dir => dir.id==this.house.direction)
     }
   },
   methods: {
@@ -133,18 +134,18 @@ export default {
     updateImages (images) {
       this.house.images = images
     },
+    getDirection () {
+      $auth.request.get('/api/direction')
+      .then(res => {
+        this.directions = res.data
+      })
+      .catch(err => {
+        console.log(err.response.data.message)
+      })
+    },
     show (house) {
       this.edit = false
       this.house = house
-      this.chosen_province.id = house.province.id
-      this.chosen_province.name = house.province.name
-      this.chosen_district.id = house.district.id
-      this.chosen_district.name = house.district.name
-
-      this.chosen_area = house.area==null? this.chosen_area : {
-        id: house.area.id,
-        name: house.area.name
-      }
       this.$modal.show('detail-house')
     },
     update () {
@@ -153,7 +154,8 @@ export default {
         province_id: this.house.province_id,
         district_id: this.house.district_id,
         area_id: this.house.area_id,
-        rent: this.house.rent?this.TRUE:this.FALSE,
+        rent: this.house.rent,
+        direction: this.house.direction,
         price: this.house.price==null?'':this.house.price,
         description: this.house.description
       })

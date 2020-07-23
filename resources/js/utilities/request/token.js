@@ -40,7 +40,7 @@ const $token = {
     return localStorage.getItem(this.keys.refresh)
   },
   get expires () {
-    return localStorage.getItem(this.keys.expires)
+    return parseInt(localStorage.getItem(this.keys.expires))
   }
 }
 export default $token

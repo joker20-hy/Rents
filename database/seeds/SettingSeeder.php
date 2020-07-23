@@ -14,10 +14,24 @@ class SettingSeeder extends Seeder
     public function run()
     {
         DB::table('settings')->insert([
-            'user_id' => 1,
-            'verification_2_step' => false,
-            'created_at' => Carbon::now(),
-            'updated_at' => Carbon::now()
+            [
+                'user_id' => 1,
+                'verification_2_step' => false,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now()
+            ],
+            [
+                'user_id' => 2,
+                'verification_2_step' => false,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now()
+            ],
+            [
+                'user_id' => 3,
+                'verification_2_step' => false,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now()
+            ]
         ]);
     }
 }

@@ -23,7 +23,6 @@
   </div>
 </template>
 <script>
-import { $auth } from '../../../utilities/request/request'
 import serialize from '../../../utilities/serialize'
 import RoomDetail from './Detail'
 import ListItem from './ListItem'

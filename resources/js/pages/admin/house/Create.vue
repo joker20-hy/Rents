@@ -52,7 +52,7 @@
       </div>
       <div class="form-group d-flex">
         <label for="">This is a house for rent ?</label>
-        <switch-input class="ml-auto" :status="house.rent" @click="house.rent=!house.rent"/>
+        <switch-box class="ml-auto" v-model="house.rent" :class="house.rent?'on':''"></switch-box>
       </div>
       <div class="form-group" v-show="house.rent">
         <label for="">Price</label>
@@ -80,13 +80,12 @@ import { $auth } from '../../../utilities/request/request'
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
 import adapter from '../../../utilities/CKImageAdapter'
 import SuggestBox from '../../utilities/SuggestBox'
-import SwitchInput from '../../utilities/SwitchInput'
-
+import SwitchBox from '../../utilities/SwitchBox'
 export default {
   name: 'create-house',
   components: {
     SuggestBox,
-    SwitchInput
+    SwitchBox
   },
   data () {
     return {
@@ -102,7 +101,7 @@ export default {
       images: [],
       house: {
         name: '',
-        rent: false,
+        rent: 0,
         province_id: '',
         district_id: '',
         area_id: '',
@@ -113,7 +112,15 @@ export default {
       }
     }
   },
-  created () {
+  computed: {
+    TRUE () {
+      return 1
+    },
+    FALSE () {
+      return 0
+    }
+  },
+  mounted () {
     this.getDirection()
   },
   methods: {

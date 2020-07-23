@@ -37,7 +37,6 @@
   </div>
 </template>
 <script>
-import { $auth } from '../../../utilities/request/request'
 import ListItem from './ListItem'
 import UserProfile from './Profile'
 import UserSetting from './Setting'

@@ -31,6 +31,7 @@ class UpdateController extends Controller
     		'area_id' => 'nullable|integer|exists:areas,id',
     		'rent' => 'required|boolean',
             'price' => 'nullable|numeric',
+            'direction' => 'nullable|integer',
     		'description' => 'nullable|string',
     		'addition_images' => 'nullable|array',
             'addition_images.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048'

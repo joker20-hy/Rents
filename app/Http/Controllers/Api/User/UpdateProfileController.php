@@ -19,7 +19,7 @@ class UpdateProfileController extends Controller
     public function main(Request $request)
     {
         $params = $this->validation($request);
-        $this->userServices->updateProfile($request->userId, $params);
+        $this->userServices->updateProfile($request->id, $params);
         return response()->json([], 204);
     }
 

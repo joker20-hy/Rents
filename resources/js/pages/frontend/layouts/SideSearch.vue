@@ -15,7 +15,6 @@
   </div>
 </template>
 <script>
-import { $auth } from '../../../utilities/request/request'
 import ClickOutside from 'vue-click-outside'
 export default {
   name: 'side-search',
@@ -76,8 +75,8 @@ export default {
           district: this.address.slug
         }
       }
-      this.$emit('search', params)
       this.hide()
+      this.$router.push({name: 'search-room', params: params})
     }
   },
   directives: {

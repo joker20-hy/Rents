@@ -25,12 +25,15 @@ class IndexController extends Controller
     public function validation(Request $request)
     {
         return $request->validate([
-            'province' => 'nullable||string',
-            'district' => 'nullable||string',
-            'area' => 'nullable||string',
-            'lat' => 'nullable||double',
-            'lng' => 'nullable||double',
-            'address' => 'nullable||string'
+            'province' => 'nullable|string',
+            'district' => 'nullable|string',
+            'area' => 'nullable|string',
+            'lat' => 'nullable|double',
+            'lng' => 'nullable|double',
+            'address' => 'nullable|string',
+            'price' => 'nullable|integer',
+            'acreage' => 'nullable|integer|min:0',
+            'infras' => 'nullable|string',
         ]);
     }
 }

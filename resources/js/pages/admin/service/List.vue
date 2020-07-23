@@ -39,7 +39,6 @@
   </div>
 </template>
 <script>
-import { $auth } from '../../../utilities/request/request'
 import serialize from '../../../utilities/serialize'
 import ListItem from './ListItem'
 import CreateService from './Create'

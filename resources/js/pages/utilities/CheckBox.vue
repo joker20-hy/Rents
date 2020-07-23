@@ -1,7 +1,7 @@
 <template>
-  <span class="check-box" @click="check()" :checked="checked">
+  <span class="check-box" @click="check()" :checked="isChecked">
     <span class="check">
-      <i class="fas fa-check" v-show="checked"></i>
+      <i class="fas fa-check" v-show="isChecked"></i>
     </span>&nbsp;
     <span>{{ label }}</span>
   </span>
@@ -10,6 +10,11 @@
 export default {
   name: 'check-box',
   props: {
+    checked: {
+      required: false,
+      default: false,
+      type: Boolean
+    },
     index: {
       required: true
     },
@@ -20,15 +25,15 @@ export default {
   },
   data () {
     return {
-      checked: false
+      isChecked: this.checked
     }
   },
   methods: {
     check () {
-      this.checked=!this.checked
+      this.isChecked=!this.isChecked
       this.$emit('change', {
         index: this.index,
-        checked: this.checked
+        checked: this.isChecked
       })
     }
   }
@@ -50,5 +55,8 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+  .check-box[checked="checked"] {
+    color: #3490dc;
   }
 </style>

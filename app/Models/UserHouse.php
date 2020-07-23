@@ -11,7 +11,8 @@ class UserHouse extends Model
 
     protected $fillable = [
         'user_id',
-        'house_id'
+        'house_id',
+        'role'
     ];
 
     public function user()
