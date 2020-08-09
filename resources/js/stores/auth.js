@@ -6,6 +6,18 @@ const auth = {
   getters: {
     user (state) {
       return state.user
+    },
+    normal (state) {
+      return state.user.role==$config.user.ROLE.NORMAL
+    },
+    admin (state) {
+      return state.user.role==$config.user.ROLE.ADMIN
+    },
+    owner (state) {
+      return state.user.role==$config.user.ROLE.OWNER
+    },
+    renter (state) {
+      return state.user.role==$config.user.ROLE.RENTER
     }
   },
   mutations: {

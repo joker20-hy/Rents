@@ -67,7 +67,7 @@ export default {
       this.query.keywords = this.keywords
       this.query.limit = this.limit
       let targetApi = `${this.api}?${serialize.fromObj(this.query)}`
-      $auth.request.get(targetApi)
+      $request.get(targetApi)
       .then(res => {
         if (res.data.length > 0) this.showSuggest()
         this.records = res.data

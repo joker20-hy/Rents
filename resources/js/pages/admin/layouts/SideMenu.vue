@@ -48,7 +48,7 @@ export default {
   name: 'side-menu',
   data () {
     return {
-      is_show: false
+      is_show: true
     }
   },
   created () {

@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 
-import { $auth } from './utilities/request/request'
+import { store } from './stores/store'
 import Home from './pages/frontend/home/Index'
 import SearchRoom from './pages/frontend/search/room/Index'
 import Detail from './pages/frontend/detail/Index'
@@ -13,6 +13,7 @@ import ReviewRoom from './pages/frontend/review/Room'
 import ReviewRenter from './pages/frontend/review/Renter'
 /** Auth components */
 import Login from './pages/auth/Login'
+import Register from './pages/auth/register'
 /** Owner components */
 import Owner from './pages/owner/Index'
 import OwnerHouse from './pages/owner/house/Index'
@@ -21,7 +22,12 @@ import OwnerDetailHouse from './pages/owner/house/Detail'
 import OwnerCreateHouse from './pages/owner/house/Create'
 import OwnerRoom from './pages/owner/room/Index'
 import OwnerListRoom from './pages/owner/room/List'
+import OwnerDetailRoom from './pages/owner/room/Detail'
 import OwnerCreateRoom from './pages/owner/room/Create'
+
+import OwnerListPayment from './pages/owner/payment/List'
+import OwnerCreatePayment from './pages/owner/payment/Create'
+import OwnerDetailPayment from './pages/owner/payment/Detail'
 /** Dashboard parent components */
 import Admin from './pages/admin/Index'
 import Users from './pages/admin/user/Index'
@@ -45,6 +51,7 @@ import Criteria from './pages/admin/criteria/Index'
 import CriteriaList from './pages/admin/criteria/List'
 import Reviews from './pages/admin/review/Index'
 import ReviewList from './pages/admin/review/List'
+import { $auth } from './utilities/request/request'
 
 Vue.use(Router)
 
@@ -98,12 +105,18 @@ const router = new Router({
         }
       ],
       beforeEnter(to, from, next) {
-        if ($auth.check) next()
-        else router.push({name: 'login'})
+        if ($auth.check) {
+          $old_route = ''
+          next()
+        }
+        else {
+          $old_route = to.fullPath
+          router.push({name: 'login'})
+        }
       }
     },
     {
-      path: '/login',
+      path: '/dang-nhap',
       name: 'login',
       component: Login,
       beforeEnter(to, from, next) {
@@ -112,11 +125,20 @@ const router = new Router({
       }
     },
     {
-      path: '/owner',
+      path: '/dang-ky-tai-khoan',
+      name: 'register',
+      component: Register,
+      beforeEnter(to, from, next) {
+        if ($auth.check) router.push({name: 'home'})
+        else next()
+      }
+    },
+    {
+      path: '/chu-nha',
       component: Owner,
       children: [
         {
-          path: 'houses',
+          path: 'nha',
           component: OwnerHouse,
           children: [
             {
@@ -125,34 +147,61 @@ const router = new Router({
               component: OwnerListHouse
             },
             {
-              path: ':id',
-              name: 'owner-detail-house',
-              component: OwnerDetailHouse
-            },
-            {
-              path: 'create',
+              path: 'them-nha',
               name: 'owner-create-house',
               component: OwnerCreateHouse
-            }
-          ]
-        },
-        {
-          path: 'rooms',
-          component: OwnerRoom,
-          children: [
+            },
             {
-              path: ':house_id/list',
+              path: ':id/phong-tro',
               name: 'owner-list-room',
               component: OwnerListRoom
             },
             {
-              path: ':house_id/create',
+              path: ':id/them-phong',
               name: 'owner-create-room',
               component: OwnerCreateRoom
+            },
+            {
+              path: ':id',
+              name: 'owner-detail-house',
+              component: OwnerDetailHouse
             }
           ]
+        },
+        {
+          path: 'phong-tro',
+          component: OwnerRoom,
+          children: [
+            {
+              path: ':id',
+              name: 'owner-detail-room',
+              component: OwnerDetailRoom
+            },
+            {
+              path: ':id/tao-hoa-don',
+              name: 'owner-create-payment',
+              component: OwnerCreatePayment
+            },
+            {
+              path: ':id/hoa-don',
+              name: 'owner-list-payment',
+              component: OwnerListPayment
+            }
+          ]
+        },
+        {
+          path: 'hoa-don/:id',
+          name: 'owner-detail-payment',
+          component: OwnerDetailPayment
         }
-      ]
+      ],
+      beforeEnter(to, from, next) {
+        if ($auth.check) {
+          if ($auth.user.role==$config.user.ROLE.OWNER) next()
+          else router.push({name: 'home'})
+        }
+        else router.push({name: 'login'})
+      }
     },
     {
       path: '/a',
@@ -274,7 +323,10 @@ const router = new Router({
         }
       ],
       beforeEnter(to, from, next) {
-        if ($auth.check) next()
+        if ($auth.check) {
+          if ($auth.user.role==$config.user.ROLE.ADMIN) next()
+          else router.push({name: 'home'})
+        }
         else router.push({name: 'login'})
       }
     }

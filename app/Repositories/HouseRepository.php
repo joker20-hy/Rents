@@ -64,7 +64,8 @@ class HouseRepository
         } elseif (isset($conditions['province'])) {
             $query = $query->where('province_id', $conditions['province']);
         }
-        return $query->with('province')->with('district')->with('area')
+        return $query->with('houseServices')->with('province')
+                    ->with('district')->with('area')
                     ->paginate($paginate);
     }
 
@@ -93,10 +94,20 @@ class HouseRepository
         $house = DB::transaction(function () use ($params, $ownerId) {
         	$house = $this->house->create($params);
 	        $this->userHouse->create([
-	            'user_id' => $ownerId,
-	            'house_id' => $house->id,
-	            'role' => config('const.OWNER_ROLE.OWNER')
-	        ]);
+                'user_id' => $ownerId,
+                'house_id' => $house->id,
+                'role' => config('const.OWNER_ROLE.OWNER')
+            ]);
+            $houseServices = [];
+            foreach($params['services'] as $serv) {
+                $serv = json_decode($serv);
+                array_push($houseServices, [
+                    'house_id' => $house->id,
+                    'service_id' => $serv->id,
+                    'price' => $serv->price
+                ]);
+            }
+            $this->houseService->insert($houseServices);
 	        return $house;
         });
         return $house;
@@ -114,7 +125,19 @@ class HouseRepository
     {
     	$house = DB::transaction(function () use ($id, $params) {
     		$house = $this->house->findOrFail($id);
-    		$house->update($params);
+            $house->update($params);
+            $houseServices = [];
+            foreach($params['add_services'] as $serv) {
+                array_push($houseServices, [
+                    'house_id' => $house->id,
+                    'service_id' => $serv['id'],
+                    'price' => $serv['price']
+                ]);
+            }
+            $this->houseService->insert($houseServices);
+            $this->houseService->where('house_id', $house->id)
+                ->whereIn('service_id', $params['remove_services'])
+                ->delete();
         	return $house;
         });
         return $house;
@@ -153,6 +176,7 @@ class HouseRepository
     		$house = $this->house->findOrFail($id);
     		$house->delete();
             $house->rooms()->delete();
+            $house->houseServices()->delete();
         });
         return true;
     }

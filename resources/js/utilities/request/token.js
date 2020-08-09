@@ -7,9 +7,9 @@ const $token = {
    * Keys to tokens
    */
   keys: {
-    access: '_access_token',
-    refresh: '_refresh_token',
-    expires: '_expires_in'
+    get access() { return '_access_token' },
+    get refresh() { return '_refresh_token' },
+    get expires() { return '_expires_in' }
   },
   /**
    * Store tokens

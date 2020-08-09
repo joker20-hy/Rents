@@ -50,6 +50,9 @@
         </label>
         <input type="text" class="input" v-model="house.address" placeholder="vd: số 20 ngõ 20" required>
       </div>
+      <label>Dịch vụ của nhà trọ <span class="text-danger" title="Required feild">*</span></label>
+      <small>(Những dịch vụ mà người thuê trọ cần trả trong quá trình thuê phòng)</small>
+      <choose-service :list="services"/>
       <div class="form-group d-flex">
         <label for="">This is a house for rent ?</label>
         <switch-box class="ml-auto" v-model="house.rent" :class="house.rent?'on':''"></switch-box>
@@ -76,16 +79,17 @@
   </div>
 </template>
 <script>
-import { $auth } from '../../../utilities/request/request'
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
 import adapter from '../../../utilities/CKImageAdapter'
 import SuggestBox from '../../utilities/SuggestBox'
 import SwitchBox from '../../utilities/SwitchBox'
+import ChooseService from './Services'
 export default {
   name: 'create-house',
   components: {
     SuggestBox,
-    SwitchBox
+    SwitchBox,
+    ChooseService
   },
   data () {
     return {
@@ -118,10 +122,14 @@ export default {
     },
     FALSE () {
       return 0
+    },
+    services () {
+      return this.$store.getters['services/services']
     }
   },
   mounted () {
     this.getDirection()
+    this.getServices()
   },
   methods: {
     getProvince (obj) {
@@ -141,7 +149,7 @@ export default {
       }
     },
     getDirection () {
-      $auth.request.get('/api/direction')
+      $request.get('/api/direction')
       .then(res => {
         this.directions = res.data
       })
@@ -149,21 +157,19 @@ export default {
         console.log(err.response.data.message)
       })
     },
+    getServices() {
+      $request.get('/api/service')
+      .then(res => {
+        res.data.forEach(item => {
+          item.price = ''
+          item.checked = false
+        })
+        this.$store.commit('services/services', res.data)
+      })
+      .catch(err => {console.log(err)})
+    },
     store () {
-      let data = new FormData();
-      for( var i = 0; i < this.images.length; i++ ){
-        data.append(`images[${i}]`, this.images[i]);
-      }
-      data.append('name', this.house.name)
-      data.append('province_id', this.house.province_id)
-      data.append('district_id', this.house.district_id)
-      data.append('area_id', this.house.area_id)
-      data.append('address', this.house.address)
-      data.append('rent', this.house.rent ? $config.TRUE : $config.FALSE)
-      data.append('price', this.house.price)
-      data.append('direction', this.house.direction)
-      data.append('description', this.house.description)
-      $auth.request.post('/api/house', data, {
+      $request.post('/api/house', this.getData(), {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
@@ -183,6 +189,29 @@ export default {
           timeout: 3000
         })
       })
+    },
+    getData() {
+      let data = new FormData();
+      for( var i = 0; i < this.images.length; i++ ) {
+        data.append(`images[${i}]`, this.images[i]);
+      }
+      data.append('name', this.house.name)
+      data.append('province_id', this.house.province_id)
+      data.append('district_id', this.house.district_id)
+      data.append('area_id', this.house.area_id)
+      data.append('address', this.house.address)
+      data.append('rent', this.house.rent ? $config.TRUE : $config.FALSE)
+      data.append('price', this.house.price)
+      data.append('direction', this.house.direction)
+      data.append('description', this.house.description)
+      let count = 0
+      this.services.forEach(serv => {
+        if (serv.checked) data.append(`services[${count++}]`, JSON.stringify({
+          id: serv.id,
+          price: serv.price
+        }))
+      })
+      return data
     }
   }
 }

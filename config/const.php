@@ -32,7 +32,13 @@ return [
     ],
     'SERVICE_TYPE' => [
         'PER_UNIT' => 1,
-        'PERIODIC' => 2
+        'PERIODIC' => 2,
+        'BY_RENTERS' => 3
+    ],
+    'SERVICE_TYPE_NAME' => [
+        'PER_UNIT' => 'Theo đơn vị',
+        'PERIODIC' => 'Định kỳ',
+        'BY_RENTERS' => 'Theo người thuê trọ'
     ],
     'OWNER_ROLE' => [
         'OWNER' => 1,
@@ -108,6 +114,10 @@ return [
             'feild' => 'price',
             'order' => 'asc'
         ]
+    ],
+    'ROOM_STATUS' => [
+        'waiting' => 0,
+        'rented' => 1
     ],
     'MAX_SIZE_IMAGE' => 2
 ];

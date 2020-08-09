@@ -31,7 +31,6 @@ export default {
   },
   methods: {
     onSort () {
-      console.log(this.sort_condition)
       this.$emit('sort', this.sort_condition)
     }
   }

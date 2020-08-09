@@ -14,10 +14,5 @@ use Illuminate\Support\Facades\Auth;
 |
 */
 
-// Route::get('/', 'HomeController@index');
-// Route::get('/tim-kiem', 'HomeController@search');
-
-// Auth::routes();
-
-Route::any('/{all}', 'HomeController@admin')->where(['all' => '.*']);
+Route::any('/{all}', 'HomeController@index')->where(['all' => '.*']);
 

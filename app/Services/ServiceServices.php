@@ -13,7 +13,15 @@ class ServiceServices
         $this->serviceRepository = $serviceRepository;
     }
 
-    public function index($paginate = 10)
+    public function index()
+    {
+        return $this->serviceRepository->all();
+    }
+
+    /**
+     * @param integer $paginate
+     */
+    public function list($paginate = 10)
     {
         return $this->serviceRepository->list($paginate);
     }
@@ -27,6 +35,7 @@ class ServiceServices
      */
     public function store(array $params)
     {
+        $params['unit'] = $params['type']==config('const.SERVICE_TYPE.BY_RENTERS')?'người':$params['unit'];
         return $this->serviceRepository->store($params);
     }
 

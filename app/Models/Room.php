@@ -18,7 +18,9 @@ class Room extends Model
     	'images',
 		'description',
 		'price',
-        'cycle'
+		'cycle',
+		'status',
+		'renter_count'
     ];
 
     public function house()
@@ -29,5 +31,10 @@ class Room extends Model
 	public function criterias()
 	{
 		return $this->belongsToMany(Criteria::class, 'room_criterias');
+	}
+
+	public function renters()
+	{
+		return $this->hasMany(User::class);
 	}
 }

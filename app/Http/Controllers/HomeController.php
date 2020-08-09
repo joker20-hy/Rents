@@ -23,16 +23,6 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('frontend.home');
-    }
-
-    public function search(Request $request)
-    {
-        dd($request);
-    }
-
-    public function admin()
-    {
-        return view('admin.app');
+        return view('app');
     }
 }

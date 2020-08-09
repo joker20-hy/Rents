@@ -32,6 +32,51 @@ class ReviewRepository
     }
 
     /**
+     * @param integer $paginate
+     */
+    public function listAll($paginate = 10)
+    {
+        return $this->review->paginate($paginate);
+    }
+
+    /**
+     * @param integer $paginate
+     */
+    public function listOwner($paginate)
+    {
+        return $this->review->join('review_owners', 'reviews.id', '=', 'review_owners.review_id')
+                            ->paginate($paginate);
+    }
+
+    /**
+     * @param integer $paginate
+     */
+    public function listRenter($paginate = 10)
+    {
+        return $this->review->join('review_renters', 'reviews.id', '=', 'review_renters.review_id')
+                            ->paginate($paginate);
+        
+    }
+
+    /**
+     * @param integer $paginate
+     */
+    public function listHouse($paginate)
+    {
+        return $this->review->join('review_houses', 'reviews.id', '=', 'review_houses.review_id')
+                            ->paginate($paginate);
+    }
+
+    /**
+     * @param integer $paginate
+     */
+    public function listRoom($paginate)
+    {
+        return $this->review->join('review_rooms', 'reviews.id', '=', 'review_rooms.review_id')
+                            ->paginate($paginate);
+    }
+
+    /**
      * Store review
      *
      * @param integer $type

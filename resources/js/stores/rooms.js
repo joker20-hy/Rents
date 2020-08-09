@@ -9,6 +9,9 @@ const rooms = {
       },
       first (state) {
         return state.rooms[0]
+      },
+      find: state => id => {
+        return state.rooms.find(room => room.id==id)
       }
     },
     mutations: {

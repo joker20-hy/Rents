@@ -4,13 +4,13 @@
       Review list
     </h3>
     <div class="d-flex py-3">
-      <button class="type-btn mr-2" :class="type==receiver_type.RENTER?'active':''" @click="changeReceiverType(receiver_type.RENTER)">
+      <button class="type-btn mr-2" :class="type==review_type.RENTER?'active':''" @click="changeReceiverType(review_type.RENTER)">
         renters
       </button>
-      <button class="type-btn mr-2" :class="type==receiver_type.HOUSE?'active':''" @click="changeReceiverType(receiver_type.HOUSE)">
+      <button class="type-btn mr-2" :class="type==review_type.HOUSE?'active':''" @click="changeReceiverType(review_type.HOUSE)">
         houses
       </button>
-      <button class="type-btn mr-2" :class="type==receiver_type.ROOM?'active':''" @click="changeReceiverType(receiver_type.ROOM)">
+      <button class="type-btn mr-2" :class="type==review_type.ROOM?'active':''" @click="changeReceiverType(review_type.ROOM)">
         rooms
       </button>
     </div>
@@ -60,7 +60,7 @@ export default {
   },
   data () {
   	return {
-      type: 1,
+      type: $config.REVIEW.TYPE.RENTER,
   	  loading: false,
   	  create: false,
   	  query: {
@@ -81,8 +81,8 @@ export default {
   	listApi () {
   	  return `/api/review/${this.type}?${serialize.fromObj(this.query.page)}`
     },
-    receiver_type () {
-      return $config.REVIEW.RECEIVER_TYPE
+    review_type () {
+      return $config.REVIEW.TYPE
     }
   },
   methods: {
@@ -92,7 +92,7 @@ export default {
     },
   	list () {
   	  this.loading = true
-  	  $auth.request.get(this.listApi)
+  	  $request.get(this.listApi)
   	  .then(res => {
   	  	this.loading = false
         this.per_page = res.data.per_page
@@ -117,7 +117,7 @@ export default {
       this.$modal.show('delete-review')
     },
     destroy () {
-      $auth.request.delete(`/api/review/${this.chosen.id}`)
+      $request.delete(`/api/review/${this.chosen.id}`)
       .then(res => {
         this.$modal.hide('delete-review')
         this.success('The review has been deleted successfully')

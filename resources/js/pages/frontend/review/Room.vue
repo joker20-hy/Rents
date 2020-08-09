@@ -82,7 +82,7 @@ export default {
   },
   methods: {
 	getRoom () {
-	  $auth.request.get(`/api/room/${this.id}`)
+	  $request.get(`/api/room/${this.id}`)
 	  .then(res => {
 		this.$store.commit('rooms/rooms', [res.data])
 	  })
@@ -100,7 +100,7 @@ export default {
 	  this.infra_rate = rate
 	},
 	create () {
-	  $auth.request.post(`/api/review/${this.type}`, {
+	  $request.post(`/api/review/${this.type}`, {
 		criteria_id: this.id,
 		title: this.title,
 		owner_rate: this.owner_rate,

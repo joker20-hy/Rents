@@ -70,7 +70,7 @@ export default {
   methods: {
     list () {
       this.loading = true
-      $auth.request.get(`/api/area?page=${this.page}`)
+      $request.get(`/api/area?page=${this.page}`)
       .then(res => {
         this.loading = false
         this.per_page = res.data.per_page
@@ -100,7 +100,7 @@ export default {
       this.$modal.show('delete-area')
     },
     destroy () {
-      $auth.request.delete(`/api/area/${this.chosen.id}`)
+      $request.delete(`/api/area/${this.chosen.id}`)
       .then(res => {
         this.$modal.hide('delete-area')
         this.$store.commit('areas/remove', this.chosen.id)

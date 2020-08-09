@@ -54,7 +54,7 @@ export default {
       this.leaveEdit()
     },
     update () {
-      $auth.request.put(`/api/province/${this.province.id}`, this.province)
+      $request.put(`/api/province/${this.province.id}`, this.province)
       .then(res => {
         this.edit = false
         this.$emit('success', 'The province has been updated successfully')

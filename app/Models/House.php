@@ -58,6 +58,11 @@ class House extends Model
         return $this->hasMany(UserHouse::class);
     }
 
+    public function houseServices()
+    {
+        return $this->hasMany(HouseService::class);
+    }
+
     public function services()
     {
         return $this->belongsToMany(Service::class, 'house_services');

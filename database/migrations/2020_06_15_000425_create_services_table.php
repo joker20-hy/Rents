@@ -16,6 +16,8 @@ class CreateServicesTable extends Migration
         Schema::create('services', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
+            $table->unsignedTinyInteger('type')->default(config('const.SERVICE_TYPE.PER_UNIT'));
+            $table->string('unit')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

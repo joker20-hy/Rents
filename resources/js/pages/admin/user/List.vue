@@ -82,7 +82,7 @@ export default {
     },
     list () {
       this.loading = true
-      $auth.request.get(this.listUrl)
+      $request.get(this.listUrl)
       .then(res => {
         this.loading = false
         this.$store.commit('users/users', res.data.data)

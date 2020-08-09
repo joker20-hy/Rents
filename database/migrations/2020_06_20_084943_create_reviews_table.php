@@ -18,7 +18,6 @@ class CreateReviewsTable extends Migration
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users');
             $table->string('title')->nullable();
-            $table->unsignedTinyInteger('rate');
             $table->text('description')->nullable();
             $table->boolean('anonymous')->default(false);
             $table->unsignedInteger('like')->default(0);

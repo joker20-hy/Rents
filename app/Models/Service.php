@@ -9,7 +9,7 @@ class Service extends Model
 {
     use SoftDeletes;
 
-    protected $fillable = ['name'];
+    protected $fillable = ['name', 'type', 'unit'];
 
     public function houses()
     {

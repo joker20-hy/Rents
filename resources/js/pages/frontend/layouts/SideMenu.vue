@@ -13,6 +13,9 @@
 	  <router-link v-if="admin" :to="{name: 'user-list'}" item>
       <i class="fas fa-users-cog"></i> Quản lý
     </router-link>
+     <router-link v-else-if="owner" :to="{name: 'owner-list-house'}" item>
+      <i class="fas fa-users-cog"></i> Quản lý
+    </router-link>
     <div item v-if="auth.id!=undefined" @click="logout()">
       <i class="fas fa-sign-out-alt"></i> Đăng xuất
     </div>
@@ -41,6 +44,9 @@ export default {
     },
     admin () {
       return this.auth.role==$config.user.ROLE.ADMIN
+    },
+    owner () {
+      return this.auth.role==$config.user.ROLE.OWNER
     }
   },
   methods: {

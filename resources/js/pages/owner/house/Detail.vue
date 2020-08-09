@@ -37,6 +37,11 @@
         <label for="">Chi tiết địa chỉ</label>
         <input type="text" class="input" v-model="house.address" placeholder="Địa chỉ chi tiết">
       </div>
+      <!--  -->
+      <label>Dịch vụ của nhà trọ <span class="text-danger" title="Required feild">*</span></label>
+      <small>(Những dịch vụ mà người thuê trọ cần trả trong quá trình thuê nhà)</small>
+      <choose-service :list="services" :chosens="serviceIds" @delete="deleteService" @add="addService" :editable="edit"/>
+      <!--  -->
       <div class="form-group d-flex">
         <label for="">Nhà để cho thuê?</label>
         <switch-box v-model="house.rent" class="ml-auto" :class="house.rent==1?'on':''" :locked="!edit"/>
@@ -70,12 +75,13 @@ import adapter from '../../../utilities/CKImageAdapter'
 import SuggestBox from '../../utilities/SuggestBox'
 import SwitchBox from '../../utilities/SwitchBox'
 import ImageLibrary from '../../utilities/ImageLibrary'
-
+import ChooseService from '../../admin/house/Services'
 export default {
   components: {
     SuggestBox,
     SwitchBox,
-    ImageLibrary
+    ImageLibrary,
+    ChooseService
   },
   data () {
     return {
@@ -89,7 +95,9 @@ export default {
       provinces: [],
       districts: [],
       areas: [],
-      description: ''
+      description: '',
+      add_services: [],
+      remove_services: []
     }
   },
   watch: {
@@ -106,28 +114,53 @@ export default {
     house () {
       return this.$store.getters['houses/find'](this.id)
     },
-    TRUE () {
-      return $config.TRUE
-    },
-    FALSE () {
-      return $config.FALSE
-    },
     direction () {
       return this.directions.find(dir => dir.id==this.house.direction)
+    },
+    services () {
+      return this.$store.getters['services/services']
+    },
+    serviceIds () {
+      return select(this.house.house_services, ['service_id', 'price'])
+    },
+    data() {
+      return {
+        id: this.house.id,
+        name: this.house.name,
+        province_id: this.house.province_id,
+        district_id: this.house.district_id,
+        area_id: this.house.area_id,
+        address: this.house.address,
+        rent: this.house.rent,
+        price: this.house.price,
+        acreage: this.house.acreage,
+        direction: this.house.direction,
+        description: this.house.description,
+        add_services: this.add_services,
+        remove_services: this.remove_services
+      }
     }
   },
   created () {
     this.getDirection()
+    this.getServices()
   },
   methods: {
     getDirection () {
-      $auth.request.get('/api/direction')
+      $request.get('/api/direction')
+      .then(res => this.directions = res.data )
+      .catch(err => console.log(err.response.data.message))
+    },
+    getServices() {
+      $request.get('/api/service')
       .then(res => {
-        this.directions = res.data
+        res.data.forEach(item => {
+          item.price = ''
+          item.checked = false
+        })
+        this.$store.commit('services/services', res.data)
       })
-      .catch(err => {
-        console.log(err.response.data.message)
-      })
+      .catch(err => console.log(err.response.data.message))
     },
     getProvince (province) {
       this.house.province_id = province.id
@@ -139,27 +172,34 @@ export default {
       this.house.area_id = area.id
     },
     getHouse () {
-      $auth.request.get(`/api/house/${this.id}`)
+      $request.get(`/api/house/${this.id}`)
       .then(res => {
         res.data.images = res.data.images==null?[]:JSON.parse(res.data.images)
         res.data.description = res.data.description==null?'':utf8.decode(res.data.description)
         this.$store.commit('houses/houses', [res.data])
       })
-      .catch(err => {
-        console.log(err.response.data)
-      })
+      .catch(err => console.log(err.response.data.message) )
     },
     updateImages (images) {
       this.house.images = images
     },
     update () {
-      $auth.request.put(`/api/house/${this.house.id}`, this.house)
+      $request.put(`/api/house/${this.house.id}`, this.data)
       .then(res => {
-        console.log(res)
+        $eventHub.$emit('success-alert', {
+          title: 'Thành công',
+          message: 'Đã chỉnh sửa thông tin thành công',
+          timeout: 3000
+        })
+        this.$router.push({name: 'owner-list-house'})
       })
-      .catch(err => {
-        console.log(err)
-      })
+      .catch(err => console.log(err))
+    },
+    addService(ids) {
+      this.add_services = ids
+    },
+    deleteService(ids) {
+      this.remove_services = ids
     }
   }
 }

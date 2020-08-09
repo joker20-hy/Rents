@@ -3,11 +3,12 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use App\Repositories\UserRepository;
 
 class UserServices
 {
-    private const FOLDER = 'avatar';
+    private const FOLDER = "avatar";
     protected $userRepository;
 
     public function __construct(UserRepository $userRepository)
@@ -18,6 +19,16 @@ class UserServices
     public function index($paginate = 10)
     {
         return $this->userRepository->list($paginate);
+    }
+
+    /**
+     * @param array $params
+     */
+    public function store(array $params)
+    {
+        $params["password"] = Hash::make($params["password"]);
+        $user = $this->userRepository->store($params);
+        return $user;
     }
 
     public function show($id = null)
@@ -31,7 +42,7 @@ class UserServices
             $user = $this->userRepository->findById($id);
         }
         $user->profile;
-        return $user;      
+        return $user;
     }
 
     /**
@@ -98,6 +109,17 @@ class UserServices
     public function destroy($id)
     {
         $this->userRepository->destroy($id);
+    }
+
+    public function rent($id, $roomId)
+    {
+        if (!$this->permissible($id)) {
+            return abort(403, "Bạn không có quyền thực hiện hành động này");
+        }
+        return $this->userRepository->update($id, [
+            'role' => config('const.USER.ROLE.RENTER'),
+            'room_id' => $roomId
+        ]);
     }
 
     /**

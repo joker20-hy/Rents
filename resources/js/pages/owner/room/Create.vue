@@ -62,7 +62,6 @@
   </div>
 </template>
 <script>
-import { $auth } from '../../../utilities/request/request'
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
 import adapter from '../../../utilities/CKImageAdapter'
 import CheckBox from '../../utilities/CheckBox'
@@ -80,7 +79,7 @@ export default {
       error: {},
       room: {
         name: '',
-        house_id: this.$route.params.house_id,
+        house_id: this.$route.params.id,
         acreage: '',
         price: '',
         cycle: '',
@@ -121,7 +120,7 @@ export default {
       }
     },
     store () {
-      $auth.request.post('/api/room', this.data, {
+      $request.post('/api/room', this.data, {
         headers: { 'Content-Type': 'multipart/form-data' }
       })
       .then(res => this.$router.push({name: 'room-list'}) )
@@ -139,7 +138,7 @@ export default {
       })
     },
     getCriterias () {
-      $auth.request.get('/api/criteria')
+      $request.get('/api/criteria')
       .then(res => {
         res.data.forEach(cri => cri.checked = false);
         this.criterias = res.data

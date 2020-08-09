@@ -48,7 +48,7 @@ export default {
         return false
       }
       this.showSuggest=true
-      $auth.request.get(`/api/sg/address?keywords=${this.keywords}`)
+      $request.get(`/api/sg/address?keywords=${this.keywords}`)
       .then(res => {
         this.addresses = res.data
       })

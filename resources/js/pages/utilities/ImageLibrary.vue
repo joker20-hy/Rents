@@ -1,7 +1,7 @@
 <template>
   <div>
     <label for="" style="font-weight: 600" v-show="label!=''">{{ label }}</label>
-    <div class="d-flex align-items-center pt-1">
+    <div class="d-flex align-items-center pt-1" v-if="editable">
       {{ photos_label }}
       <button type="button" class="btn text-primary px-1" onclick="clickTarget('#images')">
         <i class="fas fa-cloud-upload-alt"></i> Thêm ảnh
@@ -15,7 +15,7 @@
         <button type="button" class="btn text-primary" v-show="edit" @click="leaveEdit">Hủy</button>
       </div>
     </div>
-    <div>
+    <div v-show="editable">
       <small class="text-muted">** Kích thước ảnh không thể lớn hơn {{ maxSize }} **</small>
     </div>
     <div v-show="bucket.length==0" class="text-center text-muted">Hiện chưa có ảnh</div>
@@ -125,7 +125,7 @@ export default {
       return data
     },
     upload () {
-      $auth.request.post(this.updateApi, this.getData(), {
+      $request.post(this.updateApi, this.getData(), {
         headers: {'Content-Type': 'multipart/form-data'}
       })
       .then(res => {
@@ -153,7 +153,7 @@ export default {
     remove () {
       let images = []
       this.bucket.filter(img => !img.choose).forEach(img => images.push(img.url))
-      $auth.request.put(this.deleteApi, {
+      $request.put(this.deleteApi, {
         images: images
       })
       .then(res => {

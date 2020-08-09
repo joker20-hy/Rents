@@ -59,15 +59,13 @@ export default {
       $eventHub.$emit('toggle-side-search')
     },
     get () {
-      $auth.request.get(`/api/room/${this.id}`)
+      $request.get(`/api/room/${this.id}`)
       .then(res => {
         res.data.description = utf8.decode(res.data.description)
         this.images = JSON.parse(res.data.images)
         this.$store.commit('rooms/rooms', [res.data])
       })
-      .catch(err => {
-        console.log(err.response.data)
-      })
+      .catch(err => console.log(err.response.data) )
     }
   }
 }

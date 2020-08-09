@@ -38,7 +38,7 @@ export default {
   },
   methods: {
     getProvinces () {
-      $auth.request.get('/api/province/all')
+      $request.get('/api/province/all')
       .then(res => {
         this.provinces = res.data
       })
@@ -51,7 +51,7 @@ export default {
       this.district.name = ''
     },
     store () {
-      $auth.request.post('/api/district', this.district)
+      $request.post('/api/district', this.district)
       .then(res => {
         this.reset()
         this.$emit('created', res.data)

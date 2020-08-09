@@ -47,14 +47,17 @@ class ReviewServices
     public function index($type, $paginate = 10)
     {
         switch ($type) {
-            case config('const.REVIEW.RECEIVER_TYPE.RENTER'):
-                return $this->renter($paginate);
+            case config('const.REVIEW.TYPE.OWNER'):
+                return $this->reviewRepository->listOwner($paginate);
                 break;
-            case config('const.REVIEW.RECEIVER_TYPE.HOUSE'):
-                return $this->house($paginate);
+            case config('const.REVIEW.TYPE.RENTER'):
+                return $this->reviewRepository->listRenter($paginate);
                 break;
-            case config('const.REVIEW.RECEIVER_TYPE.ROOM'):
-                return $this->room($paginate);
+            case config('const.REVIEW.TYPE.HOUSE'):
+                return $this->reviewRepository->listHouse($paginate);
+                break;
+            case config('const.REVIEW.TYPE.ROOM'):
+                return $this->reviewRepository->listRoom($paginate);
                 break;
         }
         return [];
