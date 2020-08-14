@@ -3,6 +3,16 @@ import $token from './token'
 import $user from './user'
 
 const $auth = {
+  _data: {},
+  remember (key, value) {
+    this._data[key] = value 
+  },
+  forget (key) {
+    this._data[key] = undefined
+  },
+  data (key) {
+    return this._data[key]
+  },
   get api() {
     return {
       login: '/api/login',

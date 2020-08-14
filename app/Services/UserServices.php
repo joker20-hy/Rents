@@ -111,7 +111,15 @@ class UserServices
         $this->userRepository->destroy($id);
     }
 
-    public function rent($id, $roomId)
+    /**
+     * Rent room
+     *
+     * @param integer $id
+     * @param integer $roomId
+     *
+     * @return \App\Models\User
+     */
+    public function rentRoom($id, $roomId)
     {
         if (!$this->permissible($id)) {
             return abort(403, "Bạn không có quyền thực hiện hành động này");
@@ -119,6 +127,21 @@ class UserServices
         return $this->userRepository->update($id, [
             'role' => config('const.USER.ROLE.RENTER'),
             'room_id' => $roomId
+        ]);
+    }
+
+    /**
+     * Leave room
+     *
+     * @param integer $id
+     *
+     * @return \App\Models\User
+     */
+    public function leaveRoom($id)
+    {
+        return $this->userRepository->update($id, [
+            'role' => config('const.USER.ROLE.NORMAL'),
+            'room_id' => null
         ]);
     }
 

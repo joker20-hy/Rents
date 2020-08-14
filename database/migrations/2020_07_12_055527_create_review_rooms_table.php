@@ -19,6 +19,7 @@ class CreateReviewRoomsTable extends Migration
             $table->unsignedBigInteger('room_id');
             $table->foreign('room_id')->references('id')->on('rooms');
             $table->unsignedTinyInteger('secure_rate')->default(0);
+            $table->unsignedTinyInteger('infra_rate')->default(0);
             $table->timestamps();
             $table->softDeletes();
         });

@@ -3,25 +3,20 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use App\Models\Room;
-use App\Models\RoomCriteria;
 use App\Repositories\RoomRepository;
 
 class RoomServices
 {
     private $folder;
-    protected $room;
     protected $imageServices;
-    protected $roomCriteria;
+    protected $userServinces;
     protected $roomRepository;
 
-    public function __construct(Room $room, RoomCriteria $roomCriteria, ImageServices $imageServices, RoomRepository $roomRepository)
+    public function __construct(ImageServices $imageServices, UserServices $userServinces, RoomRepository $roomRepository)
     {
         $this->folder = config('const.FOLDER.ROOM');
-        $this->room = $room;
-        $this->roomCriteria = $roomCriteria;
         $this->imageServices = $imageServices;
+        $this->userServinces = $userServinces;
         $this->roomRepository = $roomRepository;
     }
 
@@ -33,63 +28,7 @@ class RoomServices
      */
     public function index($conditions = [], $paginate = 10)
     {
-        $rooms = $this->room->selectRaw("
-            rooms.*,
-            houses.address_detail as address"
-        )->join("houses", "rooms.house_id", "=", "houses.id")
-        ->join("provinces", "houses.province_id", "=", "provinces.id")
-        ->join("districts", "houses.district_id", "=", "districts.id")
-        ->join("areas", "houses.area_id", "=", "areas.id");
-        $rooms = $this->search($rooms, $conditions);
-        $rooms = $this->filter($rooms, $conditions);
-        $rooms = $rooms->paginate($paginate);
-        foreach($rooms as $room) {
-            $room->criterias;
-        }
-        return $rooms;
-    }
-
-    private function search($query, $conditions)
-    {
-        if (isset($conditions['lat']) && isset($conditions['lng'])) {
-            //
-        } elseif (isset($conditions['area'])) {
-            return $query->where('areas.slug', $conditions['area']);
-        } elseif (isset($conditions['district'])) {
-            return $query->where('districts.slug', $conditions['district']);
-        } elseif (isset($conditions['province'])) {
-            return $query->where('provinces.slug', $conditions['province']);
-        } elseif (isset($conditions['address'])) {
-            return $query->where('houses.address_detail', 'like', "%".$conditions['address']."%");
-        }
-        return $query;
-    }
-
-    private function filter($query, $conditions)
-    {
-        if (array_key_exists('price', $conditions)) {
-            $price_condition = config('const.ROOM_FILTER.PRICE')[$conditions['price']];
-            $query = $query->whereBetween("rooms.price", [$price_condition['min'], $price_condition['max']]);
-        }
-        if (array_key_exists('acreage', $conditions)) {
-            $acreage_condition = config('const.ROOM_FILTER.ACREAGE')[$conditions['acreage']];
-            $query = $query->whereBetween("rooms.acreage", [$acreage_condition['min'], $acreage_condition['max']]);
-        }
-        if (array_key_exists('infras', $conditions)) {
-            $query = $query->whereRaw("(
-                select
-                    count(*)
-                from room_criterias
-                where
-                    room_id=rooms.id and criteria_id in (".$conditions['infras'].") > 0
-            )");
-        }
-        return $query;
-    }
-
-    private function sort($query, $conditions)
-    {
-        //
+        return $this->roomRepository->get($conditions, $paginate);
     }
 
     /**
@@ -101,40 +40,10 @@ class RoomServices
     public function list($conditions = [], $paginate = 10)
     {
         $authUser = Auth::user();
-        $rooms = $this->room->selectRaw(
-            "rooms.*,
-            houses.address_detail  as address,
-            (select count(*) from users where room_id=rooms.id) as renters_count"
-        )->join("houses", "rooms.house_id", "=", "houses.id")
-        ->join("provinces", "houses.province_id", "=", "provinces.id")
-        ->join("districts", "houses.district_id", "=", "districts.id");
         if ($authUser->role==config('USER.ROLE.OWNER')) {
-            $rooms = $rooms->join("user_houses", "user_houses.house_id", "=", "houses.id")
-                        ->where('user_houses.user_id', $authUser->id);
+            return $this->roomRepository->list($conditions, $authUser->id, $paginate);
         }
-        $rooms = $this->listFilter($rooms, $conditions);
-        return $rooms->paginate($paginate);
-    }
-
-    /**
-     * Filter for list rooms
-     *
-     * @param mixed $query
-     * @param array $conditions []
-     */
-    private function listFilter($query, $conditions)
-    {
-        if (!is_null($conditions['house'])) {
-            $query = $query->where("houses.id", $conditions['house']);
-        } elseif (!is_null($conditions['area'])) {
-            $query = $query->join("areas", "houses.area_id", "=", "areas.id")
-                        ->where("areas.id", $conditions['area']);
-        } elseif (!is_null($conditions['district'])) {
-            $query = $query->where("districts.id", $conditions['district']);
-        } elseif (!is_null($conditions['province'])) {
-            $query = $query->where("provinces.id", $conditions['province']);
-        }
-        return $query;
+        return $this->roomRepository->list($conditions, null, $paginate);
     }
 
     /**
@@ -222,14 +131,19 @@ class RoomServices
      */
     public function destroy($id)
     {
-        $room = $this->room->findOrFail($id);
-        if ($this->permission($room->house_id)) {
-            $room->delete();
-        } else {
+        if (!$this->permission($id)) {
             return abort(403, "You have no permission to delete room");
         }
+        $this->roomRepository->delete($id);
     }
 
+    /**
+     * Get room with services
+     *
+     * @param integer $id
+     *
+     * @return array
+     */
     public function getServices($id)
     {
         if (!$this->permission($id)) {
@@ -244,6 +158,17 @@ class RoomServices
             'room' => $room,
             'room_services' => $roomServices
         ];
+    }
+
+    public function leaveRoom($id, $all = false, $userIds = [])
+    {
+        if ($all) {
+            $this->roomRepository->emptyRoom($id);
+        } else {
+            foreach($userIds as $userId) {
+                $this->userServinces->leaveRoom($userId);
+            }
+        }
     }
 
     /**

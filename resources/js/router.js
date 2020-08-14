@@ -11,6 +11,7 @@ import Review from './pages/frontend/review/Index'
 import ReviewHouse from './pages/frontend/review/House'
 import ReviewRoom from './pages/frontend/review/Room'
 import ReviewRenter from './pages/frontend/review/Renter'
+import Account from './pages/frontend/user/Index'
 /** Auth components */
 import Login from './pages/auth/Login'
 import Register from './pages/auth/register'
@@ -85,6 +86,21 @@ const router = new Router({
       ]
     },
     {
+      path: '/:id/tai-khoan',
+      name: 'account',
+      component: Account,
+      beforeEnter(to, from, next) {
+        if ($auth.check) {
+          $auth.forget('old_route')
+          next()
+        }
+        else {
+          $auth.remember('old_route', to)
+          router.push({name: 'login'})
+        }
+      }
+    },
+    {
       path: '/danh-gia',
       component: Review,
       children: [
@@ -106,11 +122,11 @@ const router = new Router({
       ],
       beforeEnter(to, from, next) {
         if ($auth.check) {
-          $old_route = ''
+          $auth.forget('old_route')
           next()
         }
         else {
-          $old_route = to.fullPath
+          $auth.remember('old_route', to)
           router.push({name: 'login'})
         }
       }
@@ -324,10 +340,14 @@ const router = new Router({
       ],
       beforeEnter(to, from, next) {
         if ($auth.check) {
+          $auth.forget('old_route')
           if ($auth.user.role==$config.user.ROLE.ADMIN) next()
           else router.push({name: 'home'})
         }
-        else router.push({name: 'login'})
+        else {
+          $auth.remember('old_route', to)
+          router.push({name: 'login'})
+        }
       }
     }
   ]
