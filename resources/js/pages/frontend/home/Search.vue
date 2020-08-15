@@ -82,13 +82,9 @@ export default {
   methods: {
     suggestAddress (address) {
       if (this.address.name.length < 2) return false
-      $auth.request.get(`/api/sg/address?keywords=${this.address.name}`)
-      .then(res => {
-        this.addresses = res.data
-      })
-      .catch(err => {
-        console.log(err.response.data)
-      })
+      $request.get(`/api/sg/address?keywords=${this.address.name}`)
+      .then(res => this.addresses = res.data )
+      .catch(err => console.log(err.response.data) )
     },
     chooseAddress (address) {
       this.address = address
@@ -103,13 +99,9 @@ export default {
       this.suggest.province = false
     },
     getProvinces () {
-      $auth.request.get('/api/sg/provinces')
-      .then(res => {
-        this.provinces = res.data
-      })
-      .catch(err => {
-        console.log(err.response.data)
-      })
+      $request.get('/api/sg/provinces')
+      .then(res => this.provinces = res.data )
+      .catch(err => console.log(err.response.data) )
     },
     hideProvinceSuggest() {
       this.suggest.province = false
@@ -122,13 +114,9 @@ export default {
       this.district = {
         name: 'Quận huyện'
       }
-      $auth.request.get(`/api/district/${provinceId}`)
-      .then(res => {
-        this.districts = res.data
-      })
-      .catch(err => {
-        console.log(err.response.data)
-      })
+      $request.get(`/api/district/${provinceId}`)
+      .then(res => this.districts = res.data )
+      .catch(err => console.log(err.response.data) )
     },
     hideDistrictSuggest () {
       this.suggest.district = false

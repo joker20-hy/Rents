@@ -95,7 +95,7 @@ export default {
       this.query.infras=this.$route.query.infras==undefined?'':this.$route.query.infras
       this.conditions.price = $room_filter.price
       this.conditions.acreage = $room_filter.acreage
-      $auth.request(`/api/criteria`)
+      $request(`/api/criteria`)
       .then(res => {
         this.conditions.infras = res.data
         this.conditions.infras.forEach(infras => {
@@ -121,7 +121,7 @@ export default {
       this.init()
       this.loading = true
       this.query.page = page
-      $auth.request.get(this.listApi())
+      $request.get(this.listApi())
       .then(res => {
         this.loading = false
         this.rooms = res.data.data

@@ -39,7 +39,6 @@
   </div>
 </template>
 <script>
-import { $auth } from '../../../utilities/request/request'
 import serialize from '../../../utilities/serialize'
 import ListItem from './ListItem'
 import HouseDetail from './Detail'
@@ -88,7 +87,7 @@ export default {
     },
     list () {
       this.loading = true
-      $auth.request.get(this.listApi())
+      $request.get(this.listApi())
       .then(res => {
         this.loading = false
         res.data.data.forEach(dat => {
@@ -110,7 +109,7 @@ export default {
       this.$modal.show('delete-house')
     },
     destroy () {
-      $auth.request.delete(`/api/house/${this.chosen}`)
+      $request.delete(`/api/house/${this.chosen}`)
       .then(res => {
         this.$modal.hide('delete-house')
         $eventHub.$emit('success-alert', {

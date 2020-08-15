@@ -53,7 +53,7 @@ export default {
       $eventHub.$emit('show-create-room')
     },
     list () {
-      $auth.request.get('/api/room/list')
+      $request.get('/api/room/list')
       .then(res => {
         res.data.data.forEach(dat => {
           dat.images = dat.images==null||dat.images==''?[]:JSON.parse(dat.images)
@@ -70,7 +70,7 @@ export default {
       this.$modal.show('delete-room')
     },
     destroy () {
-      $auth.request.delete(`/api/room/${this.chosen}`)
+      $request.delete(`/api/room/${this.chosen}`)
       .then(res => {
         this.$modal.hide('delete-room')
         $eventHub.$emit('success-alert', {

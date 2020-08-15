@@ -1,6 +1,6 @@
 <template>
-  <div class="col-md-10 col-lg-8 col-xl-6 mx-auto">
-  	<h3 class="d-flex align-items-end mt-5 py-3 text-primary">
+  <div class="col-md-10 col-lg-8 col-xl-7 mx-auto">
+  	<h3 class="d-flex align-items-end mt-5 py-1 text-primary">
       Service list
       <button class="btn ml-auto text-primary" v-show="!create" style="font-weight: 600" @click="create=true">
         <i class="fas fa-plus"></i> Create
@@ -12,8 +12,10 @@
 	</div>
     <table class="records-list">
       <thead>
-      	<th>Name</th>
-      	<th>Actions</th>
+      	<th>Tên dịch vụ</th>
+		<th>Loại dịch vụ</th>
+		<th>Đơn vị</th>
+      	<th>Hành động</th>
       </thead>
       <tbody>
       	<list-item v-for="service in services" :key="service.id" :service="service" @destroy="destroyConfirm"/>
@@ -70,13 +72,13 @@ export default {
   	  return this.$store.getters['services/services']
   	},
   	listApi () {
-  	  return `/api/service?${serialize.fromObj(this.query.page)}`
+  	  return `/api/service/list?${serialize.fromObj(this.query.page)}`
   	}
   },
   methods: {
   	list () {
   	  this.loading = true
-  	  $auth.request.get(this.listApi)
+  	  $request.get(this.listApi)
   	  .then(res => {
   	  	this.loading = false
   	  	this.page_count = res.data.last_page
@@ -109,7 +111,7 @@ export default {
   	  this.$modal.show('delete-service')
   	},
   	destroy () {
-  	  $auth.request.delete(`/api/service/${this.chosen.id}`)
+  	  $request.delete(`/api/service/${this.chosen.id}`)
   	  .then(res => {
   	  	this.$modal.hide('delete-service')
   	  	this.$store.commit('services/remove', this.chosen.id)

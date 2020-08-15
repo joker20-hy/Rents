@@ -76,7 +76,7 @@ export default {
     },
     list () {
       this.loading = true
-      $auth.request.get(`/api/province?page=${this.page}`)
+      $request.get(`/api/province?page=${this.page}`)
       .then(res => {
         this.per_page = res.data.per_page
         this.page_count = res.data.last_page
@@ -97,7 +97,7 @@ export default {
       }
     },
     destroy () {
-      $auth.request.delete(`/api/province/${this.chosen.id}`)
+      $request.delete(`/api/province/${this.chosen.id}`)
       .then(res => {
         this.$store.commit('provinces/remove', this.chosen.id)
         this.$modal.hide('delete-province')

@@ -8,6 +8,9 @@
         </router-link>
       </div>
       <list-item v-for="house in houses" :key="house.id" :house="house" @destroy="confirmDestroy"/>
+      <div class="py-3 text-center mx-auto" v-if="loading">
+        <i class="fas fa-spinner fa-pulse fa-lg text-primary"></i>
+      </div>
       <confirm-box :name="'delete-house'" :title="'Xóa nhà'" :message="'Bản ghi nhà này sẽ bị xóa'" @confirm="destroy()"/>
     </div>
   </div>
@@ -22,7 +25,8 @@ export default {
   },
   data () {
     return {
-      chosen: ''
+      chosen: '',
+      loading: false
     }
   },
   created () {
@@ -35,8 +39,10 @@ export default {
   },
   methods: {
     list () {
-      $auth.request.get(`/api/house/list`)
+      this.loading = true
+      $request.get(`/api/house/list`)
       .then(res => {
+        this.loading = false
         res.data.data.forEach(house => {
           house.images=house.images==null?[]:JSON.parse(house.images)
           house.description = house.description==null?'':utf8.decode(house.description)
@@ -44,6 +50,7 @@ export default {
         this.$store.commit('houses/houses', res.data.data)
       })
       .catch(err => {
+        this.loading = false
         console.log(err)
       })
     },
@@ -52,7 +59,7 @@ export default {
       this.$modal.show('delete-house')
     },
     destroy () {
-      $auth.request.delete(`/api/house/${this.chosen}`)
+      $request.delete(`/api/house/${this.chosen}`)
       .then(res => {
         this.$modal.hide('delete-house')
         $eventHub.$emit('success-alert', {

@@ -7,10 +7,13 @@
 	  {{ auth.name }}
 	</header>
 	<main class="px-2">
-    <div item v-if="auth.id!=undefined">
+    <router-link v-if="auth.id!=undefined" :to="{name: 'account', params: {id: auth.id}}" item>
       <i class="fas fa-user"></i> Tài khoản
-    </div>
+    </router-link>
 	  <router-link v-if="admin" :to="{name: 'user-list'}" item>
+      <i class="fas fa-users-cog"></i> Quản lý
+    </router-link>
+     <router-link v-else-if="owner" :to="{name: 'owner-list-house'}" item>
       <i class="fas fa-users-cog"></i> Quản lý
     </router-link>
     <div item v-if="auth.id!=undefined" @click="logout()">
@@ -41,6 +44,9 @@ export default {
     },
     admin () {
       return this.auth.role==$config.user.ROLE.ADMIN
+    },
+    owner () {
+      return this.auth.role==$config.user.ROLE.OWNER
     }
   },
   methods: {

@@ -12,6 +12,7 @@ import areas from './areas'
 import provinces from './provinces'
 import districts from './districts'
 import reviews from './reviews'
+import payments from './payments'
 
 Vue.use(Vuex)
 
@@ -27,6 +28,7 @@ export const store = new Vuex.Store({
     areas,
     provinces,
     districts,
-    reviews
+    reviews,
+    payments
   }
 })

@@ -7,6 +7,12 @@
   	  	</div>
   	  	<input class="form-control" v-show="edit" v-model="service.name">
   	  </td>
+	  <td>
+		{{ serviceName(service.type) }}
+	  </td>
+	  <td>
+		{{ service.unit }}
+	  </td>
   	  <td class="px-2">
   	  	<div>
   	  	  <button class="btn text-primary" @click="enterEdit()" v-show="!edit">edit</button>
@@ -37,6 +43,11 @@ export default {
   	}
   },
   methods: {
+	serviceName(type) {
+	  for(let i in $config.SERVICE_TYPE){
+		if ($config.SERVICE_TYPE[i].value==type) return $config.SERVICE_TYPE[i].name
+	  }
+	},
   	enterEdit () {
   	  this.backup()
   	  this.edit = true
@@ -48,7 +59,7 @@ export default {
   	},
    	update () {
    	  this.updating = true
-   	  $auth.request.put(`/api/service/${this.service.id}`, {
+   	  $request.put(`/api/service/${this.service.id}`, {
    	  	name: this.service.name
    	  })
    	  .then(res => {

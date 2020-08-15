@@ -15,6 +15,18 @@ class AreaRepository
     }
 
     /**
+     * List areas
+     *
+     * @param integer $paginate
+     *
+     * @return mixed
+     */
+    public function list($paginate = 10)
+    {
+        return $this->area->with('province')->with('district')->paginate($paginate);
+    }
+
+    /**
      * Create area record
      *
      * @param array $params
@@ -49,11 +61,6 @@ class AreaRepository
     public function findBySlug($slug)
     {
         return $this->area->where('slug', $slug)->first();
-    }
-
-    public function list($paginate)
-    {
-        return $this->area->with('province')->with('district')->paginate($paginate);
     }
 
     /**

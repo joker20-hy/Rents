@@ -44,7 +44,6 @@
         <div class="form-group d-flex">
           <label for="">House for rent?</label>
           <switch-box class="ml-auto" v-model="house.rent" :class="house.rent?'on':''" :locked="!edit"></switch-box>
-          <!-- <switch-input class="ml-auto" :status="house.rent" @click="house.rent=!house.rent" :locked="!edit"/> -->
         </div>
         <div class="form-group" v-show="house.rent">
           <label for="">Direction</label>
@@ -71,7 +70,6 @@
   </modal>
 </template>
 <script>
-import { $auth } from '../../../utilities/request/request'
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
 import adapter from '../../../utilities/CKImageAdapter'
 import SuggestBox from '../../utilities/SuggestBox'
@@ -135,7 +133,7 @@ export default {
       this.house.images = images
     },
     getDirection () {
-      $auth.request.get('/api/direction')
+      $request.get('/api/direction')
       .then(res => {
         this.directions = res.data
       })
@@ -149,7 +147,7 @@ export default {
       this.$modal.show('detail-house')
     },
     update () {
-      $auth.request.put(`/api/house/${this.house.id}`, {
+      $request.put(`/api/house/${this.house.id}`, {
         name: this.house.name,
         province_id: this.house.province_id,
         district_id: this.house.district_id,

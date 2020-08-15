@@ -86,17 +86,6 @@ export default {
   	  this.infras_conditions[target.index].checked = target.checked
   	},
   	apply () {
-      console.log({
-  	  	price: {
-          index: this.chosen_price,
-          name: this.price_conditions[this.chosen_price]
-        },
-        acreage: {
-          index: this.chosen_acreage,
-          name: this.acreage_conditions[this.chosen_acreage]
-        },
-  	  	infras: this.infras_conditions.filter(infras => infras.checked==true)
-      })
       this.$emit('apply', {
   	  	price: {
           index: this.chosen_price,

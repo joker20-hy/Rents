@@ -18,7 +18,7 @@ class CreateHousesTable extends Migration
             $table->string('name');
             $table->unsignedSmallInteger('province_id');
             $table->foreign('province_id')->references('id')->on('provinces');
-            $table->unsignedMediumInteger('district_id');
+            $table->unsignedInteger('district_id');
             $table->foreign('district_id')->references('id')->on('districts');
             $table->unsignedBigInteger('area_id');
             $table->foreign('area_id')->references('id')->on('areas');

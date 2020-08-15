@@ -86,6 +86,7 @@ class HouseServices
         $house->province;
         $house->district;
         $house->area;
+        $house->houseServices;
         return $house;
     }
 
@@ -102,7 +103,7 @@ class HouseServices
         if (!$this->permission($id)) {
             return abort(403, "You have no permission to update house");
         }
-        if (isset($params['description'])) {
+        if (array_key_exists('description', $params)) {
             $params['description'] = utf8_encode($params['description']);
         }
         $house = $this->houseRepository->update($id, $params);
@@ -173,7 +174,6 @@ class HouseServices
         } elseif ($authUser->role==config('const.USER.ROLE.OWNER')) {
             $houseIds = $authUser->houses->pluck('id');
             return $houseIds->contains($id);
-            return in_array($id, $houseIds);
         }
         return false;
     }

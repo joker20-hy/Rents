@@ -61,7 +61,7 @@ export default {
   },
   methods: {
   	list () {
-  	  $auth.request.get(`/api/criteria/list?page${this.page}`)
+  	  $request.get(`/api/criteria/list?page${this.page}`)
   	  .then(res => {
   	  	this.page_count = res.data.last_page
   	  	this.per_page = res.data.per_page
@@ -92,7 +92,7 @@ export default {
   	  this.$modal.show('delete-criteria')
   	},
   	destroy () {
-  	  $auth.request.delete(`/api/criteria/${this.chosen.id}`)
+  	  $request.delete(`/api/criteria/${this.chosen.id}`)
   	  .then(res => {
   	  	$eventHub.$emit('success-alert', {
           title: 'Success',

@@ -35,7 +35,8 @@ class StoreController extends Controller
             'images.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'direction' => 'nullable|integer',
             'price' => 'nullable|integer',
-            'description' => 'nullable|string'
+            'description' => 'nullable|string',
+            'services' => 'nullable|array'
         ]);
     }
 }

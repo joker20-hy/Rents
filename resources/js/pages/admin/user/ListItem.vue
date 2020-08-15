@@ -55,7 +55,7 @@ export default {
     },
     verifyStatus () {
       this.$store.commit('users/changeVerify', this.user)
-      $auth.request.put(`/api/user/${this.user.id}/verify`, {
+      $request.put(`/api/user/${this.user.id}/verify`, {
         verify: this.user.verify
       })
       .then(res => {

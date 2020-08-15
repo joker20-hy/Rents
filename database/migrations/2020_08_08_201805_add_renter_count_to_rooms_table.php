@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddInfrasRateToReviewRoomsTable extends Migration
+class AddRenterCountToRoomsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,8 @@ class AddInfrasRateToReviewRoomsTable extends Migration
      */
     public function up()
     {
-        Schema::table('review_rooms', function (Blueprint $table) {
-            $table->unsignedTinyInteger('infra_rate')->default(0);
+        Schema::table('rooms', function (Blueprint $table) {
+            $table->unsignedInteger('renter_count')->default(0)->after('status');
         });
     }
 
@@ -25,8 +25,8 @@ class AddInfrasRateToReviewRoomsTable extends Migration
      */
     public function down()
     {
-        Schema::table('review_rooms', function (Blueprint $table) {
-            $table->dropColumn('infra_rate');
+        Schema::table('rooms', function (Blueprint $table) {
+            $table->dropColumn('renter_count');
         });
     }
 }

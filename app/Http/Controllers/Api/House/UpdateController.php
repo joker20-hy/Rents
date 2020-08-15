@@ -34,7 +34,9 @@ class UpdateController extends Controller
             'direction' => 'nullable|integer',
     		'description' => 'nullable|string',
     		'addition_images' => 'nullable|array',
-            'addition_images.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048'
+            'addition_images.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'add_services' => 'nullable|array',
+            'remove_services' => 'nullable|array'
     	]);
     }
 }

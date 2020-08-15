@@ -25,7 +25,7 @@ export default {
   },
   methods: {
   	store () {
-  	  $auth.request.post('/api/criteria', {
+  	  $request.post('/api/criteria', {
 		name: this.name,
 		icon: this.icon
   	  })

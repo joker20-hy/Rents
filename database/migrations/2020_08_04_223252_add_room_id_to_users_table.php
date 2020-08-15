@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddPriceToRoomsTable extends Migration
+class AddRoomIdToUsersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,9 @@ class AddPriceToRoomsTable extends Migration
      */
     public function up()
     {
-        Schema::table('rooms', function (Blueprint $table) {
-            $table->integer('price')->after('acreage');
+        Schema::table('users', function (Blueprint $table) {
+            $table->unsignedBigInteger('room_id')->nullable()->after('verify');
+            $table->foreign('room_id')->references('id')->on('rooms');
         });
     }
 
@@ -25,8 +26,8 @@ class AddPriceToRoomsTable extends Migration
      */
     public function down()
     {
-        Schema::table('rooms', function (Blueprint $table) {
-            $table->dropColumn('price');
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('room_id');
         });
     }
 }

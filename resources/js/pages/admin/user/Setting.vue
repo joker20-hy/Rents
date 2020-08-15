@@ -47,7 +47,7 @@ export default {
     },
     change2Step () {
       this.user.setting.verification_2_step=this.user.setting.verification_2_step!=$config.TRUE ? $config.TRUE : $config.FALSE
-      $auth.request.put(`/api/user/${this.user.id}/setting`, this.user.setting)
+      $request.put(`/api/user/${this.user.id}/setting`, this.user.setting)
       .then(res => {
         $eventHub.$emit('success-alert', {
           title: 'Success',

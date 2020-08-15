@@ -24,7 +24,8 @@ class User extends Authenticatable implements MustVerifyEmail
         'role',
         'avg_rate',
         'rate_count',
-        'verify'
+        'verify',
+        'room_id'
     ];
 
     /**
@@ -74,5 +75,10 @@ class User extends Authenticatable implements MustVerifyEmail
     public function reviews()
     {
         return $this->hasMany(Review::class);
+    }
+
+    public function room()
+    {
+        return $this->belongsTo(Room::class);
     }
 }

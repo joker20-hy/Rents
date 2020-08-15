@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddCycleToRoomsTable extends Migration
+class AddStatusToPaymentsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,8 @@ class AddCycleToRoomsTable extends Migration
      */
     public function up()
     {
-        Schema::table('rooms', function (Blueprint $table) {
-            $table->unsignedTinyInteger('cycle')->after('price')->default(1);
+        Schema::table('payments', function (Blueprint $table) {
+            $table->boolean('status')->default(false)->after('bill');
         });
     }
 
@@ -25,8 +25,8 @@ class AddCycleToRoomsTable extends Migration
      */
     public function down()
     {
-        Schema::table('rooms', function (Blueprint $table) {
-            $table->dropColumn('cycle');
+        Schema::table('payments', function (Blueprint $table) {
+            $table->dropColumn('status');
         });
     }
 }

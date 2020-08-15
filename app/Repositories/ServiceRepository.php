@@ -14,6 +14,11 @@ class ServiceRepository
         $this->service = $service;        
     }
 
+    public function all()
+    {
+        return $this->service->select(['id', 'name', 'type'])->get();
+    }
+
     /**
      * List and paginate service records
      *
@@ -23,7 +28,7 @@ class ServiceRepository
      */
     public function list($paginate)
     {
-        return $this->service->paginate($paginate);
+        return $this->service->orderBy('updated_at')->paginate($paginate);
     }
 
     /**

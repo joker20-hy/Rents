@@ -31,6 +31,24 @@ class SettingSeeder extends Seeder
                 'verification_2_step' => false,
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now()
+            ],
+            [
+                'user_id' => 4,
+                'verification_2_step' => false,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now()
+            ],
+            [
+                'user_id' => 5,
+                'verification_2_step' => false,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now()
+            ],
+            [
+                'user_id' => 6,
+                'verification_2_step' => false,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now()
             ]
         ]);
     }

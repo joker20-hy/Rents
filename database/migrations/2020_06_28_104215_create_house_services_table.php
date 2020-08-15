@@ -19,8 +19,8 @@ class CreateHouseServicesTable extends Migration
             $table->unsignedInteger('service_id');
             $table->foreign('service_id')->references('id')->on('services');
             $table->double('price')->default(0.0);
-            $table->unsignedTinyInteger('type')->default(config('const.SERVICE_TYPE.PRICE_FIX'));
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

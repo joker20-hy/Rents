@@ -1,12 +1,12 @@
 <template>
   <modal name="logout-form" :width="300" :class="['text-center']">
-    <h3 class="pt-4 pb-3 mb-3 text-light bg-danger">Logout confirm</h3>
+    <h3 class="pt-4 pb-3 mb-3 text-danger">Xác nhận đăng xuất</h3>
     <div>
-      Are you sure?
+      Bạn có chắc?
     </div>
     <div class="form-group pt-4">
-      <button class="btn text-primary" @click="hide()">Cancel</button>
-      <button class="btn text-danger" @click="logout()">Confirm</button>
+      <button class="btn text-primary" @click="hide()">Hủy</button>
+      <button class="btn text-danger" @click="logout()">Xác nhận</button>
     </div>
   </modal>
 </template>

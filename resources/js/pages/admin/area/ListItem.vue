@@ -60,7 +60,7 @@ export default {
       this.area.slug = this.backup_area.slug
     },
     update () {
-      $auth.request.put(`/api/area/${this.area.id}`, {
+      $request.put(`/api/area/${this.area.id}`, {
         name: this.area.name,
         slug: this.area.slug
       })

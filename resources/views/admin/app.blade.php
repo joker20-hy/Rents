@@ -30,8 +30,15 @@
     <script>
       const $room_filter = {!! json_encode($room_filter) !!}
       const $room_sort = {!! json_encode($room_sort) !!}
-      function clickTarget(id) {
-        document.querySelector(id).click()
+      clickTarget = id => document.querySelector(id).click()
+      function select(arr, cols) {
+        let result = []
+        arr.forEach(obj => {
+          let item = {}
+          cols.forEach(col => item[col]=obj[col])
+          result.push(item)
+        })
+        return result
       }
       const $config = {
         user: {!! json_encode(config('const.USER')) !!},
@@ -48,7 +55,8 @@
             name: 'Định kỳ'
           }
         },
-        REVIEW: {!! json_encode(config('const.REVIEW')) !!}
+        REVIEW: {!! json_encode(config('const.REVIEW')) !!},
+        ROOM_STATUS: {!! json_encode(config('const.ROOM_STATUS')) !!}
       }
     </script>
 </body>

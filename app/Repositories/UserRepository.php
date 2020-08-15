@@ -43,6 +43,24 @@ class UserRepository
     }
 
     /**
+     * Create user and dependent relationship
+     *
+     * @param array $params
+     *
+     * @return \App\Models\User
+     */
+    public function store(array $params)
+    {
+        $user = DB::transaction(function () use ($params) {
+            $user = $this->user->create($params);
+            $this->profile->create(['user_id' => $user->id]);
+            $this->setting->create(['user_id' => $user->id]);
+            return $user;
+        });
+        return $user;
+    }
+
+    /**
      * Update user record
      *
      * @param integer $id

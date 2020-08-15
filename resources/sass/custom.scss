@@ -38,6 +38,13 @@
   top: unset!important;
   max-width: 100%;
 }
+.vm--modal.loading-box {
+  background-color: transparent!important;
+  box-shadow: unset!important;
+  text-align: center;
+  font-size: 30px;
+  color: $dark;
+}
 .vm--container.alert-box {
   align-items: flex-start!important;
 }
@@ -395,7 +402,7 @@ $side-search-header: 240px;
 }
 [side-menu] {
   width: 100%;
-  background-color: $light;
+  background-color: $white;
   position: fixed;
   top: 0px;
   right: 0px;
@@ -489,7 +496,6 @@ $side-search-header: 240px;
       height: 30px;
     }
     .btn-auth {
-      display: none;
       color: $gray;
     }
     .btn {
@@ -615,6 +621,7 @@ $side-search-header: 240px;
   background-color: $white;
   border-radius: 8px;
   padding: 15px;
+  box-shadow: 0px 0px 2px #bbb;
 }
 [note] {
   padding: 10px;
@@ -634,4 +641,11 @@ $side-search-header: 240px;
     border-right: 9px solid transparent;
     border-bottom: 10px solid $blue;
   }
+}
+.list-item {
+  border-radius: 6px;
+  padding: 10px;
+  background-color: $white;
+  box-shadow: 0px 0px 2px #bbb;
+  margin-bottom: 10px;
 }

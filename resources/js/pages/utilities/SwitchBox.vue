@@ -1,5 +1,5 @@
 <template>
-  <input type="range" min="0" max="1" ref="val" @input="input()" :disabled="locked" switch-box>
+  <input type="range" min="0" max="1" ref="val" @input="input()" :disabled="locked" switch-box @change="$emit('change')">
 </template>
 <script>
 export default {

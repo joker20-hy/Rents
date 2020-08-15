@@ -56,7 +56,7 @@ export default {
   	},
   	update () {
   	  this.updating = true
-  	  $auth.request.put(`/api/criteria/${this.criteria.id}`, {
+  	  $request.put(`/api/criteria/${this.criteria.id}`, {
   	  	name: this.criteria.name
   	  })
   	  .then(res => {

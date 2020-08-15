@@ -46,7 +46,7 @@
       </div>
       <div class="row pt-3 pb-2">
         <div class="col-4">
-          {{ room.acreage }} m2
+          <span style="font-weight:600">Diên tích:</span> {{ room.acreage }} m2
         </div>
         <div class="col-8 text-right">
           {{ room.price }} vnđ/tháng

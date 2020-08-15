@@ -22,7 +22,7 @@ export default {
       this.name = ''
     },
     store () {
-      $auth.request.post('/api/province', {
+      $request.post('/api/province', {
         name: this.name
       })
       .then(res => {

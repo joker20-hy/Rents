@@ -3,6 +3,9 @@
     <router-view/>
     <alert-box/>
     <logout-form/>
+    <modal name="loading" :classes="'loading-box'">
+      <i class="fas fa-spinner fa-pulse"></i>
+    </modal>
   </div>
 </template>
 <script>
@@ -19,18 +22,24 @@ export default {
     return {}
   },
   mounted () {
-    this.authUser()
+    if (!$auth.check) return false
+    $eventHub.$on('on-loading', this.onloading)
+    $eventHub.$on('off-loading', this.offloading)
+    $request.get('/api/user/find')
+    .then(res => {
+      this.$store.commit('auth/user', res.data)
+      if ($auth.user==null||res.data.id!=$auth.user.id) $auth = $auth.init(res.data)
+    })
+    .catch(err => {
+      err.response.status==401?this.$router.push({name: 'login'}):''
+    })
   },
   methods: {
-    authUser () {
-      if (!$auth.check) return false
-      $auth.request.get('/api/user/find')
-      .then(res => {
-        this.$store.commit('auth/user', res.data)
-      })
-      .catch(err => {
-        if (err.response.status==401) this.$router.push({name: 'login'})
-      })
+    onloading() {
+      this.$modal.show('loading')
+    },
+    offloading() {
+      this.$modal.hide('loading')
     }
   }
 }

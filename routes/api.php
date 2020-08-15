@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Route;
 Route::group(['namespace' => 'Api'], function() {
 	Route::group(['namespace' => 'Auth'], function() {
 		Route::post('login', 'LoginController@login');
+		Route::post('register', 'RegisterController@main');
 	});
 	Route::group([
 		'namespace' => 'Suggest',
@@ -63,6 +64,7 @@ Route::group(['namespace' => 'Api'], function() {
 	], function () {
 		Route::post('{type}', 'StoreController@main')->middleware('auth:api');
 	});
+
 	Route::group([
 	    'middleware' => 'auth:api'
 	], function() {
@@ -132,8 +134,10 @@ Route::group(['namespace' => 'Api'], function() {
 		], function () {
 			Route::post('', 'StoreController@main')->middleware('admin-owner-role');
 			Route::put('{id}', 'UpdateController@main')->middleware('admin-owner-role');
+			Route::get('{id}/services', 'GetServicesController@main')->middleware('admin-owner-role');
 			Route::post('{id}/images', 'UploadImagesController@main')->middleware('admin-owner-role');
 			Route::put('{id}/images', 'UpdateImagesController@main')->middleware('admin-owner-role');
+			Route::put('{id}/status', 'UpdateStatusController@main')->middleware('admin-owner-role');
 			Route::delete('{id}', 'DestroyController@main')->middleware('admin-owner-role');
 		});
 		Route::group([
@@ -141,6 +145,7 @@ Route::group(['namespace' => 'Api'], function() {
 			'prefix' => 'service'
 		], function () {
 			Route::get('', 'IndexController@main');
+			Route::get('list', 'ListController@main');
 			Route::post('', 'StoreController@main')->middleware('admin-role');
 			Route::put('{id}', 'UpdateController@main')->middleware('admin-role');
 			Route::delete('{id}', 'DestroyController@main')->middleware('admin-role');
@@ -166,6 +171,15 @@ Route::group(['namespace' => 'Api'], function() {
 			'prefix' => 'image'
 		], function () {
 			Route::post('', 'StoreController@main');
+		});
+		Route::group([
+			'namespace' => 'Payment',
+			'prefix' => 'payment'
+		], function () {
+			Route::get('list', 'ListController@main');
+			Route::get('{id}', 'ShowController@main');
+			Route::post('', 'StoreController@main');
+			Route::put('{id}/status', 'UpdateStatusController@main');
 		});
 	});
 });

@@ -29,7 +29,8 @@ class UpdateController extends Controller
             'acreage' => 'required|numeric|min:0',
             'description' => 'required|string',
             'price' => 'required|numeric|min:1000',
-            'cycle' => 'required|numeric|min:1'
+            'cycle' => 'required|numeric|min:1',
+            'criterias' => 'required|array'
         ]);
     }
 }
