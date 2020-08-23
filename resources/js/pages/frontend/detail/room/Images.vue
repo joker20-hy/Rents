@@ -1,23 +1,15 @@
 <template>
-  <div class="row room-images">
-    <div class="col-md-7 contain primary">
-      <img :src="images[0]" alt="" class="mw-100 mh-100">
+  <div detail-preview-image>
+    <div big>
+      <div img-contain primary :style="`background-image: url(${images.length>0?images[0]:default_image})`" @click="$emit('detail', 0)"></div>
     </div>
-    <div class="col-md-5 mh-100">
-      <div class="row">
-        <div class="col-4 col-md-12 contain secondary">
-          <img :src="images.length>=2?images[1]:defaultImg" alt="" class="mw-100 mh-100">
-        </div>
-        <div class="col-4 col-md-6 contain tertiary">
-          <img :src="images.length>=3?images[2]:defaultImg" alt="" class="mw-100 mh-100">
-        </div>
-        <div class="col-4 col-md-6 contain tertiary">
-          <img :src="images.length>4?images[3]:defaultImg" alt="" class="mw-100 mh-100">
-          <div class="cover">
-            <svg viewBox="0 0 469.33333 469.33333" xmlns="http://www.w3.org/2000/svg">
-            <path d="m437.332031 192h-160v-160c0-17.664062-14.335937-32-32-32h-21.332031c-17.664062 0-32 14.335938-32 32v160h-160c-17.664062 0-32 14.335938-32 32v21.332031c0 17.664063 14.335938 32 32 32h160v160c0 17.664063 14.335938 32 32 32h21.332031c17.664063 0 32-14.335937 32-32v-160h160c17.664063 0 32-14.335937 32-32v-21.332031c0-17.664062-14.335937-32-32-32zm0 0"/>
-            </svg>
-          </div>
+    <div medium>
+      <div img-contain secondary :style="`background-image: url(${images.length>1?images[1]:default_image})`" @click="$emit('detail', 1)"></div>
+      <div img-contain tertiary :style="`background-image: url(${images.length>2?images[2]:default_image})`" @click="$emit('detail', 2)"></div>
+      <div img-contain tertiary :style="`background-image: url(${images.length>3?images[3]:default_image})`" @click="$emit('detail', 3)">
+        <div v-if="images.length>4" cover>
+          <!-- v-if="images.length>4" -->
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M328 256c0 39.8-32.2 72-72 72s-72-32.2-72-72 32.2-72 72-72 72 32.2 72 72zm104-72c-39.8 0-72 32.2-72 72s32.2 72 72 72 72-32.2 72-72-32.2-72-72-72zm-352 0c-39.8 0-72 32.2-72 72s32.2 72 72 72 72-32.2 72-72-32.2-72-72-72z"/></svg>
         </div>
       </div>
     </div>
@@ -33,8 +25,8 @@ export default {
     }
   },
   computed: {
-    defaultImg () {
-      return '/images/photo.svg'
+    default_image () {
+      return $config.IMAGES.DEFAULT
     }
   },
   data () {

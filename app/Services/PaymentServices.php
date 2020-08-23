@@ -82,6 +82,16 @@ class PaymentServices
     }
 
     /**
+     * Delete payment
+     *
+     * @param integer $id
+     */
+    public function destroy($id)
+    {
+        $this->paymentRepository->destroy($id);
+    }
+
+    /**
      * Check if current user has permission
      *
      * @param integer $id

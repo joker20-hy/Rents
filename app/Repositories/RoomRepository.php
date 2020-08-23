@@ -67,20 +67,18 @@ class RoomRepository
     private function criteriaFilter($query, array $conditions)
     {
         if (array_key_exists('price', $conditions)) {
-            $price_condition = config('const.ROOM_FILTER.PRICE')[$conditions['price']];
-            $query = $query->whereBetween("rooms.price", [$price_condition['min'], $price_condition['max']]);
+            $prices = config('const.ROOM_FILTER.PRICE')[$conditions['price']];
+            $query = $query->whereBetween("rooms.price", [$prices['min'], $prices['max']]);
         }
         if (array_key_exists('acreage', $conditions)) {
-            $acreage_condition = config('const.ROOM_FILTER.ACREAGE')[$conditions['acreage']];
-            $query = $query->whereBetween("rooms.acreage", [$acreage_condition['min'], $acreage_condition['max']]);
+            $acreages = config('const.ROOM_FILTER.ACREAGE')[$conditions['acreage']];
+            $query = $query->whereBetween("rooms.acreage", [$acreages['min'], $acreages['max']]);
         }
-        if (array_key_exists('infras', $conditions)) {
+        if (array_key_exists('criterias', $conditions)) {
             $query = $query->whereRaw("(
-                select
-                    count(*)
+                select count(*)
                 from room_criterias
-                where
-                    room_id=rooms.id and criteria_id in (".$conditions['infras'].") > 0
+                where room_id=rooms.id and criteria_id in (".$conditions['criterias'].") > 0
             )");
         }
         return $query;
@@ -98,10 +96,11 @@ class RoomRepository
         $query = $this->room->selectRaw(
             "rooms.*,
             houses.address_detail  as address,
-            (select count(*) from users where room_id=rooms.id) as renters_count"
+            (select count(*) from users where users.room_id = rooms.id) as renters_count"
         )->join("houses", "rooms.house_id", "=", "houses.id")
         ->join("provinces", "houses.province_id", "=", "provinces.id")
-        ->join("districts", "houses.district_id", "=", "districts.id");
+        ->join("districts", "houses.district_id", "=", "districts.id")
+        ->with('criterias');
         if (!is_null($ownerId)) {
             $query = $query->join("user_houses", "user_houses.house_id", "=", "houses.id")
                         ->where('user_houses.user_id', $ownerId);
@@ -153,18 +152,16 @@ class RoomRepository
     public function store(array $params)
     {
         $room = DB::transaction(function () use ($params) {
-            $room = $this->room->create($params);
-            $roomCriterias = [];
-            foreach ($params['criterias'] as $criteria) {
-                array_push($roomCriterias, [
-                    'room_id' => $room->id,
-                    'criteria_id' => $criteria
-                ]);
-            }
-            $this->roomCriteria->insert($roomCriterias);
-            $room->criterias;
-            return $room;
+            return $this->room->create($params);
         });
+        $roomCriterias = [];
+        foreach ($params['criterias'] as $criteria) {
+            array_push($roomCriterias, ['room_id' => $room->id, 'criteria_id' => $criteria]);
+        }
+        DB::transaction(function () use ($roomCriterias) {
+            $this->roomCriteria->insert($roomCriterias);
+        });
+        $room->criterias;
         return $room;
     }
 
@@ -178,8 +175,8 @@ class RoomRepository
      */
     public function update($id, array $params)
     {
-        $room = DB::transaction(function () use ($id, $params) {
-            $room = $this->room->findOrFail($id);
+        $room = $this->room->findOrFail($id);
+        $room = DB::transaction(function () use ($room, $params) {
             $room->update($params);
             return $room;
         });
@@ -196,20 +193,23 @@ class RoomRepository
      */
     public function addImages($id, array $newImages)
     {
-        $images = DB::transaction(function () use ($id, $newImages) {
-            $room = $this->room->findOrFail($id);
-            $oldImages = is_null($room->images) ? [] : json_decode($room->images);
-            $images = array_merge($newImages, $oldImages);
+        $room = $this->room->findOrFail($id);
+        $oldImages = is_null($room->images) ? [] : json_decode($room->images);
+        $images = array_merge($newImages, $oldImages);
+        $images = DB::transaction(function () use ($room, $images) {
     		$room->update(['images' => json_encode($images)]);
             return $images;
         });
         return $images;
     }
 
+    /**
+     * @param integer $id
+     */
     public function emptyRoom($id)
     {
-        DB::transaction(function () use ($id) {
-            $room = $this->room->findOrFail($id);
+        $room = $this->room->findOrFail($id);
+        DB::transaction(function () use ($room) {
             $room->renters->update([
                 'role' => config('const.USER.ROLE.NORMAL'),
                 'room_id' => null
@@ -224,8 +224,8 @@ class RoomRepository
      */
     public function delete($id)
     {
-        DB::transaction(function () use ($id) {
-            $room = $this->room->findOrFail($id);
+        $room = $this->room->findOrFail($id);
+        DB::transaction(function () use ($room) {
             $room->delete();
         });
     }

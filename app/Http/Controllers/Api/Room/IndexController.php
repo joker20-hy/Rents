@@ -31,9 +31,9 @@ class IndexController extends Controller
             'lat' => 'nullable|double',
             'lng' => 'nullable|double',
             'address' => 'nullable|string',
-            'price' => 'nullable|integer',
+            'price' => 'nullable|integer|min:0',
             'acreage' => 'nullable|integer|min:0',
-            'infras' => 'nullable|string',
+            'criterias' => 'nullable|string',
         ]);
     }
 }

@@ -29,7 +29,7 @@ export default {
     "$route.params.id": {
       handler (id) {
         this.id = id
-        if (this.payment==undefined) this.getPayment()
+        if (this.payment==undefined) this.get()
       },
       deep: true,
       immediate: true
@@ -41,14 +41,14 @@ export default {
     }
   },
   methods: {
-    getPayment() {
+    get() {
       $request.get(`/api/payment/${this.id}`)
       .then(res => {
         res.data.bill = JSON.parse(res.data.bill)
         let time = new Date(res.data.time)
         res.data.month = time.getMonth() + 1
         res.data.year = time.getFullYear()
-        this.$store.commit('payments/payments', [res.data])
+        this.$store.commit('payments/add', res.data)
       })
       .catch(err => console.log(err))
     }

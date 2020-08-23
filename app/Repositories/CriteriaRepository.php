@@ -45,7 +45,9 @@ class CriteriaRepository
      */
     public function store(array $params)
     {
-        $criteria = $this->criteria->create($params);
+        $criteria = DB::transaction(function () use ($params) {
+            return $this->criteria->create($params);
+        });
         return $criteria;
     }
 
@@ -59,9 +61,10 @@ class CriteriaRepository
      */
     public function update($id, array $params)
     {
-        $criteria = DB::transaction(function () use ($id, $params) {
-            $criteria = $this->criteria->findOrFail($id);
+        $criteria = $this->criteria->findOrFail($id);
+        $criteria = DB::transaction(function () use ($criteria, $params) {
             $criteria->update($params);
+            return $criteria;
         });
         return $criteria;
     }
@@ -73,8 +76,9 @@ class CriteriaRepository
      */
     public function destroy($id)
     {
-        DB::transaction(function () use ($id) {
-            $criteria = $this->criteria->findOrFail($id);
+        $criteria = $this->criteria->findOrFail($id);
+        DB::transaction(function () use ($criteria) {
+            $criteria->roomCriterias()->delete();
             $criteria->delete();
         });
     }

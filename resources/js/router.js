@@ -12,9 +12,15 @@ import ReviewHouse from './pages/frontend/review/House'
 import ReviewRoom from './pages/frontend/review/Room'
 import ReviewRenter from './pages/frontend/review/Renter'
 import Account from './pages/frontend/user/Index'
+import JoinRoom from './pages/frontend/user/JoinRoom'
+import Payment from './pages/frontend/user/Payment'
+import PaymentRoom from './pages/frontend/user/room_payment/Index'
+import PaymentRoomList from './pages/frontend/user/room_payment/List'
+import PaymentRoomDetail from './pages/frontend/user/room_payment/Detail'
+
 /** Auth components */
 import Login from './pages/auth/Login'
-import Register from './pages/auth/register'
+import Register from './pages/auth/Register'
 /** Owner components */
 import Owner from './pages/owner/Index'
 import OwnerHouse from './pages/owner/house/Index'
@@ -25,7 +31,7 @@ import OwnerRoom from './pages/owner/room/Index'
 import OwnerListRoom from './pages/owner/room/List'
 import OwnerDetailRoom from './pages/owner/room/Detail'
 import OwnerCreateRoom from './pages/owner/room/Create'
-
+import OwnerJoinRoom from './pages/owner/room/AddRenter'
 import OwnerListPayment from './pages/owner/payment/List'
 import OwnerCreatePayment from './pages/owner/payment/Create'
 import OwnerDetailPayment from './pages/owner/payment/Detail'
@@ -65,7 +71,7 @@ const router = new Router({
       component: Home
     },
     {
-      path: '/phong-tro/:province?/:district?/:area?',
+      path: '/phong-tro',
       name: 'search-room',
       component: SearchRoom
     },
@@ -82,6 +88,44 @@ const router = new Router({
           path: 'phong-tro/:id?',
           name: 'room-for-rent',
           component: DetailRoom
+        }
+      ]
+    },
+    {
+      path: '/thue-phong/:room_id',
+      name: 'join-room',
+      component: JoinRoom,
+      beforeEnter(to, from, next) {
+        if ($auth.check) {
+          $auth.forget('old_route')
+          if ($auth.user.room_id==null) next()
+          else router.push({name: 'home'})
+        }
+        else {
+          $auth.remember('old_route', to)
+          router.push({name: 'login'})
+        }
+      }
+    },
+    {
+      path: '/hoa-don',
+      component: Payment,
+      children: [
+        {
+          path: 'phong',
+          component: PaymentRoom,
+          children: [
+            {
+              path: 'chi-tiet/:id',
+              name: 'payment-room-detail',
+              component: PaymentRoomDetail
+            },
+            {
+              path: ':room_id',
+              name: 'payment-room-list',
+              component: PaymentRoomList
+            }
+          ]
         }
       ]
     },
@@ -202,6 +246,11 @@ const router = new Router({
               path: ':id/hoa-don',
               name: 'owner-list-payment',
               component: OwnerListPayment
+            },
+            {
+              path: ':id/qr',
+              name: 'owner-join-room-qr',
+              component: OwnerJoinRoom
             }
           ]
         },

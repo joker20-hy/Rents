@@ -32,11 +32,6 @@ class HouseServices
         $this->houseRepository = $houseRepository;
     }
 
-    public function index($params = [], $paginate = 10)
-    {
-        // 
-    }
-
     public function list($conditions, $paginate = 10)
     {
         $authUser = Auth::user();

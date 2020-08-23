@@ -40,7 +40,9 @@ class ServiceRepository
      */
     public function store(array $params)
     {
-        $service = $this->service->create($params);
+        $service = DB::transaction(function () use ($params) {
+            return $this->service->create($params);
+        });
         return $service;
     }
 
@@ -54,8 +56,8 @@ class ServiceRepository
      */
     public function update($id, $params)
     {
-        $service = DB::transaction(function () use ($id, $params) {
-            $service = $this->service->findOrFail($id);
+        $service = $this->service->findOrFail($id);
+        $service = DB::transaction(function () use ($service, $params) {
             $service->update($params);
             return $service;
         });
@@ -69,9 +71,9 @@ class ServiceRepository
      */
     public function destroy($id)
     {
-        DB::transaction(function () use ($id) {
-            $service = $this->service->findOrFail($id);
-            $service->delete($id);
+        $service = $this->service->findOrFail($id);
+        DB::transaction(function () use ($service) {
+            $service->delete();
         });
     }
 }

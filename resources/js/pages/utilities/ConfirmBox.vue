@@ -4,8 +4,8 @@
       <h4 class="py-2">{{ title }}</h4>
       <p>{{ message }}</p>
       <div>
-        <button type="button" class="btn text-primary" @click="confirm()">Confirm</button>
-        <button type="button" class="btn text-danger" @click="cancel()">Cancel</button>
+        <button type="button" class="btn text-primary" @click="confirm()">Xác nhận</button>
+        <button type="button" class="btn text-danger" @click="cancel()">Hủy</button>
       </div>
     </div>
   </modal>

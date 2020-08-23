@@ -1,8 +1,8 @@
 <template>
-  <div class="container pb-5">
+  <div class="container mt-3 mb-5">
     <form v-if="room" @submit.prevent="update()">
-      <h3 class="d-flex sticky-top bg-white text-primary p-2 mb-0 align-items-center" v-if="room">
-        {{ `Phòng ${room.name}` }}
+      <h3 class="d-flex sticky-top bg-white text-primary p-2 mb-0 align-items-center" style="font-size: large;z-index: 10" v-if="room">
+        {{ `${room.name}` }}
         <div class="ml-auto">
           <button type="button" class="btn text-primary" @click="enterEdit()" v-show="!edit">Chỉnh sửa</button>
           <button class="btn text-primary" v-show="edit">Cập nhật</button>
@@ -16,10 +16,14 @@
         :updateApi="`/api/room/${id}/images`"
         :deleteApi="`/api/room/${id}/images`"
         @updated="getImages"/>
-      <div class="form-group">
+        <div class="form-group">
           <label for="">Tên phòng</label>
           <div class="holder" v-show="!edit">{{ room.name }}</div>
           <input type="text" class="input" v-model="room.name" v-show="edit" placeholder="Room name" required>
+        </div>
+        <div class="form-group" v-show="!edit">
+          <label>Số người thuê phòng này: </label>
+          <div class="holder">{{ room.renters_count }}</div>
         </div>
         <div class="form-group">
           <label for="">Diện tích</label>
@@ -59,7 +63,6 @@ import ImageLibrary from '../../utilities/ImageLibrary'
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
 import adapter from '../../../utilities/CKImageAdapter'
 import CriteriaList from './Criterias'
-import { $request } from '../../../auth'
 
 export default {
   components: {
@@ -80,7 +83,10 @@ export default {
     "$route.params.id": {
       handler (id) {
         this.id = id
-        if (this.room==undefined) this.getRoom()
+        if (this.room==undefined) {
+          this.getRoom()
+          this.getCriterias()
+        }
       },
       deep: true,
       immediate: true
@@ -102,7 +108,7 @@ export default {
     criteriaIds () {
       return select(this.room.criterias, ['id'])
     },
-    data () {
+    getData () {
       let criterias = []
       this.criterias.forEach(cri => cri.checked?criterias.push(cri.id):'')
       return {
@@ -117,9 +123,6 @@ export default {
       }
     }
   },
-  mounted () {
-    this.getCriterias()
-  },
   methods: {
     enterEdit () {
       this.edit = true
@@ -131,13 +134,18 @@ export default {
       this.room.images = images
     },
     getRoom() {
+      $eventHub.$emit('on-loading')
       $request.get(`/api/room/${this.id}`)
       .then(res => {
         res.data.images = JSON.parse(res.data.images)
         res.data.description = utf8.decode(res.data.description)
         this.$store.commit('rooms/rooms', [res.data])
+        $eventHub.$emit('off-loading')
       })
-      .catch(err => console.log(err.response.data))
+      .catch(err => {
+        $eventHub.$emit('off-loading')
+        console.log(err.response.data)
+      })
     },
     getCriteria (criteria) {
       this.criterias[criteria.index].checked = criteria.checked
@@ -151,12 +159,21 @@ export default {
       .catch(err => console.log(err.response.data) )
     },
     update () {
-      $request.put(`/api/room/${this.room.id}`, this.data)
+      $eventHub.$emit('on-loading')
+      $request.put(`/api/room/${this.room.id}`, this.getData)
       .then(res => {
-        // doing
+        $eventHub.$emit('off-loading')
+        $eventHub.$emit('success-alert', {
+          title: 'Success',
+          message: 'Update info of this room successfully'
+        })
       })
       .catch(err => {
-
+        $eventHub.$emit('off-loading')
+        $eventHub.$emit('error-alert', {
+          title: 'Error',
+          message: 'Unable to update info of this room'
+        })
       })
     }
   }

@@ -4,3 +4,13 @@
 @import 'variables';
 // Bootstrap
 @import '~bootstrap/scss/bootstrap';
+
+@import './frontend/layout/header';
+@import './frontend/layout/sidemenu';
+@import './admin/header';
+@import './admin/sidemenu';
+
+
+@import './frontend/home';
+@import './frontend/search';
+@import './frontend/detail';

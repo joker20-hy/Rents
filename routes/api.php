@@ -62,6 +62,7 @@ Route::group(['namespace' => 'Api'], function() {
 		'namespace' => 'Review',
 		'prefix' => 'review'
 	], function () {
+		Route::get('{type}/{id}', 'IndexController@main');
 		Route::post('{type}', 'StoreController@main')->middleware('auth:api');
 	});
 
@@ -102,12 +103,14 @@ Route::group(['namespace' => 'Api'], function() {
 		], function () {
 			Route::get('', 'IndexController@main');
 			Route::get('find/{id?}', 'ShowControler@main');
-			Route::get('{id}/avatar', 'UpdateAvatarController@main');
+			Route::post('{id}/avatar', 'UpdateAvatarController@main');
 			Route::get('{id}/profile', 'ShowProfileController@main');
 			Route::put('{id}/profile', 'UpdateProfileController@main');
 			Route::get('{id}/setting', 'ShowSettingController@main');
 			Route::put('{id}/setting', 'UpdateSettingController@main');
 			Route::put('{id}/verify', 'VerifyController@main')->middleware('admin-role');
+			Route::put('{id}', 'UpdateController@main');
+			Route::post('rent-room/{room_id}', 'RentRoomController@main');
 		});
 		Route::group([
 			'namespace' => 'Direction',
@@ -163,7 +166,7 @@ Route::group(['namespace' => 'Api'], function() {
 			'namespace' => 'Review',
 			'prefix' => 'review'
 		], function () {
-			Route::get('{type}', 'IndexController@main');
+			Route::get('list/{type}', 'ListController@main');
 			Route::delete('{id}', 'DestroyController@main');
 		});
 		Route::group([
@@ -176,10 +179,11 @@ Route::group(['namespace' => 'Api'], function() {
 			'namespace' => 'Payment',
 			'prefix' => 'payment'
 		], function () {
-			Route::get('list', 'ListController@main');
-			Route::get('{id}', 'ShowController@main');
-			Route::post('', 'StoreController@main');
-			Route::put('{id}/status', 'UpdateStatusController@main');
+			Route::get('list', 'ListController@main')->middleware('owner-renter-role');
+			Route::get('{id}', 'ShowController@main')->middleware('owner-renter-role');
+			Route::post('', 'StoreController@main')->middleware('admin-owner-role');
+			Route::put('{id}/status', 'UpdateStatusController@main')->middleware('admin-owner-role');
+			Route::delete('{id}', 'DestroyController@main')->middleware('admin-owner-role');
 		});
 	});
 });

@@ -1,5 +1,5 @@
 <template>
-  <div class="container" style="padding-bottom: 60px" v-if="house!=undefined">
+  <div class="container" style="margin-top: 15px;padding-bottom: 60px" v-if="house!=undefined">
     <image-library class="form-group" :images="house.images" :updateApi="`/api/house/${house.id}/images`" :deleteApi="`/api/house/${house.id}/images`" @updated="updateImages"/>
     <form class="col-lg-10 col-xl-8" detail-form @submit.prevent="update()">
       <div class="d-flex">

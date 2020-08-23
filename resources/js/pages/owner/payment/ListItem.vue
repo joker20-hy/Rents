@@ -1,17 +1,17 @@
 <template>
   <transition name="slide-fade">
-    <div class="list-item d-flex">
-      <div class="col-4 px-0 d-flex justify-content-center align-items-center" style="font-weight: 600">
+    <div class="list-item row mx-0">
+      <div class="col-md-4 px-0 py-2 d-flex align-items-center" style="font-weight: 600">
         {{ `Hóa đơn tháng ${payment.month}/${payment.year}` }}
       </div>
-      <div class="col-4 px-1 d-flex justify-content-center align-items-center">
+      <div class="col-6 col-md-4 px-1 d-flex justify-content-center align-items-center">
         <switch-box v-model="payment.status" :class="payment.status?'bg-primary':''" @change="changeStatus"></switch-box>&nbsp;
         <span v-if="payment.status">Đã thanh toán</span>
         <span v-else>Chưa thanh toán</span>
       </div>
-      <div class="col-4 px-0 text-right">
+      <div class="col-6 col-md-4 px-0 text-right">
         <router-link :to="{name: 'owner-detail-payment', params: {id: payment.id}}" class="btn btn-outline-primary">Chi tiết</router-link>
-        <button class="btn btn-outline-danger">Xóa</button>
+        <button class="btn btn-outline-danger" @click="$emit('delete', payment.id)">Xóa</button>
       </div>
     </div>
   </transition>

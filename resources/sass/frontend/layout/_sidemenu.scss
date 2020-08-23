@@ -1,0 +1,51 @@
+@import '../../variables';
+
+[side-menu] {
+    width: 100%;
+    background-color: $white;
+    position: fixed;
+    top: 0px;
+    right: 0px;
+    z-index: 12;
+    min-height: 100%;
+    transform: translateX(100%);
+    transition: .3s;
+    @media(min-width: 992px) {
+      top: 59px;
+      width: 300px;
+    }
+    &.show {
+      transform: translateX(0);
+      box-shadow: -2px 1px 3px #6c757d;
+    }
+    header {
+      height: 150px;
+      display: flex;
+      align-items: flex-end;
+      color: $gray;
+      font-weight: 600;
+      padding: 0px 10px;
+    }
+    main {
+      [item] {
+        color: $gray;
+        padding: 12px 10px;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none!important;
+        display: block;
+      }
+    }
+    .avatar-contain {
+      width: 86px;
+      height: 86px;
+      border-radius: 50%;
+      border: 3px solid $light;
+      box-shadow: 0px 0px 3px $dark;
+      img {
+        max-width: 100%;
+        max-height: 100%;
+        border-radius: 50%;
+      }
+    }
+  }

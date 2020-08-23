@@ -2,20 +2,14 @@
 
 namespace App\Services;
 
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use App\Models\District;
 use App\Repositories\DistrictRepository;
 
 class DistrictServices
 {
-    protected $district;
     protected $districtRepository;
 
-    public function __construct(DistrictRepository $districtRepository, District $district)
+    public function __construct(DistrictRepository $districtRepository)
     {
-        $this->district = $district;
         $this->districtRepository = $districtRepository;
     }
 
@@ -37,9 +31,15 @@ class DistrictServices
 
     /**
      * Create a district
-     * @param array $params ['name', 'province_id']
+     *
+     * @param array $params [
+     *  name: {String},
+     *  province_id: {Integer}
+     * ]
+     *
+     * @return \App\Models\District
      */
-    public function create(array $params)
+    public function store(array $params)
     {
         $district = $this->districtRepository->store($params);
         $district->province;
@@ -54,7 +54,7 @@ class DistrictServices
      *
      * @return \App\Models\District
      */
-    public function update($id, $params)
+    public function update($id, array $params)
     {
         $district = $this->districtRepository->update($id, $params);
         $district->province;

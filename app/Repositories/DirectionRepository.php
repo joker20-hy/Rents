@@ -40,7 +40,9 @@ class DirectionRepository
      */
     public function store(array $params)
     {
-        return $this->direction->create($params);
+        return DB::transaction(function () use ($params) {
+            return $this->direction->create($params);
+        });
     }
 
     /**
@@ -53,12 +55,11 @@ class DirectionRepository
      */
     public function update($id, $params)
     {
-        $direction = DB::transaction(function () use ($id, $params) {
-            $direction = $this->direction->findOrFail($id);
+        $direction = $this->direction->findOrFail($id);
+        return DB::transaction(function () use ($direction, $params) {
             $direction->update($params);
             return $direction;
         });
-        return $direction;
     }
 
     /**
@@ -68,8 +69,8 @@ class DirectionRepository
      */
     public function destroy($id)
     {
-        DB::transaction(function () use ($id) {
-            $direction = $this->direction->findOrFail($id);
+        $direction = $this->direction->findOrFail($id);
+        DB::transaction(function () use ($direction) {
             $direction->delete();
         });
     }

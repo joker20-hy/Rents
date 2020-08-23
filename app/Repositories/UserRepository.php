@@ -70,8 +70,8 @@ class UserRepository
      */
     public function update($id, array $params)
     {
-        $user = DB::transaction(function () use ($id, $params) {
-            $user = $this->user->findOrFail($id);
+        $user = $this->user->findOrFail($id);
+        $user = DB::transaction(function () use ($user, $params) {
             $user->update($params);
             return $user;
         });
@@ -100,12 +100,13 @@ class UserRepository
      *
      * @return \App\Models\Profile
      */
-    public function updateProfile($id, $params)
+    public function updateProfile($id, array $params)
     {
-        $profile = DB::transaction(function () use ($id, $params) {
+        DB::transaction(function () use ($id, $params) {
             $this->profile->where('user_id', $id)->update($params);
-            $profile = $this->profile->where('user_id', $id)->first();
-            return $profile;
+        });
+        $profile = DB::transaction(function () use ($id) {
+            return $this->profile->where('user_id', $id)->first();
         });
         return $profile;
     }
@@ -118,14 +119,59 @@ class UserRepository
      *
      * @return \App\Models\Setting
      */
-    public function updateSetting($id, $params)
+    public function updateSetting($id, array $params)
     {
-        $setting = DB::transaction(function () use ($id, $params) {
+        DB::transaction(function () use ($id, $params) {
             $this->setting->where('user_id', $id)->update($params);
-            $setting = $this->setting->where('user_id', $id)->first();
-            return $setting;
+        });
+        $setting = DB::transaction(function () use ($id) {
+            return $this->setting->where('user_id', $id)->first();
         });
         return $setting;
+    }
+
+    /**
+     * User rent room
+     *
+     * @param integer $id
+     * @param integer $roomId
+     *
+     * @return \App\Models\User
+     */
+    public function rentRoom($id, $roomId)
+    {
+        $user = $this->user->findOrFail($id);
+        $user = $this->update($id, [
+            'role' => config('const.USER.ROLE.RENTER'),
+            'room_id' => $roomId
+        ]);
+        $user = DB::transaction(function () use ($user) {
+            $user->room->update(['status' => config('const.ROOM_STATUS.rented')]);
+            return $user;
+        });
+        return $user;
+    }
+
+    /**
+     * User leave room
+     *
+     * @param integer $id
+     *
+     * @return \App\Models\User
+     */
+    public function leaveRoom($id)
+    {
+        $user = $this->user->findOrFail($id);
+        $user = $this->update($id, [
+            'role' => config('const.USER.ROLE.RENTER'),
+            'room_id' => null
+        ]);
+        $user = DB::transaction(function () use ($user) {
+            if (count($user->room->renters) == 0) {
+                $user->room->update(['status', config('const.ROOM_STATUS.waiting')]);
+            }
+        });
+        return $user;
     }
 
     /**
@@ -135,8 +181,8 @@ class UserRepository
      */
     public function destroy($id)
     {
-        DB::transaction(function () use ($id) {
-            $user = $this->user->findOrFail($id);
+        $user = $this->user->findOrFail($id);
+        DB::transaction(function () use ($user) {
             $user->profile->delete();
             $user->setting->delete();
             $user->delete();

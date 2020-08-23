@@ -1,6 +1,6 @@
 <template>
-  <div class="container" v-if="room!=null">
-    <image-gallary :images="images"/>
+  <div class="container" style="margin-bottom: 64px" v-if="room!=null">
+    <image-gallary :images="images" @detail="slideshow"/>
     <h3>{{ room.name }}</h3>
     <small class="text-muted" v-if="room.house">{{ room.house.address_detail }}</small>    
     <div class="d-flex my-3">
@@ -12,25 +12,39 @@
         <strong>Đóng tiền:</strong> {{ room.cycle }} tháng / lần
       </div>
     </div>
-    <strong>Cơ Sở vật chất</strong>
-    <room-criterias v-if="room.criterias" :criterias="room.criterias" class="mb-3"/>
-    <strong>Mô tả</strong>
-    <p v-html="room.description"></p>
+    <div page-section>
+      <h2>Cơ Sở vật chất</h2>
+      <room-criterias v-if="room.criterias" :criterias="room.criterias" class="mb-3"/>
+    </div>
+    <div page-section>
+      <h2>Mô tả</h2>
+      <p v-html="room.description"></p>
+    </div>
+    <review-list :id="id"></review-list>
     <button class="search-btn" @click="toggleSideSearch">
       <i class="fas fa-search"></i>
     </button>
-    <div class="text-center">
-      <router-link class="btn text-primary" :to="{name:'review-room', params: {id: this.id}}">review</router-link>
-    </div>
+    <modal name="image-carousel" :classes="['mb-auto']">
+      <carousel :per-page="1" :mouse-drag="true" v-model="carousel_index">
+        <slide v-for="(image, index) in images" :key="index" :value="index">
+          <img :src="image" alt="" class="mw-100 mh-100">
+        </slide>
+      </carousel>
+    </modal>
   </div>
 </template>
 <script>
+import { Carousel, Slide } from 'vue-carousel';
 import ImageGallary from './Images'
 import RoomCriterias from './Criterias'
+import ReviewList from './Reviews'
 export default {
   components: {
     ImageGallary,
-    RoomCriterias
+    RoomCriterias,
+    ReviewList,
+    Carousel,
+    Slide
   },
   watch: {
     '$route.params.id': {
@@ -45,7 +59,8 @@ export default {
   data () {
     return {
       id: '',
-      images: []
+      images: [],
+      carousel_index: 0
     }
   },
   computed: {
@@ -59,14 +74,34 @@ export default {
       $eventHub.$emit('toggle-side-search')
     },
     get () {
+      $eventHub.$emit('on-loading')
       $request.get(`/api/room/${this.id}`)
       .then(res => {
         res.data.description = utf8.decode(res.data.description)
         this.images = JSON.parse(res.data.images)
         this.$store.commit('rooms/rooms', [res.data])
+        $eventHub.$emit('off-loading')
       })
-      .catch(err => console.log(err.response.data) )
+      .catch(err => {
+        $eventHub.$emit('off-loading')
+        console.log(err.response.data)
+      })
+    },
+    slideshow (index) {
+      this.carousel_index = index
+      console.log(this.carousel_index)
+      this.$modal.show('image-carousel')
     }
   }
 }
 </script>
+<style scoped>
+h2 {
+  font-size: medium;
+}
+@media(min-width: 992px) {
+  h2 {
+    font-size: large;
+  }
+}
+</style>

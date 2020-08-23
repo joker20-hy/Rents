@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container mb-5">
     <form @submit.prevent="store()" class="col-lg-10 col-xl-8" detail-form id="create-room">
         <h3 class="py-3 px-2 bg-primary text-light" style="margin-left: -25px;margin-right: -25px;">
           Thêm phòng
@@ -51,7 +51,7 @@
         </div>
         <label>Tiêu chí của phòng trọ <span class="text-danger" title="Required feild">*</span></label>
         <div class="row mx-0">
-          <div class="col-4" v-for="(cri, index) in criterias" :key="cri.id">
+          <div class="col-6 col-md-4" v-for="(cri, index) in criterias" :key="cri.id">
             <check-box :label="cri.name" :index="index" @change="getCriteria"/>
           </div>
         </div>
@@ -120,18 +120,28 @@ export default {
       }
     },
     store () {
+      $eventHub.$emit('on-loading')
       $request.post('/api/room', this.data, {
         headers: { 'Content-Type': 'multipart/form-data' }
       })
-      .then(res => this.$router.push({name: 'room-list'}) )
+      .then(res => {
+        $eventHub.$emit('off-loading')
+        $eventHub.$emit('success-alert', {
+          title: 'Thành công',
+          message: 'Phòng đã được thêm thành công',
+          timeout: 3000
+        })
+        this.$router.push({name: 'owner-list-room'})
+      })
       .catch(err => {
+        $eventHub.$emit('off-loading')
         if (err.response==422) {
           this.error = err.response.data.errors
         } else {
           this.error = {}
           $eventHub.$emit('error-alert', {
-            title: 'Error',
-            message: 'Unable to store room, please try again',
+            title: 'Đã có lỗi',
+            message: 'Không thể thêm phòng, hãy thử lại',
             timeout: 3000
           })
         }

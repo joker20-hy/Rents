@@ -10,10 +10,12 @@ class UserServices
 {
     private const FOLDER = "avatar";
     protected $userRepository;
+    protected $imageServices;
 
-    public function __construct(UserRepository $userRepository)
+    public function __construct(UserRepository $userRepository, ImageServices $imageServices)
     {
         $this->userRepository = $userRepository;
+        $this->imageServices = $imageServices;
     }
 
     public function index($paginate = 10)
@@ -22,7 +24,11 @@ class UserServices
     }
 
     /**
+     * Create user record
+     *
      * @param array $params
+     *
+     * @return \App\Models\User
      */
     public function store(array $params)
     {
@@ -31,6 +37,13 @@ class UserServices
         return $user;
     }
 
+    /**
+     * Show user info
+     *
+     * @param integer|null $id
+     *
+     * @return \App\Models\User
+     */
     public function show($id = null)
     {
         $authUser = Auth::user();
@@ -42,6 +55,8 @@ class UserServices
             $user = $this->userRepository->findById($id);
         }
         $user->profile;
+        $user->setting;
+        $user->room;
         return $user;
     }
 
@@ -73,7 +88,15 @@ class UserServices
         return $this->userRepository->showProfile($id);
     }
 
-    public function updateProfile($id, $params)
+    /**
+     * Update use profile
+     *
+     * @param integer $id
+     * @param array $params
+     *
+     * @return \App\Models\User
+     */
+    public function updateProfile($id, array $params)
     {
         if (!$this->permissible($id)) {
             return abort(403, 'Bạn khồng có quyền thực hiện hành động này');
@@ -81,6 +104,14 @@ class UserServices
         return $this->userRepository->updateProfile($id, $params);
     }
 
+    /**
+     * Update use profile
+     *
+     * @param integer $id
+     * @param array $params
+     *
+     * @return \App\Models\User
+     */
     public function updateSetting($id, $params)
     {
         if (!$this->permissible($id)) {
@@ -106,6 +137,33 @@ class UserServices
         return $url;
     }
 
+    /**
+     * Update user info
+     *
+     * @param integer $id
+     * @param array $params
+     *
+     * @return \App\Models\User
+     */
+    public function update($id, array $params)
+    {
+        if (!$this->permissible($id)) {
+            return abort(403, 'Bạn khồng có quyền thực hiện hành động này');
+        }
+        $profile = $params['profile'];
+        $this->userRepository->updateProfile($id, $profile);
+        unset($params['profile']);
+        $setting = $params['setting'];
+        $this->userRepository->updateSetting($id, $setting);
+        unset($params['setting']);
+        return $this->userRepository->update($id, $params);
+    }
+
+    /**
+     * Delete user
+     *
+     * @param integer $id
+     */
     public function destroy($id)
     {
         $this->userRepository->destroy($id);
@@ -114,20 +172,15 @@ class UserServices
     /**
      * Rent room
      *
-     * @param integer $id
      * @param integer $roomId
+     * @param integer|null $id
      *
      * @return \App\Models\User
      */
-    public function rentRoom($id, $roomId)
+    public function rentRoom($roomId, $id = null)
     {
-        if (!$this->permissible($id)) {
-            return abort(403, "Bạn không có quyền thực hiện hành động này");
-        }
-        return $this->userRepository->update($id, [
-            'role' => config('const.USER.ROLE.RENTER'),
-            'room_id' => $roomId
-        ]);
+        $id = is_null($id) ? Auth::user()->id : $id;
+        return $this->userRepository->rentRoom($id, $roomId);
     }
 
     /**
@@ -137,12 +190,10 @@ class UserServices
      *
      * @return \App\Models\User
      */
-    public function leaveRoom($id)
+    public function leaveRoom($id = null)
     {
-        return $this->userRepository->update($id, [
-            'role' => config('const.USER.ROLE.NORMAL'),
-            'room_id' => null
-        ]);
+        $id = is_null($id) ? Auth::user()->id : $id;
+        return $this->userRepository->leaveRoom($id);
     }
 
     /**

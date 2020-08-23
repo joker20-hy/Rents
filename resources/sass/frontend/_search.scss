@@ -1,0 +1,60 @@
+@import './layout/image-preview';
+
+[intro] {
+  width: calc(100% - #{$ip-sm-w+'px'});
+  @media(min-width: 768px) {
+    width: calc(100% - #{$ip-md-w+'px'});
+  }
+  @media(min-width: 1024px) {
+    width: calc(100% - #{$ip-lg-w+'px'});
+  }
+  padding: 0px 10px;
+  &[room] {
+    h2 {
+      a {
+        font-size: large;
+        @media(min-width: 768px) {
+          font-size: 22px;
+        }
+      }
+    }
+    [address] {
+      font-size: small;
+    }
+    [rate] {
+      display: flex;
+      font-size: small;
+      padding: 8px 0px;
+      [avg] {
+        padding: 0px 9px;
+        background-color: $red;
+        font-weight: 600;
+        color: $light;
+        border-radius: 5px;
+      }
+      [count] {
+        margin-left: auto;
+      }
+    }
+    [criterias] {
+      display: flex;
+      flex-wrap: wrap;
+      padding: 5px 0px;
+      [item] {
+        padding-right: 8px;
+        display: inline-flex;
+        color: var(--blue);
+      }
+    }
+    [base-info] {
+      display: flex;
+      font-size: small;
+      @media(min-width: 992px) {
+        font-size: medium;
+      }
+      [price] {
+        margin-left: auto;
+      }
+    }
+  }
+}

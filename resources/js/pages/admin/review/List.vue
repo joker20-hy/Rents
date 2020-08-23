@@ -79,7 +79,7 @@ export default {
   	  return this.$store.getters['reviews/reviews']
   	},
   	listApi () {
-  	  return `/api/review/${this.type}?${serialize.fromObj(this.query.page)}`
+  	  return `/api/review/list/${this.type}?${serialize.fromObj(this.query.page)}`
     },
     review_type () {
       return $config.REVIEW.TYPE

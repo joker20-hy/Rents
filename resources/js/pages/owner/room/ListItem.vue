@@ -1,8 +1,10 @@
 <template>
   <transition name="slide-fade">
-    <div class="bg-white p-2 rounded" item>
+    <div class="bg-white p-2 rounded mb-3" item>
       <div class="pb-2" style="font-weight: 600">
-        <router-link :to="{name: 'owner-detail-room', params: {id: room.id}}">{{ room.name }}</router-link>
+        <router-link :to="{name: 'owner-detail-room', params: {id: room.id}}">
+          {{ room.name }}
+        </router-link>
       </div>
       <div class="pb-2" style="font-size: small">Địa chỉ: {{ room.address }}</div>
       <div class="d-flex" style="font-size: small">
@@ -13,6 +15,9 @@
             Số đánh giá {{ room.rate_count }}
         </div>
       </div>
+      <div class="pt-2">
+        Số lượng người thuê trọ: {{ room.renters_count }}
+      </div>
       <div class="d-flex align-items-center pt-2">
         <switch-box v-model="room.status" :class="room.status?'bg-success':'bg-danger'" @change="changeStatus()"></switch-box>&nbsp;&nbsp;
         <span v-if="status_waiting" class="text-danger">
@@ -22,9 +27,16 @@
           <i class="fas fa-check"></i> Nhà đã được thuê
         </span>
       </div>
-      <div class="py-2 text-right">
-        <router-link :to="{name: 'owner-list-payment', params: {id: room.id}}"><i class="fas fa-list-ul"></i> Danh sách hóa đơn</router-link>&nbsp;&nbsp;
-        <router-link v-if="room.renter_count>0" :to="{name: 'owner-create-payment', params: {id: room.id}}"><i class="fas fa-money-check"></i> Tạo hóa đơn</router-link>
+      <div class="py-2 text-right text-md-center row mx-0">
+        <div class="col-md-4">
+          <router-link v-if="status_rented" :to="{name: 'owner-list-payment', params: {id: room.id}}"><i class="fas fa-list-ul"></i> Danh sách hóa đơn</router-link>
+        </div>
+        <div class="col-md-4">
+          <router-link v-if="status_rented" :to="{name: 'owner-create-payment', params: {id: room.id}}"><i class="fas fa-money-check"></i> Tạo hóa đơn</router-link>
+        </div>
+        <div class="col-md-4">
+          <router-link :to="{name: 'owner-join-room-qr', params: {id: room.id}}">Thêm người thuê</router-link>
+        </div>
       </div>
     </div>
   </transition>

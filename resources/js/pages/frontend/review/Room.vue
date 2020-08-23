@@ -1,5 +1,5 @@
 <template>
-  <div review-contain v-if="room!=null">
+  <div review-contain v-if="room!=null" class="mb-5">
   	<form review-form @submit.prevent="create">
 	  <div class="pb-4">
 		<span style="font-weight: 600">{{ room.name }}</span><br>

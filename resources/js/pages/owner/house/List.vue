@@ -1,5 +1,5 @@
 <template>
-  <div class="container px-0">
+  <div class="container mt-3 mb-5 px-0">
     <div class="col-md-10 mx-auto">
       <h4>Danh sách nhà</h4>
       <div class="p-2 bg-white mb-3 d-flex">
@@ -21,7 +21,7 @@ import ListItem from './ListItem'
 export default {
   components: {
     ConfirmBox,
-    ListItem
+    ListItem,
   },
   data () {
     return {

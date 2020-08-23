@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container mb-5">
     <form @submit.prevent="store()" class="col-lg-10 col-xl-8" detail-form id="create-house">
       <h3 class="py-3 px-2 bg-primary text-light" style="margin-left: -25px;margin-right: -25px;">
         Thêm nhà

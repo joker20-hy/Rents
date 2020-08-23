@@ -11,7 +11,10 @@
 		{{ serviceName(service.type) }}
 	  </td>
 	  <td>
-		{{ service.unit }}
+		<div class="holder" v-show="!edit">
+  	  	  {{ service.unit }}
+  	  	</div>
+		<input class="form-control" v-show="edit" v-model="service.unit">
 	  </td>
   	  <td class="px-2">
   	  	<div>
@@ -60,7 +63,8 @@ export default {
    	update () {
    	  this.updating = true
    	  $request.put(`/api/service/${this.service.id}`, {
-   	  	name: this.service.name
+		name: this.service.name,
+		unit: this.service.unit	 
    	  })
    	  .then(res => {
    	  	this.edit = false
