@@ -7,6 +7,8 @@ import { request } from './utilities/request/request'
 window.$request = request
 import serialize from './utilities/serialize'
 window.serialize = serialize
+import merge from './utilities/merge'
+window.merge = merge
 window.$old_route = ''
 
 import router from './router.js'
@@ -15,7 +17,11 @@ import Paginate from 'vuejs-paginate'
 import { store } from './stores/store.js'
 import CKEditor from '@ckeditor/ckeditor5-vue'
 import App from './pages/App'
+import Clipboard from 'v-clipboard'
+// import VueCarousel from 'vue-carousel';
 
+// Vue.use(VueCarousel)
+Vue.use(Clipboard)
 Vue.use( CKEditor )
 Vue.use(VModal, { dialog: true })
 Vue.component('paginate', Paginate)

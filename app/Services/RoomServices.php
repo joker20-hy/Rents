@@ -150,6 +150,7 @@ class RoomServices
             return abort(403, "Bạn không có quyền thực hiện hành động này");
         }
         $room = $this->roomRepository->findById($id);
+        $room->renters_count = $room->renters->count();
         $roomServices = $room->house->houseServices;
         foreach($roomServices as $roomService) {
             $roomService->service;

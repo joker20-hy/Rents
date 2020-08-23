@@ -6,27 +6,26 @@
         <div class="py-2">
           <strong>Giá</strong>
         </div>
-      	<select class="form-control" v-model="chosen_price">
+      	<select class="form-control" v-model="price">
       	  <option value="">Giá</option>
-      	  <option v-for="(condition, index) in price_conditions" :key="index" :value="index">{{ condition }}</option>
+      	  <option v-for="(condition, index) in conditions.price" :key="index" :value="index">{{ condition }}</option>
       	</select>
       </div>
       <div>
         <div class="py-2">
-          <strong>Giá</strong>
+          <strong>Diện tích</strong>
         </div>
-        <select class="form-control" v-model="chosen_acreage">
+        <select class="form-control" v-model="acreage">
           <option value="">Diện tích</option>
-          <option v-for="(condition, index) in acreage_conditions" :key="index" :value="index">{{ condition }}</option>
+          <option v-for="(condition, index) in conditions.acreage" :key="index" :value="index">{{ condition }}</option>
         </select>
       </div>
-
       <div class="pt-3 pb-2">
       	<strong>Cơ sở vật chất</strong>
       </div>
       <div class="row mx-0">
-        <div class="col-4 px-1" v-for="(infras, index) in infras_conditions" :key="infras.id">
-          <check-box :index="index" :label="infras.name" @change="check" :checked="infras.checked"/>
+        <div class="col-4 px-1" v-for="(criterias, index) in conditions.criterias" :key="criterias.id">
+          <check-box :index="index" :label="criterias.name" @change="check" :checked="criterias.checked"/>
         </div>
       </div>
       <div class="d-flex">
@@ -37,65 +36,72 @@
 </template>
 <script>
 import CheckBox from '../../../utilities/CheckBox'
-import serialize from '../../../../utilities/serialize'
 export default {
   name: 'room-filter',
-  props: {
-    acreage: {
-      required: true,
-      type: Array
-    },
-    price: {
-      required: true,
-      type: Array
-    },
-    infras: {
-      required: true,
-      type: Array
-    },
-    filled: {
-      required: true,
-      type: Object
-    }
-  },
   components: {
     CheckBox
   },
   watch: {
-    filled (val) {
-      this.chosen_price = val.price
+    "$route.query.acreage": {
+      handler (acreage) {
+        this.acreage = acreage==undefined?'':acreage
+      },
+      deep: true,
+      immediate: true
     },
-    price (price) {
-      this.price_conditions = price
+    "$route.query.price": {
+      handler (price) {
+        this.price = price==undefined?"":price
+      },
+      deep: true,
+      immediate: true
     },
-    infras (infras) {
-      this.infras_conditions = infras
+    "$route.query.criterias": {
+      handler (criterias) {
+        this.criterias = criterias==undefined?[]:criterias.split(',')
+      },
+      deep: true,
+      immediate: true
     }
   },
   data () {
     return {
-      chosen_acreage: this.filled.acreage,
-      chosen_price: this.filled.price,
-      acreage_conditions: this.acreage,
-      price_conditions: this.price,
-      infras_conditions: this.infras
+      acreage: '',
+      price: '',
+      criterias: [],
+      conditions: {
+        acreage: $room_filter.acreage,
+        price: $room_filter.price,
+        criterias: []
+      }
     }
+  },
+  mounted () {
+    this.getcriterias()
   },
   methods: {
   	check (target) {
-  	  this.infras_conditions[target.index].checked = target.checked
-  	},
+  	  this.conditions.criterias[target.index].checked = target.checked
+    },
+    getcriterias () {
+      $request.get(`/api/criteria`)
+      .then(res => {
+        res.data.forEach(criterias => {
+          criterias.checked=this.criterias.includes(`${criterias.id}`)
+        })
+        this.conditions.criterias = res.data
+      })
+      .catch(err => console.log(err.response.data))
+    },
   	apply () {
+      let criterias = []
+      this.conditions.criterias.filter(cri => {
+        if (cri.checked) criterias.push(cri.id)
+      })
       this.$emit('apply', {
-  	  	price: {
-          index: this.chosen_price,
-          name: this.price_conditions[this.chosen_price]
-        },
-        acreage: {
-          index: this.chosen_acreage,
-          name: this.acreage_conditions[this.chosen_acreage]
-        },
-  	  	infras: this.infras_conditions.filter(infras => infras.checked==true)
+        price: `${this.price}`,
+        acreage: `${this.acreage}`,
+        criterias: criterias.join(',')
       })
       this.$modal.hide('room-filter')
   	}

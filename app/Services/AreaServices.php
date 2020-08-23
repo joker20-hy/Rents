@@ -14,15 +14,6 @@ class AreaServices
         $this->areaRepository = $areaRepository;
     }
 
-    // /**
-    //  * @param integer $id
-    //  * @return \App\Models\Area
-    //  */
-    // public function find($id)
-    // {
-    //     return $this->area->findOrFail($id);
-    // }
-
     /**
      * List all area by conditions
      *

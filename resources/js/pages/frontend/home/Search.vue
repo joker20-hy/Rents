@@ -1,42 +1,23 @@
 <template>
-  <div class="search-form">
+  <div id="search-form">
+    <div bg-cover></div>
     <form @submit.prevent="search">
-      <h3 class="text-center py-3 text-light">Tìm kiếm nhà trọ, phòng trọ trên toàn quốc</h3>
+      <h1 class="text-center py-3 text-light">Tìm kiếm nhà trọ, phòng trọ trên toàn quốc</h1>
       <div class="row position-relative mb-3">
         <div class="col-12" v-click-outside="hideAddressSuggest">
-          <input type="search" class="search-input" placeholder="Nhập địa chỉ, quận huyện" v-model="address.name" @keyup="suggestAddress()" @focus="suggest.address=true">
+          <input type="search" class="search-input" @search="clear()" placeholder="Nhập địa chỉ, quận huyện" v-model="keywords" @keyup="suggestAddress(keywords)" @focus="suggest.address=true">
           <transition name="slide-fade">
             <suggest-box :options="addresses" :show="suggest.address" @choose="chooseAddress"/>
           </transition>
         </div>
       </div>
       <div class="row mb-3">
-        <div class="col-6 pr-0" v-click-outside="hideProvinceSuggest">
-          <div class="d-flex align-items-center search-input" @click="suggest.province=!suggest.province" style="cursor: pointer">
-            <span class="text-dark">{{ province.name }}</span>
-            <i class="fas fa-chevron-down ml-auto"></i>
-          </div>
-          <transition name="slide-fade">
-            <suggest-box :options="provinces" :show="suggest.province" @choose="chooseProvince"/>
-          </transition>
-        </div>
-        <div class="col-6 pl-0" v-click-outside="hideDistrictSuggest">
-          <div class="d-flex align-items-center search-input" @click="suggest.district=!suggest.district" style="cursor: pointer">
-            <span class="text-dark">{{ district.name }}</span>
-            <i class="fas fa-chevron-down ml-auto"></i>
-          </div>
-          <transition name="slide-fade">
-            <suggest-box :options="districts" :show="suggest.district" @choose="chooseDistrict"/>
-          </transition>
-        </div>
-      </div>
-      <div class="row mb-3">
-        <div class="col-8 pr-0">
+        <div class="col-7 pr-0">
           <button type="button" class="search-input bg-light text-dark text-bold">
             <i class="fas fa-street-view"></i> Tìm xung quanh
           </button>
         </div>
-        <div class="col-4">
+        <div class="col-5">
           <button class="search-input bg-danger text-light">
             <i class="fas fa-search"></i>
           </button>
@@ -55,8 +36,7 @@ export default {
   },
   data () {
     return {
-      provinces: [],
-      districts: [],
+      keywords: '',
       addresses: [],
       address: {},
       district: {
@@ -70,88 +50,47 @@ export default {
         name: 'Tỉnh thành'
       },
       suggest: {
-        address: false,
-        province: false,
-        district: false
+        address: false
       }
     }
   },
-  mounted () {
-    this.getProvinces()
-  },
   methods: {
-    suggestAddress (address) {
-      if (this.address.name.length < 2) return false
-      $request.get(`/api/sg/address?keywords=${this.address.name}`)
+    suggestAddress (keywords) {
+      if (keywords.length < 2) return false
+      $request.get(`/api/sg/address?keywords=${keywords}`)
       .then(res => this.addresses = res.data )
       .catch(err => console.log(err.response.data) )
     },
     chooseAddress (address) {
       this.address = address
+      this.keywords = address.name
       this.suggest.address = false
+    },
+    clear () {
+      if (this.keywords=='') this.address={}
     },
     hideAddressSuggest() {
       this.suggest.address = false
     },
-    chooseProvince (province) {
-      this.province = province
-      this.getDistricts(province.id)
-      this.suggest.province = false
-    },
-    getProvinces () {
-      $request.get('/api/sg/provinces')
-      .then(res => this.provinces = res.data )
-      .catch(err => console.log(err.response.data) )
-    },
-    hideProvinceSuggest() {
-      this.suggest.province = false
-    },
-    chooseDistrict (district) {
-      this.district = district
-      this.suggest.district = false
-    },
-    getDistricts (provinceId) {
-      this.district = {
-        name: 'Quận huyện'
-      }
-      $request.get(`/api/district/${provinceId}`)
-      .then(res => this.districts = res.data )
-      .catch(err => console.log(err.response.data) )
-    },
-    hideDistrictSuggest () {
-      this.suggest.district = false
-    },
     search () {
-      let params = {}
-      if (this.address.name!=''&&this.address.name!=undefined) {
-        if (this.address.slug!=undefined) {
-          if (this.address.d_slug!=undefined) {
-            params = {
-              province: this.address.p_slug,
-              district: this.address.d_slug,
-              area: this.address.slug
-            }
-          } else {
-            params = {
-              province: this.address.p_slug,
-              district: this.address.slug
-            }
-          }
+      if (this.address.name!=undefined) {
+        let query = {}
+        switch (this.address.type) {
+          case 1:
+            query = {province: this.address.slug}
+            break;
+          case 2:
+            query = {district: this.address.slug}
+            break;
+          case 3:
+            query = {area: this.address.slug}
+            break;
+          default:
+            break;
         }
-      } else if (this.province.slug!=undefined) {
-        if (this.district.slug!=undefined) {
-          params = {
-            province: this.province.slug,
-            district: this.district.slug
-          }
-        } else {
-          params = {
-            province: this.province.slug
-          }
-        }
-      }
-      if (params.province!='') {
-        this.$router.push({name: 'search-room', params: params})
+        this.$router.push({name: 'search-room', query: query})
+      } else if (this.keywords!='') {
+        this.$router.push({name: 'search-room', query: {address: this.keywords}})
       } else {
         this.$router.push({name: 'search-room'})
       }
@@ -162,9 +101,3 @@ export default {
   }
 }
 </script>
-<style scoped>
-  form {
-    width: 100%;
-    max-width: 600px;
-  }
-</style>

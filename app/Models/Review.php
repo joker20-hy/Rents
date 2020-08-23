@@ -42,4 +42,9 @@ class Review extends Model
     {
         return $this->belongsToMany(Room::class, 'review_rooms', 'room_id');
     }
+
+    public function reviewRooms()
+    {
+        return $this->hasOne(ReviewRoom::class);
+    }
 }

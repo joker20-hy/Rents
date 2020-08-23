@@ -73,8 +73,8 @@ class AreaRepository
      */
     public function update($id, array $params)
     {
-        $area = DB::transaction(function () use ($id, $params) {
-            $area = $this->area->findOrFail($id);
+        $area = $this->area->findOrFail($id);
+        $area = DB::transaction(function () use ($area, $params) {
             $area->update($params);
             return $area;
         });
@@ -88,8 +88,8 @@ class AreaRepository
      */
     public function destroy($id)
     {
-        DB::transaction(function () use ($id) {
-            $area = $this->area->findOrFail($id);
+        $area = $this->area->findOrFail($id);
+        DB::transaction(function () use ($area) {
             if (count($area->houses) > 0) {
                 $area->houses->delete();
             }

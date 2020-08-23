@@ -1,12 +1,12 @@
 <template>
-  <section id="side-menu" v-show="is_show" class="float-left" style="min-width: 300px;max-width: 300px;min-height: 100vh">
-    <div style="height: 200px;display: flex;align-items: flex-end;justify-content: center;padding-bottom:15px">
-     <span class="text-center">
+  <section admin-side-menu id="side-menu" v-show="is_show">
+    <header>
+      <span class="text-center">
       <img v-if="auth.profile" :src="auth.profile.image==null?'/images/default.svg':auth.profile.image" alt=""/>
       <br>
       {{ auth.name }}
      </span>
-    </div>
+    </header>
     <div>
       <ul class="list-group list-group-flush">
         <li class="list-group-item">

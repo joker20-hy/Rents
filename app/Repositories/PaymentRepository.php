@@ -39,7 +39,7 @@ class PaymentRepository
         if (!is_null($roomId)) {
             $payments = $payments->where('room_id', $roomId);
         }
-        return $payments->paginate($paginate);
+        return $payments->orderBy('created_at', 'desc')->paginate($paginate);
     }
 
     /**
@@ -52,8 +52,7 @@ class PaymentRepository
     public function store(array $params)
     {
         $payment = DB::transaction(function () use ($params) {
-            $payment = $this->payment->create($params);
-            return $payment;
+            return $this->payment->create($params);
         });
         return $payment;
     }
@@ -68,11 +67,24 @@ class PaymentRepository
      */
     public function update($id, array $params)
     {
-        $payment = DB::transaction(function () use ($id, $params) {
-            $payment = $this->payment->findOrFail($id);
+        $payment = $this->payment->findOrFail($id);
+        $payment = DB::transaction(function () use ($payment, $params) {
             $payment->update($params);
             return $payment;
         });
         return $payment;
+    }
+
+    /**
+     * Delete payment
+     * 
+     * @param integer $id
+     */
+    public function destroy($id)
+    {
+        $payment = $this->payment->findOrFail($id);
+        DB::transaction(function () use ($payment) {
+            $payment->delete();
+        });
     }
 }

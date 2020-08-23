@@ -9,7 +9,7 @@
       <path d="m164.539062 301.242188c31.742188.035156 58.25-24.191407 61.066407-55.808594 2.816406-31.617188-18.992188-60.148438-50.242188-65.722656-31.25-5.578126-61.578125 13.648437-69.871093 44.289062h-105.492188v32h105.492188c7.234374 26.664062 31.417968 45.191406 59.046874 45.242188zm0-90.484376c16.148438 0 29.242188 13.09375 29.242188 29.242188 0 16.152344-13.09375 29.242188-29.242188 29.242188-16.148437 0-29.242187-13.089844-29.242187-29.242188.015625-16.140625 13.097656-29.226562 29.242187-29.242188zm0 0"/></svg>
       &nbsp;Bộ lọc
     </button>
-    <select class="ml-auto" v-model="sort_condition" @change="onSort()">
+    <select class="ml-auto" v-model="sort" @change="onSort()">
       <option value="">Sắp xếp</option>
       <option v-for="(condition, index) in sort_conditions" :value="index" :key="index">{{ condition }}</option>
     </select>
@@ -18,20 +18,28 @@
 <script>
 export default {
   name: 'tool-bar',
-  props: {
-    sort_conditions: {
-      required: true,
-      type: Array
+  computed: {
+    sort_conditions () {
+      return $room_sort
+    }
+  },
+  watch: {
+    "$route.query.sort":  {
+      handler (sort) {
+        this.sort = sort==undefined?"":sort
+      },
+      deep: true,
+      immediate: true
     }
   },
   data () {
     return {
-      sort_condition: ''
+      sort: ''
     }
   },
   methods: {
     onSort () {
-      this.$emit('sort', this.sort_condition)
+      this.$emit('sort', this.sort)
     }
   }
 }
@@ -42,6 +50,7 @@ select {
   outline: none!important;
   color: #343a40;
   border-bottom: 2px solid #6c757d;
+  background-color: transparent;
   padding: 0px 10px;
 }
 </style>

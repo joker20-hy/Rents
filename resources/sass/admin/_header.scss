@@ -1,0 +1,17 @@
+@import '../variables';
+
+[header-bar] {
+    padding: 8px 12px;
+    display: flex;
+    background-color: $white;
+    .rent-logo {
+        font-weight: 600;
+        color: $blue;
+        text-decoration: none!important;
+        font-size: x-large;
+    }
+    .btn-auth {
+        color: $gray;
+        font-weight: 600;
+    }
+}

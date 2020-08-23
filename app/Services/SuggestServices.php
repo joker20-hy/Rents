@@ -90,22 +90,32 @@ class SuggestServices
         select
             a.id as id,
             a.slug as slug,
-            d.slug as d_slug,
-            p.slug as p_slug,
+            3 as type,
             concat(a.name, ', ', d.name, ', ', p.name) as name
         from
             areas a join provinces p on a.province_id = p.id
             join districts d on a.district_id = d.id
-        where a.name like '%$keywords%' and a.deleted_at is null limit 8");
+        where a.name like '%$keywords%' and a.deleted_at is null limit 4");
         $districts = DB::select("
         select
             d.id as id,
             d.slug as slug,
-            p.slug as p_slug,
+            2 as type,
             concat(d.name, ', ', p.name) as name
         from
             districts d join provinces p on d.province_id = p.id
-        where d.name like '%$keywords%' and d.deleted_at is null limit 8");
-        return array_merge($areas, $districts);
+        where d.name like '%$keywords%' and d.deleted_at is null limit 4");
+        $provinces = DB::select("
+        select
+            id,
+            slug,
+            1 as type,
+            name
+        from
+            provinces
+        where name like '%$keywords%' and deleted_at is null limit 2");
+        $results = array_merge($provinces, $districts);
+        $results = array_merge($results, $areas);
+        return $results;
     }
 }

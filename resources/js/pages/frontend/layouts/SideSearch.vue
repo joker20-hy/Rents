@@ -59,24 +59,31 @@ export default {
     choose (address) {
       this.address = address
       this.keywords = address.name
-      this.showSuggest=false
+      this.showSuggest = false
     },
     search () {
-      let params = {}
-      if (this.address.d_slug!=undefined) {
-        params = {
-          province: this.address.p_slug,
-          district: this.address.d_slug,
-          area: this.address.slug
-        }
-      } else {
-        params = {
-          province: this.address.p_slug,
-          district: this.address.slug
-        }
-      }
       this.hide()
-      this.$router.push({name: 'search-room', params: params})
+      if (this.address.name!=undefined) {
+        let query = {}
+        switch (this.address.type) {
+          case 1:
+            query = {province: this.address.slug}
+            break;
+          case 2:
+            query = {district: this.address.slug}
+            break;
+          case 3:
+            query = {area: this.address.slug}
+            break;
+          default:
+            break;
+        }
+        this.$router.push({name: 'search-room', query: query})
+      } else if (this.keywords!='') {
+        this.$router.push({name: 'search-room', query: {address: this.keywords}})
+      } else {
+        this.$router.push({name: 'search-room'})
+      }
     }
   },
   directives: {

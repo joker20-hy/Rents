@@ -1,14 +1,15 @@
 <template>
-  <div class="container">
+  <div class="container mt-3">
     <div class="row justify-content-center">
       <div class="col-12 col-md-10 col-xl-6">
         <div class="d-flex">
-          <h3>Danh sách hóa đơn</h3> <router-link :to="{name: 'owner-create-payment', params: {id: query.room_id}}" class="ml-auto"><i class="fas fa-money-check"></i> Tạo hóa đơn</router-link>
+          <h3>Danh sách hóa đơn</h3> 
+          <router-link style="font-weight: 600" :to="{name: 'owner-create-payment', params: {id: query.room_id}}" class="ml-auto"><i class="fas fa-money-check"></i> Tạo hóa đơn</router-link>
         </div>
         <div class="text-muted text-center" v-if="payments.length==0">
           Hiện chưa có hóa đơn nào
         </div>
-        <list-item v-else v-for="payment in payments" :key="payment.id" :payment="payment"/>
+        <list-item v-else v-for="payment in payments" :key="payment.id" :payment="payment" @delete="confirmDelete"/>
         <paginate
           v-if="payments.length>0"
           v-model="query.page"
@@ -23,16 +24,20 @@
         </paginate>
       </div>
     </div>
+    <confirm-box :name="'delete-payment'" :title="'Xóa hóa đơn'" :message="'Bạn có chăc muốn xóa hóa đơn này?'" @confirm="destroy()"></confirm-box>
   </div>
 </template>
 <script>
+import ConfirmBox from '../../utilities/ConfirmBox'
 import ListItem from './ListItem'
 export default {
   components: {
-    ListItem
+    ListItem,
+    ConfirmBox
   },
   data () {
     return {
+      chosen: '',
       page_count: 1,
       query: {
         page: this.$route.query.page,
@@ -75,6 +80,31 @@ export default {
     },
     changePage (page) {
       this.$router.push({name: 'owner-list-payment', params: {id: this.query.room_id}, query: {page: page}})
+    },
+    confirmDelete (id) {
+      this.chosen = id
+      this.$modal.show('delete-payment')
+    },
+    destroy () {
+      this.$modal.hide('delete-payment')
+      $eventHub.$emit('on-loading')
+      $request.delete(`/api/payment/${this.chosen}`)
+      .then(res => {
+        this.$store.commit('payments/delete', this.chosen)
+        $eventHub.$emit('off-loading')
+        $eventHub.$emit('success-alert', {
+          title: 'Thành công',
+          message: 'Hóa đơn đã được xóa thành công',
+          timeout: 5000
+        })
+      })
+      .catch(err => {
+        $eventHub.$emit('off-loading')
+        $eventHub.$emit('error-alert', {
+          title: 'Không thành công',
+          message: 'Hóa đơn chưa thể được xóa, xin hãy thử lại sau'
+        })
+      })
     }
   }
 }

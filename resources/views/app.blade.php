@@ -42,6 +42,10 @@
       }
       const $config = {
         user: {!! json_encode(config('const.USER')) !!},
+        ANONYMOUS: `{!! asset('images/anonymous.svg') !!}`,
+        IMAGES: {
+          DEFAULT: `{!! asset('images/default.png') !!}`
+        },
         TRUE: 1,
         FALSE: 0,
         MAX_SIZE_IMAGE: '2MB',
@@ -60,7 +64,8 @@
           }
         },
         REVIEW: {!! json_encode(config('const.REVIEW')) !!},
-        ROOM_STATUS: {!! json_encode(config('const.ROOM_STATUS')) !!}
+        ROOM_STATUS: {!! json_encode(config('const.ROOM_STATUS')) !!},
+        REVIEW: {!! json_encode(config('const.REVIEW')) !!}
       }
     </script>
 </body>

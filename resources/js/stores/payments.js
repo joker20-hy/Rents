@@ -14,6 +14,12 @@ const payments = {
   mutations: {
     payments (state, data) {
       state.payments = data
+    },
+    add (state, data) {
+      state.payments.push(data)
+    },
+    delete (state, id) {
+      state.payments = state.payments.filter(payment => payment.id!=id)
     }
   }
 }

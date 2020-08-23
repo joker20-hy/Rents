@@ -1,10 +1,20 @@
 <template>
   <div class="contain">
-    <div v-if="room.renter_count==0" class="alert alert-danger">
+    <div v-if="room.renters_count==0" class="alert alert-danger">
       Phòng hiện chưa có người thuê
     </div>
-    <form v-if="room.renter_count>0&&room_services.length>0" @submit.prevent="generate()">
-      <h4 class="mb-3">Hóa đơn tháng {{ today.getMonth()+1 }}/{{ today.getFullYear() }}</h4>
+    <form v-if="room.renters_count>0" @submit.prevent="generate()">
+      <h4 class="mb-3">Hóa đơn {{ room.name }}</h4>
+      <div class="row form-group">
+        <div class="col-6">
+          <label for="">Tháng</label>
+          <input type="number" class="form-control" v-model="month">
+        </div>
+        <div class="col-6">
+          <label for="">Năm</label>
+          <input type="number" class="form-control" v-model="year">
+        </div>
+      </div>
       <div class="row form-group mx-0" v-for="service in room_services" :key="service.service_id">
         <div class="w-100" v-if="service.service.type==service_types.PER_UNIT.value">
           <div class="d-flex">
@@ -13,7 +23,7 @@
           <input type="text" class="form-control" v-model="service.amount" :placeholder="service.service.unit" required>
         </div>
         <div class="w-100 d-flex" v-else-if="service.service.type==service_types.BY_RENTERS.value">
-          <label>{{ service.service.name }}</label> <span class="ml-auto">{{ room.renter_count }} {{ service.service.unit}} x {{ service.price }} vnđ</span>
+          <label>{{ service.service.name }}</label> <span class="ml-auto">{{ room.renters_count }} {{ service.service.unit}} x {{ service.price }} vnđ</span>
         </div>
         <div class="w-100 d-flex" v-else-if="service.service.type==service_types.PERIODIC.value">
           <label>{{ service.service.name }}</label>
@@ -57,11 +67,15 @@ export default {
         room_price: 0,
         total: 0
       },
+      month: '',
+      year: '',
       storing: false
     }
   },
   mounted () {
     this.getServices()
+    this.month = this.today.getMonth() + 1
+    this.year = this.today.getFullYear()
   },
   computed: {
     service_types () {
@@ -83,7 +97,7 @@ export default {
       this.bill.room_price = this.room.price
       this.bill.total = this.room.price
       this.room_services.forEach(serv => {
-        serv.amount = serv.service.type==this.service_types.BY_RENTERS.value?this.room.renter_count:serv.amount
+        serv.amount = serv.service.type==this.service_types.BY_RENTERS.value?this.room.renters_count:serv.amount
         let row = {
           servince_id: serv.service.id,
           servince_name: serv.service.name,

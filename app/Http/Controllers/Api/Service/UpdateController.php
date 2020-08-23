@@ -25,7 +25,8 @@ class UpdateController extends Controller
     public function validation(Request $request)
     {
         return $request->validate([
-            'name' => 'required|string'
+            'name' => 'required|string',
+            'unit' => 'required|string'
         ]);
     }
 }

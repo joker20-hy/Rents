@@ -27,8 +27,8 @@ export default {
     $eventHub.$on('off-loading', this.offloading)
     $request.get('/api/user/find')
     .then(res => {
-      this.$store.commit('auth/user', res.data)
-      if ($auth.user==null||res.data.id!=$auth.user.id) $auth = $auth.init(res.data)
+      $auth = $auth.init(res.data)
+      this.$store.commit('auth/user', $auth.user)
     })
     .catch(err => {
       err.response.status==401?this.$router.push({name: 'login'}):''

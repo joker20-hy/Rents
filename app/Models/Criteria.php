@@ -18,4 +18,9 @@ class Criteria extends Model
 	{
 		return $this->belongsToMany(Room::class, 'room_criterias');
 	}
+
+	public function roomCriterias()
+	{
+		return $this->hasMany(RoomCriteria::class);
+	}
 }

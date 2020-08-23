@@ -1,6 +1,6 @@
 <template>
   <div side-menu :class="isShow?'show':''" v-click-outside="hide">
-	<header style="height:150px">
+	<header>
 	  <div class="avatar-contain">
 	  	<img v-if="auth.profile" :src="auth.profile.image==null?'/images/default.svg':auth.profile.image" alt=""/>
 	  </div>
@@ -9,6 +9,9 @@
 	<main class="px-2">
     <router-link v-if="auth.id!=undefined" :to="{name: 'account', params: {id: auth.id}}" item>
       <i class="fas fa-user"></i> Tài khoản
+    </router-link>
+    <router-link v-if="renter" :to="{name: 'payment-room-list', params: {room_id: auth.room_id}}" item>
+      <i class="fas fa-money-check-alt"></i> Hóa đơn phòng
     </router-link>
 	  <router-link v-if="admin" :to="{name: 'user-list'}" item>
       <i class="fas fa-users-cog"></i> Quản lý
@@ -47,6 +50,9 @@ export default {
     },
     owner () {
       return this.auth.role==$config.user.ROLE.OWNER
+    },
+    renter () {
+      return this.auth.role==$config.user.ROLE.RENTER
     }
   },
   methods: {

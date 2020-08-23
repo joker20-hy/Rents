@@ -44,20 +44,39 @@ class ReviewServices
         $this->reviewRepository = $reviewRepository;
     }
 
-    public function index($type, $paginate = 10)
+    public function list($type, $paginate = 10)
     {
         switch ($type) {
             case config('const.REVIEW.TYPE.OWNER'):
-                return $this->reviewRepository->listOwner($paginate);
+                return $this->reviewRepository->listOwner(null, $paginate);
                 break;
             case config('const.REVIEW.TYPE.RENTER'):
-                return $this->reviewRepository->listRenter($paginate);
+                return $this->reviewRepository->listRenter(null, $paginate);
                 break;
             case config('const.REVIEW.TYPE.HOUSE'):
-                return $this->reviewRepository->listHouse($paginate);
+                return $this->reviewRepository->listHouse(null, $paginate);
                 break;
             case config('const.REVIEW.TYPE.ROOM'):
-                return $this->reviewRepository->listRoom($paginate);
+                return $this->reviewRepository->listRoom(null, $paginate);
+                break;
+        }
+        return [];
+    }
+
+    public function index($type, $id, $paginate = 10)
+    {
+        switch ($type) {
+            case config('const.REVIEW.TYPE.OWNER'):
+                return $this->reviewRepository->listOwner($id, $paginate);
+                break;
+            case config('const.REVIEW.TYPE.RENTER'):
+                return $this->reviewRepository->listRenter($id, $paginate);
+                break;
+            case config('const.REVIEW.TYPE.HOUSE'):
+                return $this->reviewRepository->listHouse($id, $paginate);
+                break;
+            case config('const.REVIEW.TYPE.ROOM'):
+                return $this->reviewRepository->listRoom($id, $paginate);
                 break;
         }
         return [];

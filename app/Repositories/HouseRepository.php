@@ -93,22 +93,26 @@ class HouseRepository
     {
         $house = DB::transaction(function () use ($params, $ownerId) {
         	$house = $this->house->create($params);
-	        $this->userHouse->create([
+	        return $house;
+        });
+        DB::transaction(function () use ($ownerId, $house) {
+            $this->userHouse->create([
                 'user_id' => $ownerId,
                 'house_id' => $house->id,
                 'role' => config('const.OWNER_ROLE.OWNER')
             ]);
-            $houseServices = [];
-            foreach($params['services'] as $serv) {
-                $serv = json_decode($serv);
-                array_push($houseServices, [
-                    'house_id' => $house->id,
-                    'service_id' => $serv->id,
-                    'price' => $serv->price
-                ]);
-            }
+        });
+        $houseServices = [];
+        foreach($params['services'] as $serv) {
+            $serv = json_decode($serv);
+            array_push($houseServices, [
+                'house_id' => $house->id,
+                'service_id' => $serv->id,
+                'price' => $serv->price
+            ]);
+        }
+        DB::transaction(function () use ($houseServices) {
             $this->houseService->insert($houseServices);
-	        return $house;
         });
         return $house;
     }
@@ -123,22 +127,26 @@ class HouseRepository
      */
     public function update($id, array $params)
     {
-    	$house = DB::transaction(function () use ($id, $params) {
-    		$house = $this->house->findOrFail($id);
+        $house = $this->house->findOrFail($id);
+    	$house = DB::transaction(function () use ($house, $params) {
             $house->update($params);
-            $houseServices = [];
-            foreach($params['add_services'] as $serv) {
-                array_push($houseServices, [
-                    'house_id' => $house->id,
-                    'service_id' => $serv['id'],
-                    'price' => $serv['price']
-                ]);
-            }
+        	return $house;
+        });
+        $houseServices = [];
+        foreach($params['add_services'] as $serv) {
+            array_push($houseServices, [
+                'house_id' => $house->id,
+                'service_id' => $serv['id'],
+                'price' => $serv['price']
+            ]);
+        }
+        DB::transaction(function () use ($houseServices) {
             $this->houseService->insert($houseServices);
+        });
+        DB::transaction(function () use ($house, $params) {
             $this->houseService->where('house_id', $house->id)
                 ->whereIn('service_id', $params['remove_services'])
                 ->delete();
-        	return $house;
         });
         return $house;
     }
@@ -153,10 +161,10 @@ class HouseRepository
      */
     public function addImages($id, array $newImages)
     {
-    	$images = DB::transaction(function () use ($id, $newImages) {
-    		$house = $this->house->findOrFail($id);
-            $oldImages = is_null($house->images) ? [] : json_decode($house->images);
-    		$images = array_merge($newImages, $oldImages);
+        $house = $this->house->findOrFail($id);
+        $oldImages = is_null($house->images) ? [] : json_decode($house->images);
+    	$images = array_merge($newImages, $oldImages);
+    	$images = DB::transaction(function () use ($house, $images) {
     		$house->update(['images' => json_encode($images)]);
         	return $images;
         });
@@ -172,11 +180,11 @@ class HouseRepository
      */
     public function destroy($id)
     {
-    	DB::transaction(function () use ($id) {
-    		$house = $this->house->findOrFail($id);
-    		$house->delete();
-            $house->rooms()->delete();
+        $house = $this->house->findOrFail($id);
+    	DB::transaction(function () use ($house) {
             $house->houseServices()->delete();
+            $house->rooms()->delete();
+            $house->delete();
         });
         return true;
     }

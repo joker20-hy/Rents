@@ -3,16 +3,13 @@
 namespace App\Services;
 
 use App\Repositories\CriteriaRepository;
-use App\Models\Criteria;
 
 class CriteriaServices
 {
-    protected $criteria;
     protected $criteriaRepository;
 
-    public function __construct(Criteria $criteria, CriteriaRepository $criteriaRepository)
+    public function __construct(CriteriaRepository $criteriaRepository)
     {
-        $this->criteria = $criteria;
         $this->criteriaRepository = $criteriaRepository;
     }
 
@@ -21,6 +18,13 @@ class CriteriaServices
         return $this->criteriaRepository->all();
     }
 
+    /**
+     * List and paginate criteria
+     *
+     * @param integer $paginate
+     *
+     * @return mixed
+     */
     public function list($paginate = 10)
     {
         return $this->criteriaRepository->listAll($paginate);
@@ -33,7 +37,7 @@ class CriteriaServices
      *
      * @return \App\Models\Criteria
      */
-    public function store($params)
+    public function store(array $params)
     {
         return $this->criteriaRepository->store($params);
     }
@@ -46,7 +50,7 @@ class CriteriaServices
      *
      * @return \App\Models\Criteria
      */
-    public function update($id, $params)
+    public function update($id, array $params)
     {
         $criteria = $this->criteriaRepository->update($id, $params);
         return $criteria;

@@ -40,7 +40,9 @@ class ProvinceRepository
      */
     public function store(array $params)
     {
-        $province = $this->province->create($params);
+        $province = DB::transaction(function () use ($params) {
+            return $this->province->create($params);
+        });
         return $province;
     }
 
@@ -78,8 +80,8 @@ class ProvinceRepository
      */
     public function update($id, array $params)
     {
-        $province = DB::transaction(function () use ($id, $params) {
-            $province = $this->province->findOrFail($id);
+        $province = $this->province->findOrFail($id);
+        $province = DB::transaction(function () use ($province, $params) {
             $province->update($params);
             return $province;
         });

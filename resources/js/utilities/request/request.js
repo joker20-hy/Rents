@@ -20,6 +20,9 @@ const $auth = {
       logout: '/api/logout'
     }
   },
+  get baseUrl () {
+    return 'http://rent.joker.com'
+  },
   get user () {
     return this._user.user
   },
@@ -88,7 +91,7 @@ function logout(success=null, error=null) {
   })
 }
 const request = axios.create({
-  baseURL: 'http://rent.joker.com/',
+  baseURL: `${$auth.baseUrl}/`,
   headers: {
     Authorization: `Bearer ${$token.access_token}`
   }

@@ -1,5 +1,5 @@
 <template>
-  <div class="auth-container">
+  <div class="auth-container p-2">
     <div class="login-form">
       <form action="" class="px-3 pt-4 pb-3" @submit.prevent="login()">
         <div class="text-center text-muted mb-4">
@@ -21,7 +21,7 @@
             Đăng nhập
           </button>
         </div>
-        <div class="bg-light text-center pb-2">
+        <div class="text-center pb-2">
           <a href="" class="text-dark">Quên mật khẩu ?</a>
         </div>
       </form>
@@ -92,7 +92,7 @@ export default {
     box-shadow: 0px 1px 3px;
   }
   .login-form {
-    min-width: 360px;
+    width: 400px;
     max-width: 100%;
     margin-left: auto;
     margin-right: auto;

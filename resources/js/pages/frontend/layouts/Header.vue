@@ -1,5 +1,5 @@
 <template>
-  <div nav-bar :class="isAuth?'':'py-2'">
+  <div id="header" nav-bar :class="isAuth?'':'py-2'">
   	<div class="logo">
   	  <router-link :to="{name: 'home'}" class="text-primary text-bold" style="font-size: 24px;text-decoration: none;">Rent</router-link>
   	</div>

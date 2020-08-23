@@ -64,6 +64,7 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'admin-role' => \App\Http\Middleware\AdminRole::class,
         'owner-role' => \App\Http\Middleware\OwnerRole::class,
-        'admin-owner-role' => \App\Http\Middleware\AdminOwnerRole::class
+        'admin-owner-role' => \App\Http\Middleware\AdminOwnerRole::class,
+        'owner-renter-role' => \App\Http\Middleware\OwnerRenterRole::class
     ];
 }

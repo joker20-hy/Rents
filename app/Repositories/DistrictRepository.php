@@ -96,12 +96,11 @@ class DistrictRepository
      */
     public function update($id, array $params)
     {
-        $district = DB::transaction(function () use ($id, $params) {
-            $district = $this->district->findOrFail($id);
+        $district = $this->district->findOrFail($id);
+        return DB::transaction(function () use ($district, $params) {
             $district->update($params);
             return $district;
         });
-        return $district;
     }
 
     /**
@@ -111,12 +110,10 @@ class DistrictRepository
      */
     public function destroy($id)
     {
-        DB::transaction(function () use ($id) {
-            $district = $this->district->findOrfail($id);
+        $district = $this->district->findOrfail($id);
+        DB::transaction(function () use ($district) {
+            $district->areas()->delete();
             $district->delete();
-            if (count($district->areas) > 0) {
-                $district->areas->delete();
-            }
         });
     }
 }
