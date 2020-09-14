@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Repositories\UserRepository;
@@ -180,6 +181,10 @@ class UserServices
     public function rentRoom($roomId, $id = null)
     {
         $id = is_null($id) ? Auth::user()->id : $id;
+        $user = $this->userRepository->findById($id);
+        if ($roomId==$user->room_id) {
+            return abort(400, 'You are already in this room');
+        }
         return $this->userRepository->rentRoom($id, $roomId);
     }
 

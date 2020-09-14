@@ -1,7 +1,7 @@
 <template>
   <transition name="slide-fade">
     <div class="row mx-0">
-      <div class="col-6 col-md-4" v-for="(cri, index) in criterias" :key="cri.id">
+      <div class="col-md-4" v-for="(cri, index) in criterias" :key="cri.id">
         <check-box :label="cri.name" :checked="cri.checked" :index="index" @change="getCriteria"/>
       </div>
     </div>

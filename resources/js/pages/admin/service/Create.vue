@@ -13,8 +13,8 @@
 		  <option v-for="(type, index) in service_types" :key="index" :value="type.value">{{ type.name }}</option>
 	  	</select>
 	  </div>
-	  <div class="form-group" v-show="service.type==service_types.PER_UNIT.value">
-		<input type="text" v-model="service.unit" placeholder="Đơn vị VD: số điện">
+	  <div class="form-group" v-show="service.type!=service_types.BY_RENTERS.value">
+		<input type="text" class="form-control" v-model="service.unit" placeholder="Đơn vị VD: số điện">
 	  </div>
 	  <div class="form-group text-right">
 		<button type="button" class="btn text-danger mx-1" @click="cancel()">Cancel</button>

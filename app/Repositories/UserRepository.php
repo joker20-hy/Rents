@@ -2,22 +2,26 @@
 
 namespace App\Repositories;
 
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 use App\Models\User;
 use App\Models\Profile;
 use App\Models\Setting;
-use Illuminate\Support\Facades\DB;
+use App\Models\RentRoom;
 
 class UserRepository
 {
     protected $user;
     protected $profile;
     protected $setting;
+    protected $rentRoom;
 
-    public function __construct(User $user, Profile $profile, Setting $setting)
+    public function __construct(User $user, Profile $profile, Setting $setting, RentRoom $rentRoom)
     {
         $this->user = $user;
         $this->profile = $profile;
         $this->setting = $setting;
+        $this->rentRoom = $rentRoom;
     }
 
     /**
@@ -141,11 +145,19 @@ class UserRepository
     public function rentRoom($id, $roomId)
     {
         $user = $this->user->findOrFail($id);
-        $user = $this->update($id, [
-            'role' => config('const.USER.ROLE.RENTER'),
-            'room_id' => $roomId
-        ]);
-        $user = DB::transaction(function () use ($user) {
+        $user = DB::transaction(function () use ($user, $roomId) {
+            $user = $this->update($user->id, [
+                'role' => config('const.USER.ROLE.RENTER'),
+                'room_id' => $roomId
+            ]);
+            $rentRoom = $this->rentRoom->where('room_id', $roomId)->first();
+            if (is_null($rentRoom)) {
+                $this->rentRoom->create([
+                    'room_id' => $roomId,
+                    'from' => Carbon::now(),
+                    'to' => null
+                ]);
+            }
             $user->room->update(['status' => config('const.ROOM_STATUS.rented')]);
             return $user;
         });
@@ -162,13 +174,15 @@ class UserRepository
     public function leaveRoom($id)
     {
         $user = $this->user->findOrFail($id);
-        $user = $this->update($id, [
-            'role' => config('const.USER.ROLE.RENTER'),
-            'room_id' => null
-        ]);
         $user = DB::transaction(function () use ($user) {
+            $user = $this->update($user->id, [
+                'role' => config('const.USER.ROLE.RENTER'),
+                'room_id' => null
+            ]);
             if (count($user->room->renters) == 0) {
                 $user->room->update(['status', config('const.ROOM_STATUS.waiting')]);
+                $this->rentRoom->where('room_id', $user->room_id)
+                    ->update(['to' => Carbon::now(), 'deleted_at' => Carbon::now()]);
             }
         });
         return $user;

@@ -1,6 +1,9 @@
 <template>
-<div class="contain">
-  <div class="bill-contain" v-if="payment">
+<div class="contain" v-if="payment">
+  <router-link :to="{name: 'owner-list-payment', params: {id: this.payment.room_id}}">
+    <i class="fas fa-chevron-left"></i> Danh sách
+  </router-link>
+  <div class="bill-contain mt-2">
     <h4>Hóa đơn tháng {{ payment.month }}/{{ payment.year }}</h4>
     <div class="form-group d-flex" v-for="row in payment.bill.services" :key="row.servince_id">
       <label>{{ row.servince_name }}</label>
@@ -9,6 +12,10 @@
     <div class="form-group d-flex">
       <label>Tiền phòng</label>
       <div class="ml-auto">{{ payment.bill.room_price }} vnđ</div>
+    </div>
+    <div class="form-group d-flex">
+      <label>Ghi chú</label>
+      <div class="ml-auto">{{ payment.bill.note }} vnđ</div>
     </div>
     <hr>
     <div class="form-group d-flex">

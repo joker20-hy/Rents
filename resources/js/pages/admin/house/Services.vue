@@ -1,6 +1,6 @@
 <template>
   <div class="row">
-    <div class="col-6 col-lg-4" v-for="(service, index) in services" :key="service.id" v-show="service.checked||editable">
+    <div class="col-md-6 col-lg-4" v-for="(service, index) in services" :key="service.id" v-show="service.checked||editable">
       <check-box :label="service.name" :index="index" :checked="service.checked" @change="chooseService" v-show="editable"/>
       <transition name="slide-fade">
         <div v-show="service.checked&&editable" class="form-group">

@@ -22,7 +22,7 @@
   	  :page-count="page_count"
   	  :page-range="3"
   	  :margin-pages="2"
-  	  :click-handler="changePage"
+  	  :click-handler="list"
   	  :prev-text="'Prev'"
   	  :next-text="'Next'"
   	  :container-class="'pagination'"
@@ -60,8 +60,9 @@ export default {
   	this.list()
   },
   methods: {
-  	list () {
-  	  $request.get(`/api/criteria/list?page${this.page}`)
+  	list (page = 1) {
+	  this.page = page
+  	  $request.get(`/api/criteria/list?page=${this.page}`)
   	  .then(res => {
   	  	this.page_count = res.data.last_page
   	  	this.per_page = res.data.per_page
@@ -82,10 +83,6 @@ export default {
   	  	this.page = this.page + 1
   	  	this.list()
   	  }
-  	},
-  	changePage (page) {
-  	  this.page = page
-  	  this.list()
   	},
   	destroyConfirm (criteria) {
   	  this.chosen = criteria

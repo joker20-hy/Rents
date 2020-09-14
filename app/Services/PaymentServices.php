@@ -28,7 +28,8 @@ class PaymentServices
      */
     public function list($roomId = null, $paginate = 10)
     {
-        return $this->paymentRepository->list($roomId, $paginate);
+        $rent = $this->roomRepository->getRent($roomId);
+        return $this->paymentRepository->list($rent->id, $paginate);
     }
 
     /**
@@ -55,6 +56,8 @@ class PaymentServices
         if (!$this->permission($params['room_id'])) {
             return abort(403, "Bạn không có quyền thực hiện hành động này");
         }
+        $rent = $this->roomRepository->getRent($params['room_id']);
+        $params['rent_room_id'] = $rent->id;
         $params['bill'] = json_encode($params['bill']);
         $params['creater_id'] = Auth::user()->id;
         $payment = $this->paymentRepository->store($params);
@@ -72,7 +75,8 @@ class PaymentServices
     public function update($id, $params)
     {
         $payment = $this->paymentRepository->findById($id);
-        if (!$this->permission($payment->room_id)) {
+        $rent = $this->roomRepository->getRentById($payment->rent_room_id);
+        if (!$this->permission($rent->room_id)) {
             return abort(403, "Bạn không có quyền thực hiện hành động này");
         }
         if (array_key_exists('bill', $params)) {

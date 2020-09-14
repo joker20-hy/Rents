@@ -49,9 +49,10 @@ export default {
           message: 'Đã xác nhận thành công',
           timeout: 3000
         })
-        this.$route.push({name: 'home'})
+        this.$router.push({name: 'home'})
       })
       .catch(err => {
+        console.log(err)
         this.confirming = false
         $eventHub.$emit('off-loading')
         $eventHub.$emit('error-alert', {

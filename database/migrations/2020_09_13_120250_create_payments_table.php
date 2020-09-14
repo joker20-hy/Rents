@@ -15,12 +15,13 @@ class CreatePaymentsTable extends Migration
     {
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('room_id');
-            $table->foreign('room_id')->references('id')->on('rooms');
+            $table->unsignedBigInteger('rent_room_id');
+            $table->foreign('rent_room_id')->references('id')->on('rent_rooms');
             $table->unsignedBigInteger('creater_id');
             $table->foreign('creater_id')->references('id')->on('users');
             $table->date('time');
             $table->text('bill');
+            $table->boolean('status')->default(false);
             $table->timestamps();
             $table->softDeletes();
         });

@@ -18,7 +18,7 @@ class UpdateStatusController extends Controller
     public function main(Request $request)
     {
         $params = $this->validation($request);
-        $this->roomServices->update($request->id, $params);
+        $this->roomServices->updateStatus($request->id, $params);
         return response()->json([], 204);
     }
 

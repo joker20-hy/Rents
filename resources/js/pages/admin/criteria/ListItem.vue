@@ -10,12 +10,19 @@
 		<textarea class="input" v-model="criteria.icon" v-show="edit"></textarea>
 	  </td>
 	  <td>
-	  	<button class="btn text-primary" @click="enterEdit()" v-show="!edit">Edit</button>
+	  	<button class="btn text-primary" @click="enterEdit()" v-show="!edit">
+		  <i class="fas fa-pencil"></i>
+		</button>
 	  	<button class="btn text-primary" @click="update()" v-show="edit">
-	  	  <i class="fas fa-spinner fa-pulse text-primary" v-show="updating"></i> Save
+		  <i class="fas fa-save text-primary" v-show="!updating"></i>
+	  	  <i class="fas fa-spinner fa-pulse text-primary" v-show="updating"></i>
 	  	</button>
-	  	<button class="btn text-danger" @click="leaveEdit()" v-show="edit">Cancel</button>
-	  	<button class="btn text-danger" @click="$emit('destroy', criteria)" v-show="!edit">Delete</button>
+	  	<button class="btn text-danger" @click="leaveEdit()" v-show="edit">
+		  <i class="fas fa-times"></i>
+		</button>
+	  	<button class="btn text-danger" @click="$emit('destroy', criteria)" v-show="!edit">
+		  <i class="fas fa-trash"></i>
+		</button>
 	  </td>
 	</tr>
   </transition>
@@ -42,14 +49,16 @@ export default {
   	  this.edit = true
   	},
   	backup () {
-  	  this.backup_data.name = this.criteria.name
+		this.backup_data.name = this.criteria.name
+		this.backup_data.icon = this.criteria.icon
   	},
   	cancel () {
   	  this.restore()
   	  this.leaveEdit()
   	},
   	restore () {
-  	  this.criteria.name = this.backup_data.name
+		this.criteria.name = this.backup_data.name,
+		this.criteria.icon = this.backup_data.icon
   	},
   	leaveEdit () {
   	  this.edit = false
@@ -57,7 +66,8 @@ export default {
   	update () {
   	  this.updating = true
   	  $request.put(`/api/criteria/${this.criteria.id}`, {
-  	  	name: this.criteria.name
+		name: this.criteria.name,
+		icon: this.criteria.icon
   	  })
   	  .then(res => {
   	  	this.updating = false

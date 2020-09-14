@@ -8,15 +8,24 @@
         </router-link>
       </div>
       <small class="text-muted" v-if="rooms.length==0">Hiện chưa có phòng nào</small>
-      <list-item v-for="room in rooms" :key="room.id" :item="room"></list-item>
+      <list-item v-for="room in rooms" :key="room.id" :item="room" @changestatus="confirmChangeStatus(room)"></list-item>
     </div>
+    <confirm-box
+      :name="'change-status-confirm'"
+      :title="'Xác nhận thay đổi'"
+      :message="`Việc thay đổi này sẽ xóa bỏ hoàn toàn thông tin về những người thuê phòng này và phòng sẽ trở lại trạng thái 'còn trống'`"
+      @confirm="changeStatus()"
+      @cancel="cancelChangeStatus()"
+      ></confirm-box>
   </div>
 </template>
 <script>
+import ConfirmBox from '../../utilities/ConfirmBox'
 import ListItem from './ListItem'
 export default {
   components: {
-    ListItem
+    ListItem,
+    ConfirmBox
   },
   data () {
     return {
@@ -56,6 +65,37 @@ export default {
       .catch(err => {
         $eventHub.$emit('off-loading')
         console.log(err)
+      })
+    },
+    confirmChangeStatus (room) {
+      this.chosen = room
+      if (this.chosen.status) {
+        this.changeStatus()
+      } else {
+        this.$modal.show('change-status-confirm')
+      }
+    },
+    cancelChangeStatus () {
+      this.chosen.status=this.chosen.status==1?0:1
+    },
+    changeStatus () {
+      $request.put(`/api/room/${this.chosen.id}/status`, {
+        status: this.chosen.status
+      })
+      .then(res => {
+        $eventHub.$emit('success-alert', {
+          title: 'Thành công',
+          message: 'Đã lưu trạng thái thành công',
+          timeout: 3000
+        })
+      })
+      .catch(err => {
+        this.chosen.status=this.chosen.status==1?0:1
+        $eventHub.$emit('error-alert', {
+          title: 'Không thành công',
+          message: 'Không thể lưu trạng thái mới',
+          timeout: 3000
+        })
       })
     }
   }

@@ -83,10 +83,8 @@ export default {
     "$route.params.id": {
       handler (id) {
         this.id = id
-        if (this.room==undefined) {
-          this.getRoom()
-          this.getCriterias()
-        }
+        if (this.room==undefined) this.getRoom()
+        this.getCriterias()
       },
       deep: true,
       immediate: true

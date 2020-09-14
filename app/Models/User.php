@@ -81,4 +81,9 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->belongsTo(Room::class);
     }
+
+    public function ownerpaymethods()
+    {
+        return $this->hasMany(OnwerPayMethod::class);
+    }
 }

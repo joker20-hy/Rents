@@ -32,10 +32,14 @@
       </div>
       <div class="form-group d-flex">
         <label>Tiền phòng</label>
-        <div class="ml-auto">{{ this.room.price }}vnđ</div>
+        <div class="ml-auto">{{ room.price }}vnđ</div>
+      </div>
+      <div class="form-group">
+        <label>Chú thích</label>
+        <textarea class="form-control" v-model="bill.note"></textarea>
       </div>
       <div class="d-flex">
-        <button class="btn btn-outline-primary ml-auto">Lưu hóa đơn</button>
+        <button class="btn btn-outline-primary ml-auto">Xuất hóa đơn</button>
       </div>
     </form>
     <div class="bill-contain" v-show="bill.services.length > 0">
@@ -65,7 +69,8 @@ export default {
       bill: {
         services: [],
         room_price: 0,
-        total: 0
+        total: 0,
+        note: ''
       },
       month: '',
       year: '',
@@ -113,7 +118,7 @@ export default {
       this.storing = true
       $request.post(`/api/payment`, {
         room_id: this.id,
-        time: `${this.today.getFullYear()}-${this.today.getMonth()>8?this.today.getMonth()+1:`0${this.today.getMonth()}`}-01`,
+        time: `${this.today.getFullYear()}-${this.month>9?this.month:`0${this.month}`}-01`,
         bill: this.bill
       })
       .then(res => {

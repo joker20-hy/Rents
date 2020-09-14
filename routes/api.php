@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Paymethod;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -142,6 +143,7 @@ Route::group(['namespace' => 'Api'], function() {
 			Route::put('{id}/images', 'UpdateImagesController@main')->middleware('admin-owner-role');
 			Route::put('{id}/status', 'UpdateStatusController@main')->middleware('admin-owner-role');
 			Route::delete('{id}', 'DestroyController@main')->middleware('admin-owner-role');
+			Route::get('{id}/renters', 'RenterController@main')->middleware('admin-owner-role');
 		});
 		Route::group([
 			'namespace' => 'Service',
@@ -184,6 +186,16 @@ Route::group(['namespace' => 'Api'], function() {
 			Route::post('', 'StoreController@main')->middleware('admin-owner-role');
 			Route::put('{id}/status', 'UpdateStatusController@main')->middleware('admin-owner-role');
 			Route::delete('{id}', 'DestroyController@main')->middleware('admin-owner-role');
+		});
+		Route::group([
+			'namespace' => 'PayMethod',
+			'prefix' => 'pay-method'
+		], function () {
+			Route::get('', 'IndexController@main');
+			Route::get('list', 'ListController@main');
+			Route::post('', 'StoreController@main');
+			Route::put('{id}', 'UpdateController@main');
+			Route::delete('{id}', 'DestroyController@main');
 		});
 	});
 });

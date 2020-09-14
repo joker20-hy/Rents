@@ -1,6 +1,9 @@
 <template>
   <div class="container mt-3 mb-5">
-    <h1>Danh sách hóa đơn</h1>
+    <h1 class="row py-3 px-2 bg-primary text-light">Danh sách hóa đơn</h1>
+    <div v-if="payments.length==0" class='text-center text-muted'>
+      Hiện chưa có hóa đơn nào
+    </div>
     <transition-group name="slide-fade">
       <div v-for="payment in payments" :key="payment.id" class="list-item row mx-0">
         <div class="col-12 px-0 d-flex align-items-center" style="font-weight: 600">

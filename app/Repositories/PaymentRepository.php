@@ -33,11 +33,11 @@ class PaymentRepository
      *
      * @return mixed
      */
-    public function list($roomId = null, $paginate = 10)
+    public function list($rentRoomId = null, $paginate = 10)
     {
         $payments = $this->payment;
-        if (!is_null($roomId)) {
-            $payments = $payments->where('room_id', $roomId);
+        if (!is_null($rentRoomId)) {
+            $payments = $payments->where('rent_room_id', $rentRoomId);
         }
         return $payments->orderBy('created_at', 'desc')->paginate($paginate);
     }

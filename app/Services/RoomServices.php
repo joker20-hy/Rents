@@ -12,8 +12,11 @@ class RoomServices
     protected $userServinces;
     protected $roomRepository;
 
-    public function __construct(ImageServices $imageServices, UserServices $userServinces, RoomRepository $roomRepository)
-    {
+    public function __construct(
+        ImageServices $imageServices,
+        UserServices $userServinces,
+        RoomRepository $roomRepository
+    ) {
         $this->folder = config('const.FOLDER.ROOM');
         $this->imageServices = $imageServices;
         $this->userServinces = $userServinces;
@@ -92,6 +95,15 @@ class RoomServices
         return $this->roomRepository->update($id, $params);
     }
 
+    public function updateStatus($id, array $params)
+    {
+        if ($params['status']) {
+            $this->roomRepository->update($id, ['status' => $params['status']]);
+        } else {
+            $this->roomRepository->emptyRoom($id);
+        }
+    }
+
         /**
      * Upload new room's images
      *
@@ -161,6 +173,11 @@ class RoomServices
         ];
     }
 
+    /**
+     * @param integer $id
+     * @param boolean $all
+     * @param array $userIds
+     */
     public function leaveRoom($id, $all = false, $userIds = [])
     {
         if ($all) {
@@ -170,6 +187,26 @@ class RoomServices
                 $this->userServinces->leaveRoom($userId);
             }
         }
+    }
+
+    /**
+     * Find all renters of a room by id
+     *
+     * @param integer $id
+     *
+     * @return array
+     */
+    public function renters($id)
+    {
+        if (!$this->permission($id)) {
+            return abort(403, "Bạn không có quyền thực hiện hành động này");
+        }
+        $room = $this->roomRepository->findById($id);
+        $renters = $room->renters;
+        foreach ($renters as $renter) {
+            $renter->profile;
+        }
+        return $renters;
     }
 
     /**

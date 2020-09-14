@@ -10,17 +10,12 @@ class Payment extends Model
     use SoftDeletes;
 
     protected $fillable = [
-        'room_id',
-        'time',
+        'rent_room_id',
         'creater_id',
+        'time',
         'bill',
         'status'
     ];
-
-    public function room()
-    {
-        return $this->belongsTo(Room::class);
-    }
 
     public function creater()
     {

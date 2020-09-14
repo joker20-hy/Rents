@@ -22,9 +22,9 @@ export default {
     return {}
   },
   mounted () {
-    if (!$auth.check) return false
     $eventHub.$on('on-loading', this.onloading)
     $eventHub.$on('off-loading', this.offloading)
+    if (!$auth.check) return false
     $request.get('/api/user/find')
     .then(res => {
       $auth = $auth.init(res.data)

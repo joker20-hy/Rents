@@ -4,7 +4,9 @@
       <div class="col-12 col-md-10 col-xl-6">
         <div class="d-flex">
           <h3>Danh sách hóa đơn</h3> 
-          <router-link style="font-weight: 600" :to="{name: 'owner-create-payment', params: {id: query.room_id}}" class="ml-auto"><i class="fas fa-money-check"></i> Tạo hóa đơn</router-link>
+          <router-link style="font-weight: 600" :to="{name: 'owner-create-payment', params: {id: query.room_id}}" class="ml-auto">
+            <i class="fas fa-money-check-alt"></i> Tạo hóa đơn
+          </router-link>
         </div>
         <div class="text-muted text-center" v-if="payments.length==0">
           Hiện chưa có hóa đơn nào

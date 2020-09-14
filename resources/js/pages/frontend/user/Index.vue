@@ -37,14 +37,14 @@
             <div class="col-6">
               <label>Họ</label>
               <div class="form-group">
-                <div class="holder" v-show="!edit">{{ user.profile.lastname }}</div>
+                <div class="holder" v-show="!edit">{{ user.profile.lastname?user.profile.lastname:'Chưa rõ' }}</div>
                 <input type="text" v-show="edit" class="input" v-model="user.profile.lastname" placeholder="Họ">
               </div>
             </div>
             <div class="col-6">
               <label>Tên</label>
               <div class="form-group">
-                <div class="holder" v-show="!edit">{{ user.profile.firstname }}</div>
+                <div class="holder" v-show="!edit">{{ user.profile.firstname?user.profile.firstname:'Chưa rõ' }}</div>
                 <input type="text" v-show="edit" class="input" v-model="user.profile.firstname" placeholder="Tên">
               </div>
             </div>
@@ -56,12 +56,12 @@
           </div>
           <div class="form-group" v-if="user.profile">
             <label>Ngày sinh</label>
-            <div class="holder" v-show="!edit">{{ user.profile.date_of_birth.split('-').reverse().join('/') }}</div>
+            <div class="holder" v-show="!edit">{{ user.profile.date_of_birth?user.profile.date_of_birth.split('-').reverse().join('/'):'Chưa rõ' }}</div>
             <input type="date" v-show="edit" class="input" v-model="user.profile.date_of_birth">
           </div>
           <div class="form-group" v-if="user.profile">
             <label>Địa chỉ</label>
-            <div class="holder" v-show="!edit">{{ user.profile.address }}</div>
+            <div class="holder" v-show="!edit">{{ user.profile.address?user.profile.address:'Chưa rõ' }}</div>
             <input type="text" v-show="edit" class="input" v-model="user.profile.address" placeholder="Địa chỉ">
           </div>
           <div class="form-group text-right" v-show="edit">

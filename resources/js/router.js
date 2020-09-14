@@ -17,7 +17,6 @@ import Payment from './pages/frontend/user/Payment'
 import PaymentRoom from './pages/frontend/user/room_payment/Index'
 import PaymentRoomList from './pages/frontend/user/room_payment/List'
 import PaymentRoomDetail from './pages/frontend/user/room_payment/Detail'
-
 /** Auth components */
 import Login from './pages/auth/Login'
 import Register from './pages/auth/Register'
@@ -31,10 +30,15 @@ import OwnerRoom from './pages/owner/room/Index'
 import OwnerListRoom from './pages/owner/room/List'
 import OwnerDetailRoom from './pages/owner/room/Detail'
 import OwnerCreateRoom from './pages/owner/room/Create'
-import OwnerJoinRoom from './pages/owner/room/AddRenter'
 import OwnerListPayment from './pages/owner/payment/List'
 import OwnerCreatePayment from './pages/owner/payment/Create'
 import OwnerDetailPayment from './pages/owner/payment/Detail'
+import OwnerPayMethods from './pages/owner/paymethods/Index'
+import OwnerListPayMethods from './pages/owner/paymethods/List'
+import OwnerCreatePayMethods from './pages/owner/paymethods/Create'
+import OwnerRenter from './pages/owner/renters/Index'
+import OwnerAddRenter from './pages/owner/renters/Add'
+import OwnerListRenter from './pages/owner/renters/List'
 /** Dashboard parent components */
 import Admin from './pages/admin/Index'
 import Users from './pages/admin/user/Index'
@@ -194,7 +198,7 @@ const router = new Router({
       }
     },
     {
-      path: '/chu-nha',
+      path: '/cn',
       component: Owner,
       children: [
         {
@@ -246,11 +250,6 @@ const router = new Router({
               path: ':id/hoa-don',
               name: 'owner-list-payment',
               component: OwnerListPayment
-            },
-            {
-              path: ':id/qr',
-              name: 'owner-join-room-qr',
-              component: OwnerJoinRoom
             }
           ]
         },
@@ -258,6 +257,38 @@ const router = new Router({
           path: 'hoa-don/:id',
           name: 'owner-detail-payment',
           component: OwnerDetailPayment
+        },
+        {
+          path: 'nguoi-thue/:room',
+          component: OwnerRenter,
+          children: [
+            {
+              path: '',
+              name: 'owner-list-renter',
+              component: OwnerListRenter
+            },
+            {
+              path: 'them',
+              name: 'owner-add-renter',
+              component: OwnerAddRenter
+            }
+          ]
+        },
+        {
+          path: 'phuong-thuc-thanh-toan',
+          component: OwnerPayMethods,
+          children: [
+            {
+              path: '',
+              component: OwnerListPayMethods,
+              name: 'owner-list-paymethod'
+            },
+            {
+              path: 'tao',
+              component: OwnerCreatePayMethods,
+              name: 'owner-create-paymethod'
+            }
+          ]
         }
       ],
       beforeEnter(to, from, next) {
