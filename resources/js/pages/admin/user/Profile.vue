@@ -108,7 +108,7 @@ export default {
       this.edit = false
     },
     update () {
-      $request.put(`/api/user/${this.user.id}/profile`, this.user.profile)
+      ajax().put(`/api/user/${this.user.id}/profile`, this.user.profile)
       .then(res => {
         this.leaveEdit()
         $eventHub.$emit('success-alert', {

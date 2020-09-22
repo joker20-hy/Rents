@@ -1,76 +1,8 @@
 <template>
   <div>
     <nav-header/>
-    <div class="container mt-3">
-        <h2>Thông tin tài khoản</h2>
-        <form @submit.prevent="update">
-          <div class="d-flex">
-            <button type="button" v-show="!edit" class="btn text-primary ml-auto" @click="enterEdit()">
-              <i class="fas fa-pencil"></i> <span style="font-weight: 600">Chỉnh sửa</span>
-            </button>
-            <button type="button" v-show="edit" class="btn text-danger ml-auto" @click="leaveEdit()">
-              <i class="fas fa-times"></i> <span style="font-weight: 600">Hủy</span>
-            </button>
-          </div>
-          <div>
-          <div class="form-group" v-if="user.profile">
-            <div class="text-center">
-              <img style="width: 100px;height: 100px;border-radius: 50%;margin-bottom: 10px" :src="user.profile.image==null?'/images/default.svg':user.profile.image" :alt="user.name">
-              <br>
-              <div>
-                <button type="button" v-show="edit" class="btn text-primary" onclick="clickTarget('#profile-image')">
-                  Thay đổi
-                </button>
-                <button type="button" class="btn text-primary" v-show="edit&&edit_avatar" @click="uploadImage()">
-                  <i class="far fa-save"></i> Lưu
-                </button>
-              </div>
-            </div>
-          </div>
-          </div>
-          <label>Tên người dùng</label>
-          <div class="form-group">
-            <div class="holder" v-show="!edit">{{ user.name }}</div>
-            <input type="text" v-show="edit" class="input" v-model="user.name" placeholder="Tên người dùng">
-          </div>
-          <div class="form-group row" v-if="user.profile">
-            <div class="col-6">
-              <label>Họ</label>
-              <div class="form-group">
-                <div class="holder" v-show="!edit">{{ user.profile.lastname?user.profile.lastname:'Chưa rõ' }}</div>
-                <input type="text" v-show="edit" class="input" v-model="user.profile.lastname" placeholder="Họ">
-              </div>
-            </div>
-            <div class="col-6">
-              <label>Tên</label>
-              <div class="form-group">
-                <div class="holder" v-show="!edit">{{ user.profile.firstname?user.profile.firstname:'Chưa rõ' }}</div>
-                <input type="text" v-show="edit" class="input" v-model="user.profile.firstname" placeholder="Tên">
-              </div>
-            </div>
-          </div>
-          <div class="form-group" v-if="edit||(user.profile && user.profile.phone)">
-            <label>Số điện thoại</label>
-            <div class="holder" v-show="!edit">{{ user.profile.phone }}</div>
-            <input type="text" v-show="edit" class="input" v-model="user.profile.phone" placeholder="Số điện thoại">
-          </div>
-          <div class="form-group" v-if="user.profile">
-            <label>Ngày sinh</label>
-            <div class="holder" v-show="!edit">{{ user.profile.date_of_birth?user.profile.date_of_birth.split('-').reverse().join('/'):'Chưa rõ' }}</div>
-            <input type="date" v-show="edit" class="input" v-model="user.profile.date_of_birth">
-          </div>
-          <div class="form-group" v-if="user.profile">
-            <label>Địa chỉ</label>
-            <div class="holder" v-show="!edit">{{ user.profile.address?user.profile.address:'Chưa rõ' }}</div>
-            <input type="text" v-show="edit" class="input" v-model="user.profile.address" placeholder="Địa chỉ">
-          </div>
-          <div class="form-group text-right" v-show="edit">
-            <button class="btn btn-outline-primary">
-              <i class="far fa-save"></i> Lưu
-            </button>
-          </div>
-        </form>
-        <input type="file" id="profile-image" @change="previewImage" class="d-none">
+    <div class="p-2">
+      <router-view></router-view>
     </div>
   </div>
 </template>
@@ -123,7 +55,7 @@ export default {
     uploadImage () {
       let data = new FormData()
       data.append('image', this.image)
-      $request.post(`/api/user/${this.user.id}/avatar`, data, {
+      ajax().post(`/api/user/${this.user.id}/avatar`, data, {
         headers: { 'Content-Type': 'multipart/form-data' }
       })
       .then(res => {
@@ -144,7 +76,7 @@ export default {
       })
     },
     update () {
-      $request.put(`/api/user/${this.user.id}`, this.getData())
+      ajax().put(`/api/user/${this.user.id}`, this.getData())
       .then(res => {
         $eventHub.$emit('success-alert', {
           title: 'Thành công',

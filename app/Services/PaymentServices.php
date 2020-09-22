@@ -56,8 +56,7 @@ class PaymentServices
         if (!$this->permission($params['room_id'])) {
             return abort(403, "Bạn không có quyền thực hiện hành động này");
         }
-        $rent = $this->roomRepository->getRent($params['room_id']);
-        $params['rent_room_id'] = $rent->id;
+        $this->roomRepository->getRent($params['room_id']);
         $params['bill'] = json_encode($params['bill']);
         $params['creater_id'] = Auth::user()->id;
         $payment = $this->paymentRepository->store($params);

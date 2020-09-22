@@ -65,7 +65,7 @@ export default {
   	},
   	update () {
   	  this.updating = true
-  	  $request.put(`/api/criteria/${this.criteria.id}`, {
+  	  ajax().put(`/api/criteria/${this.criteria.id}`, {
 		name: this.criteria.name,
 		icon: this.criteria.icon
   	  })

@@ -171,6 +171,23 @@ class UserServices
     }
 
     /**
+     * Get user's rented room
+     *
+     * @return \App\Models\Room
+     */
+    public function room()
+    {
+        $authUser = Auth::user();
+        $room = $authUser->room;
+        if (is_null($room)) {
+            return abort(404, 'Không thể tìm thấy phòng đã thuê');
+        }
+        $room->house;
+        $room->payments;
+        return $room;
+    }
+
+    /**
      * Rent room
      *
      * @param integer $roomId

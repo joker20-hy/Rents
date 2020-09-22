@@ -7,18 +7,25 @@ use Illuminate\Support\Facades\DB;
 use App\Models\RoomCriteria;
 use App\Models\RentRoom;
 use App\Models\Room;
+use App\Models\RoomPayMethod;
 
 class RoomRepository
 {
     protected $room;
     protected $rentRoom;
     protected $roomCriteria;
+    protected $roomPayMethod;
 
-    public function __construct(RoomCriteria $roomCriteria, Room $room, RentRoom $rentRoom)
-    {
+    public function __construct(
+        RoomCriteria $roomCriteria,
+        Room $room,
+        RentRoom $rentRoom,
+        RoomPayMethod $roomPayMethod
+    ) {
         $this->roomCriteria = $roomCriteria;
         $this->rentRoom = $rentRoom;
         $this->room = $room;
+        $this->roomPayMethod = $roomPayMethod;
     }
 
 
@@ -104,7 +111,8 @@ class RoomRepository
         )->join("houses", "rooms.house_id", "=", "houses.id")
         ->join("provinces", "houses.province_id", "=", "provinces.id")
         ->join("districts", "houses.district_id", "=", "districts.id")
-        ->with('criterias');
+        ->with('criterias')
+        ->with('paymethods');
         if (!is_null($ownerId)) {
             $query = $query->join("user_houses", "user_houses.house_id", "=", "houses.id")
                         ->where('user_houses.user_id', $ownerId);
@@ -222,7 +230,15 @@ class RoomRepository
         return $room;
     }
 
-    public function updateCriterias(Room $room, array $criteriaIds)
+    /**
+     * Update room criterias
+     *
+     * @param \App\Models\Room $room
+     * @param array $criteriaIds
+     *
+     * @return \App\Models\Room
+     */
+    private function updateCriterias(Room $room, array $criteriaIds)
     {
         $roomCriterias = [];
         $criterias = $room->criterias()->pluck('id');
@@ -261,6 +277,28 @@ class RoomRepository
             return $images;
         });
         return $images;
+    }
+
+    public function updatePayMethods($id, array $paymethodIds)
+    {
+        $room = $this->findById($id);
+        $paymethods = $room->paymethods->pluck('id');
+        $params = [];
+        foreach ($paymethodIds as $id) {
+            if (!$paymethods->contains($id)) {
+                array_push($params, [
+                    'room_id' => $room->id,
+                    'pay_method_id' => $id,
+                    'created_at' => Carbon::now(),
+                    'updated_at' => Carbon::now()
+                ]);
+            }   
+        }
+        $this->roomPayMethod->insert($params);
+        $this->roomPayMethod->where('room_id', $room->id)
+                ->whereNotIn('pay_method_id', $paymethodIds)
+                ->delete();
+        return $room;
     }
 
     /**

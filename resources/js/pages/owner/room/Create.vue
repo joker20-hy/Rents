@@ -121,7 +121,7 @@ export default {
     },
     store () {
       $eventHub.$emit('on-loading')
-      $request.post('/api/room', this.data, {
+      ajax().post('/api/room', this.data, {
         headers: { 'Content-Type': 'multipart/form-data' }
       })
       .then(res => {
@@ -148,7 +148,7 @@ export default {
       })
     },
     getCriterias () {
-      $request.get('/api/criteria')
+      ajax().get('/api/criteria')
       .then(res => {
         res.data.forEach(cri => cri.checked = false);
         this.criterias = res.data

@@ -40,6 +40,7 @@
 import ReviewStars from './Stars'
 import SwitchBox from '../../utilities/SwitchBox'
 import ClickOutside from 'vue-click-outside'
+
 export default {
   components: {
 	  ReviewStars,
@@ -82,7 +83,7 @@ export default {
   },
   methods: {
 	getRoom () {
-	  $request.get(`/api/room/${this.id}`)
+	  ajax().get(`/api/room/${this.id}`)
 	  .then(res => {
 		this.$store.commit('rooms/rooms', [res.data])
 	  })
@@ -100,7 +101,7 @@ export default {
 	  this.infra_rate = rate
 	},
 	create () {
-	  $request.post(`/api/review/${this.type}`, {
+	  ajax().post(`/api/review/${this.type}`, {
 		criteria_id: this.id,
 		title: this.title,
 		owner_rate: this.owner_rate,

@@ -37,7 +37,7 @@ export default {
   methods: {
     store () {
       $eventHub.$emit('on-loading')
-      $request.post(`/api/pay-method`, {
+      ajax().post(`/api/pay-method`, {
         name: this.name,
         account: this.account,
         note: this.note

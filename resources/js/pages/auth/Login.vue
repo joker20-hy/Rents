@@ -29,7 +29,7 @@
   </div>
 </template>
 <script>
-import { login } from '../../utilities/request/request'
+import { login, user } from '../../utilities/request/request'
 
 export default {
   name: 'login-form',
@@ -50,9 +50,15 @@ export default {
       login(this.credentials, this.loginSuccess, this.loginError)
     },
     loginSuccess () {
-      $eventHub.$emit('off-loading')
-      this.logining_in = false
-      window.location.href = this.redirectTo
+      user(res => {
+        $eventHub.$emit('off-loading')
+        this.logining_in = false
+        $auth = $auth.init(res.data)
+        this.$store.commit('auth/user', $auth.user)
+        this.$router.push(this.redirectTo)
+      }, err => {
+        console.log(err)
+      })
     },
     loginError (err) {
       $eventHub.$emit('off-loading')

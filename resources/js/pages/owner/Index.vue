@@ -4,8 +4,9 @@
     <router-view></router-view>
     <div owner-bottom-nav>
       <div bar>
+        <router-link :to="{name: 'account'}">Tài khoản</router-link>
         <router-link :to="{name: 'owner-list-house'}" class="mx-2">Danh sách nhà</router-link>
-        <router-link :to="{name: 'owner-list-paymethod'}" class="mx-2">Phương thức thanh toán</router-link>
+        <router-link :to="{name: 'owner-list-paymethod'}" class="mx-2">Thanh toán</router-link>
       </div>
       <!-- <router-link :to="{name: 'owner-list-paymethod'}" class="mx-2">Danh sách hóa đơn</router-link> -->
     </div>

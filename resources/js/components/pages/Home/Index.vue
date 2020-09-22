@@ -19,7 +19,7 @@ export default {
   },
   methods: {
     authUser () {
-      $request.get('/api/user/find')
+      ajax().get('/api/user/find')
       .then(res => {
         this.$store.commit('auth/user', res.data)
       })

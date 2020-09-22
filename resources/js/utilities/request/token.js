@@ -2,7 +2,7 @@
  * Token handlers
  * @private
  */
-const $token = {
+export default {
   /**
    * Keys to tokens
    */
@@ -43,4 +43,3 @@ const $token = {
     return parseInt(localStorage.getItem(this.keys.expires))
   }
 }
-export default $token

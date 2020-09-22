@@ -7,20 +7,20 @@
     <h4>Hóa đơn tháng {{ payment.month }}/{{ payment.year }}</h4>
     <div class="form-group d-flex" v-for="row in payment.bill.services" :key="row.servince_id">
       <label>{{ row.servince_name }}</label>
-      <div class="ml-auto">{{ row.price }} vnđ {{ row.amount?` (${row.amount})`:'' }}</div>
+      <div class="ml-auto">{{ range(row.price) }} vnđ {{ row.amount?` (${row.amount})`:'' }}</div>
     </div>
     <div class="form-group d-flex">
       <label>Tiền phòng</label>
-      <div class="ml-auto">{{ payment.bill.room_price }} vnđ</div>
+      <div class="ml-auto">{{ range(payment.bill.room_price) }} vnđ</div>
     </div>
     <div class="form-group d-flex">
       <label>Ghi chú</label>
-      <div class="ml-auto">{{ payment.bill.note }} vnđ</div>
+      <div class="ml-auto">{{ range(payment.bill.note) }} vnđ</div>
     </div>
     <hr>
     <div class="form-group d-flex">
       <label>Tổng</label>
-      <div class="ml-auto">{{ payment.bill.total }} vnđ</div>
+      <div class="ml-auto">{{ range(payment.bill.total) }} vnđ</div>
     </div>
   </div>
 </div>
@@ -48,8 +48,11 @@ export default {
     }
   },
   methods: {
+    range(number) {
+      return $number.range(`${number}`)
+    },
     get() {
-      $request.get(`/api/payment/${this.id}`)
+      ajax().get(`/api/payment/${this.id}`)
       .then(res => {
         res.data.bill = JSON.parse(res.data.bill)
         let time = new Date(res.data.time)

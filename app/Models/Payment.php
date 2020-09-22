@@ -10,7 +10,7 @@ class Payment extends Model
     use SoftDeletes;
 
     protected $fillable = [
-        'rent_room_id',
+        'room_id',
         'creater_id',
         'time',
         'bill',
@@ -20,5 +20,10 @@ class Payment extends Model
     public function creater()
     {
         return $this->belongsTo(User::class, 'creater_id');
+    }
+
+    public function room()
+    {
+        return $this->belongsTo(Room::class, 'room_id');
     }
 }

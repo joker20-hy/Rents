@@ -54,7 +54,7 @@ export default {
       this.district.slug = this.backup_district.slug
     },
     update () {
-      $request.put(`/api/district/${this.district.id}`, this.district)
+      ajax().put(`/api/district/${this.district.id}`, this.district)
       .then(res => {
         this.leaveEdit()
         this.$emit('success', 'District has been updated successfully')

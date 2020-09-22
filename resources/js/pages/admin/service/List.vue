@@ -78,7 +78,7 @@ export default {
   methods: {
   	list () {
   	  this.loading = true
-  	  $request.get(this.listApi)
+  	  ajax().get(this.listApi)
   	  .then(res => {
   	  	this.loading = false
   	  	this.page_count = res.data.last_page
@@ -111,7 +111,7 @@ export default {
   	  this.$modal.show('delete-service')
   	},
   	destroy () {
-  	  $request.delete(`/api/service/${this.chosen.id}`)
+  	  ajax().delete(`/api/service/${this.chosen.id}`)
   	  .then(res => {
   	  	this.$modal.hide('delete-service')
   	  	this.$store.commit('services/remove', this.chosen.id)

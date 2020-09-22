@@ -11,6 +11,7 @@
 <script>
 import AlertBox from './utilities/AlertBox'
 import LogoutForm from './auth/Logout'
+import { user } from '../utilities/request/request'
 
 export default {
   name: 'App',
@@ -25,12 +26,10 @@ export default {
     $eventHub.$on('on-loading', this.onloading)
     $eventHub.$on('off-loading', this.offloading)
     if (!$auth.check) return false
-    $request.get('/api/user/find')
-    .then(res => {
+    user(res => {
       $auth = $auth.init(res.data)
       this.$store.commit('auth/user', $auth.user)
-    })
-    .catch(err => {
+    }, err => {
       err.response.status==401?this.$router.push({name: 'login'}):''
     })
   },

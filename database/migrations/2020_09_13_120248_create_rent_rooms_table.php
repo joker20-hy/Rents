@@ -15,6 +15,8 @@ class CreateRentRoomsTable extends Migration
     {
         Schema::create('rent_rooms', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('renter_id');
+            $table->foreign('renter_id')->references('id')->on('users');
             $table->unsignedBigInteger('room_id');
             $table->foreign('room_id')->references('id')->on('rooms');
             $table->dateTime('from');

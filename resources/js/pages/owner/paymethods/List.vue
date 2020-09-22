@@ -1,7 +1,7 @@
 <template>
   <div class="contain-sm mt-3">
     <h1 style="font-size: large" class="d-flex align-items-center">
-      Danh sách phương thức thanh toán
+      Phương thức thanh toán
       <router-link :to="{name: 'owner-create-paymethod'}" class="btn ml-auto text-primary text-bold">
         <i class="fas fa-plus"></i> Thêm
       </router-link>
@@ -35,7 +35,7 @@ export default {
   methods: {
     get () {
       $eventHub.$emit('on-loading')
-      $request.get('/api/pay-method')
+      ajax().get('/api/pay-method')
       .then(res => {
         $eventHub.$emit('off-loading')
         this.$store.commit('paymethods/paymethods', res.data)
@@ -51,7 +51,7 @@ export default {
     },
     destroy () {
       $eventHub.$emit('on-loading')
-      $request.delete(`/api/pay-method/${this.chosen}`)
+      ajax().delete(`/api/pay-method/${this.chosen}`)
       .then(res => {
         $eventHub.$emit('off-loading')
         $eventHub.$emit('success-alert', {

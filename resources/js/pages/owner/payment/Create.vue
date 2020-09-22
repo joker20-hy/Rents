@@ -36,7 +36,7 @@
       </div>
       <div class="form-group">
         <label>Chú thích</label>
-        <textarea class="form-control" v-model="bill.note"></textarea>
+        <textarea class="form-control" v-model="bill.note" placeholder="VD: Số điện mới: 20"></textarea>
       </div>
       <div class="d-flex">
         <button class="btn btn-outline-primary ml-auto">Xuất hóa đơn</button>
@@ -89,7 +89,7 @@ export default {
   },
   methods: {
     getServices () {
-      $request.get(`/api/room/${this.id}/services`)
+      ajax().get(`/api/room/${this.id}/services`)
       .then(res => {
         res.data.room_services.forEach(serv => serv.amount='')
         this.room_services = res.data.room_services
@@ -116,7 +116,7 @@ export default {
     store() {
       $eventHub.$emit('on-loading')
       this.storing = true
-      $request.post(`/api/payment`, {
+      ajax().post(`/api/payment`, {
         room_id: this.id,
         time: `${this.today.getFullYear()}-${this.month>9?this.month:`0${this.month}`}-01`,
         bill: this.bill

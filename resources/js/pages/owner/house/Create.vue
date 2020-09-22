@@ -165,7 +165,7 @@ export default {
       }
     },
     getServices() {
-      $request.get('/api/service')
+      ajax().get('/api/service')
       .then(res => {
         res.data.forEach(item => {
           item.price = ''
@@ -176,14 +176,14 @@ export default {
       .catch(err => {console.log(err)})
     },
     getDirection () {
-      $request.get('/api/direction')
+      ajax().get('/api/direction')
       .then(res => {
         this.directions = res.data
       })
       .catch(err => console.log("unable to get direction list"))
     },
     store () {
-      $request.post('/api/house', this.data, {
+      ajax().post('/api/house', this.data, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }

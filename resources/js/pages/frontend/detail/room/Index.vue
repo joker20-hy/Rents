@@ -1,12 +1,19 @@
 <template>
   <div class="container" style="margin-bottom: 64px" v-if="room!=null">
     <image-gallary :images="images" @detail="slideshow"/>
-    <h3>{{ room.name }}</h3>
+    
+    <div class="d-flex" v-if="hasRight">
+      <h3>{{ room.name }}</h3>
+      <router-link class="ml-auto btn text-primary" :to="{name: 'owner-detail-room', params: {id: room.id}}">
+        <i class="fas fa-pen"></i> Chỉnh sửa
+      </router-link>
+    </div>
+
     <small class="text-muted" v-if="room.house">{{ room.house.address_detail }}</small>    
     <div class="d-flex my-3">
       <div>
         <strong>Giá: </strong>
-        {{ room.price }} vnđ
+        {{ range(room.price) }} vnđ
       </div>
       <div class="ml-auto">
         <strong>Đóng tiền:</strong> {{ room.cycle }} tháng / lần
@@ -66,6 +73,15 @@ export default {
   computed: {
     room () {
       return this.$store.getters['rooms/first']
+    },
+    admin () {
+      return this.$store.getters['auth/admin']
+    },
+    owner () {
+      return this.$store.getters['auth/owner']
+    },
+    hasRight() {
+      return this.owner||this.admin
     }
   },
   methods: {
@@ -73,9 +89,12 @@ export default {
       e.stopPropagation()
       $eventHub.$emit('toggle-side-search')
     },
+    range(number) {
+      return $number.range(`${number}`)
+    },
     get () {
       $eventHub.$emit('on-loading')
-      $request.get(`/api/room/${this.id}`)
+      ajax().get(`/api/room/${this.id}`)
       .then(res => {
         res.data.description = utf8.decode(res.data.description)
         this.images = JSON.parse(res.data.images)

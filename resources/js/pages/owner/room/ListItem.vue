@@ -32,13 +32,13 @@
         </span>
       </div>
       <div class="py-2 text-right text-md-center row mx-0">
-        <div class="col-md-3 pt-2">
-          <router-link v-if="status_rented" :to="{name: 'owner-list-payment', params: {id: room.id}}">
+        <div class="col-md-3 pt-2" v-if="status_rented">
+          <router-link :to="{name: 'owner-list-payment', params: {id: room.id}}">
             <i class="fas fa-money-check-alt"></i> Danh sách hóa đơn
           </router-link>
         </div>
-        <div class="col-md-3 pt-2">
-          <router-link v-if="status_rented" :to="{name: 'owner-create-payment', params: {id: room.id}}">
+        <div class="col-md-3 pt-2" v-if="status_rented">
+          <router-link :to="{name: 'owner-create-payment', params: {id: room.id}}">
             <i class="fas fa-plus"></i> Tạo hóa đơn
           </router-link>
         </div>
@@ -51,6 +51,11 @@
           <router-link :to="{name: 'owner-list-renter', params: {room: room.id}}">
             <i class="fas fa-user"></i> Người thuê
           </router-link>
+        </div>
+        <div class="col-md-3 pt-2">
+          <button class="btn text-primary" @click="$emit('add-pay-method', item)">
+            <i class="fas fa-dollar-sign"></i> Thanh toán
+          </button>
         </div>
       </div>
     </div>

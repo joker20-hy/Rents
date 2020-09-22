@@ -76,7 +76,7 @@ export default {
     list (page = 1) {
       this.query.page = page
       $eventHub.$emit('on-loading')
-      $request.get(`/api/room?${serialize.fromObj(this.query)}`)
+      ajax().get(`/api/room?${serialize.fromObj(this.query)}`)
       .then(res => {
         $eventHub.$emit('off-loading')
         this.rooms = res.data.data

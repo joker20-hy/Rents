@@ -5,7 +5,11 @@
         <img src="/images/photo.svg" :alt="house.name">
       </div>
       <div class="pl-2">
-        <div class="text-bold">{{ house.name }}</div>
+        <div class="text-bold">
+          <router-link :to="{name: 'owner-detail-house', params: {id: house.id}}" class="text-info" tool title="Chi tiết">
+            {{ house.name }}
+          </router-link>
+        </div>
         <div>
           <small>{{ house.address_detail }}</small>
         </div>

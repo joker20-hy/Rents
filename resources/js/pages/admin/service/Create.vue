@@ -42,7 +42,7 @@ export default {
   },
   methods: {
   	store () {
-  	  $request.post('/api/service', this.service)
+  	  ajax().post('/api/service', this.service)
   	  .then(res => {
   	  	this.reset()
   	  	this.$emit('created', res.data)

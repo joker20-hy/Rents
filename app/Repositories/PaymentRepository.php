@@ -26,6 +26,11 @@ class PaymentRepository
         return $this->payment->findOrFail($id);
     }
 
+    public function findByRoom($roomId)
+    {
+        //
+    }
+
     /**
      * List payment
      *
@@ -33,11 +38,11 @@ class PaymentRepository
      *
      * @return mixed
      */
-    public function list($rentRoomId = null, $paginate = 10)
+    public function list($roomId = null, $paginate = 10)
     {
         $payments = $this->payment;
-        if (!is_null($rentRoomId)) {
-            $payments = $payments->where('rent_room_id', $rentRoomId);
+        if (!is_null($roomId)) {
+            $payments = $payments->where('room_id', $roomId);
         }
         return $payments->orderBy('created_at', 'desc')->paginate($paginate);
     }

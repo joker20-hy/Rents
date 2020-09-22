@@ -7,18 +7,18 @@
 	  {{ auth.name }}
 	</header>
 	<main class="px-2">
-    <router-link v-if="auth.id!=undefined" :to="{name: 'account', params: {id: auth.id}}" item>
+    <div v-if="auth.id!=undefined" item @click="routeTo({name: 'account'})">
       <i class="fas fa-user"></i> Tài khoản
-    </router-link>
-    <router-link v-if="renter" :to="{name: 'payment-room-list', params: {room_id: auth.room_id}}" item>
-      <i class="fas fa-money-check-alt"></i> Hóa đơn phòng
-    </router-link>
-	  <router-link v-if="admin" :to="{name: 'user-list'}" item>
+    </div>
+    <div v-if="renter" @click="routeTo({name: 'rented-room'})" item>
+      <i class="fas fa-house-user"></i> Phòng trọ
+    </div>
+	  <div v-if="admin" @click="routeTo({name: 'user-list'})" item>
       <i class="fas fa-users-cog"></i> Quản lý
-    </router-link>
-     <router-link v-else-if="owner" :to="{name: 'owner-list-house'}" item>
+    </div>
+     <div v-else-if="owner" @click="routeTo({name: 'owner-list-house'})" item>
       <i class="fas fa-users-cog"></i> Quản lý
-    </router-link>
+    </div>
     <div item v-if="auth.id!=undefined" @click="logout()">
       <i class="fas fa-sign-out-alt"></i> Đăng xuất
     </div>
@@ -64,7 +64,12 @@ export default {
       this.isShow = false
     },
     logout () {
+      this.hide()
       $eventHub.$emit('show-logout-form')
+    },
+    routeTo (route) {
+      this.hide()
+      this.$router.push(route)
     }
   },
   directives: {

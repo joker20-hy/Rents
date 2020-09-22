@@ -124,7 +124,7 @@ export default {
       return data
     },
     upload () {
-      $request.post(this.updateApi, this.getData(), {
+      ajax().post(this.updateApi, this.getData(), {
         headers: {'Content-Type': 'multipart/form-data'}
       })
       .then(res => {
@@ -152,7 +152,7 @@ export default {
     remove () {
       let images = []
       this.bucket.filter(img => !img.choose).forEach(img => images.push(img.url))
-      $request.put(this.deleteApi, {
+      ajax().put(this.deleteApi, {
         images: images
       })
       .then(res => {

@@ -37,4 +37,14 @@ class Room extends Model
 	{
 		return $this->hasMany(User::class);
 	}
+
+	public function payments()
+	{
+		return $this->hasMany(Payment::class);
+	}
+
+	public function paymethods()
+    {
+        return $this->belongsToMany(PayMethod::class, 'room_pay_methods');
+    }
 }

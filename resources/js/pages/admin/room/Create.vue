@@ -135,7 +135,7 @@ export default {
       return data
     },
     store () {
-      $request.post('/api/room', this.getData(), {
+      ajax().post('/api/room', this.getData(), {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
@@ -157,7 +157,7 @@ export default {
       })
     },
     getCriterias () {
-      $request.get('/api/criteria')
+      ajax().get('/api/criteria')
       .then(res => {
         res.data.forEach(cri => cri.checked = false);
         this.criterias = res.data

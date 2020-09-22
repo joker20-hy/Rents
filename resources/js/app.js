@@ -1,10 +1,11 @@
 window.Vue = require('vue')
 window.$eventHub = new Vue()
 window.utf8 = require('utf8')
-import { $auth } from './utilities/request/request'
+import { $auth, ajax } from './utilities/request/request'
 window.$auth = $auth.init()
-import { request } from './utilities/request/request'
-window.$request = request
+window.ajax = ajax
+import $number from './utilities/number'
+window.$number = $number
 import serialize from './utilities/serialize'
 window.serialize = serialize
 import merge from './utilities/merge'

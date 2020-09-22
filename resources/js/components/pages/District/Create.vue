@@ -40,7 +40,7 @@ export default {
   },
   methods: {
     getProvinces () {
-      $request.get('/api/province/all')
+      ajax().get('/api/province/all')
       .then(res => {
         this.provinces = res.data
       })
@@ -53,7 +53,7 @@ export default {
       this.district.name = ''
     },
     store () {
-      $request.post('/api/district', this.district)
+      ajax().post('/api/district', this.district)
       .then(res => {
         this.reset()
         this.$emit('created', res.data)

@@ -20,7 +20,7 @@ export default {
   },
   methods: {
   	store () {
-  	  $request.post('/api/criteria', {
+  	  ajax().post('/api/criteria', {
   	  	name: this.name
   	  })
   	  .then(res => {

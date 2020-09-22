@@ -174,6 +174,19 @@ class RoomServices
     }
 
     /**
+     * Add PayMethod to Room
+     *
+     * @param integer $id
+     * @param array $payMethodIds
+     *
+     * @return \App\Models\Room
+     */
+    public function addPayMethods($id, array $payMethodIds)
+    {
+        $this->roomRepository->updatePayMethods($id, $payMethodIds);
+    }
+
+    /**
      * @param integer $id
      * @param boolean $all
      * @param array $userIds

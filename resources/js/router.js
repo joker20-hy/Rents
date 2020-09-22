@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 
-import { store } from './stores/store'
 import Home from './pages/frontend/home/Index'
 import SearchRoom from './pages/frontend/search/room/Index'
 import Detail from './pages/frontend/detail/Index'
@@ -11,9 +10,11 @@ import Review from './pages/frontend/review/Index'
 import ReviewHouse from './pages/frontend/review/House'
 import ReviewRoom from './pages/frontend/review/Room'
 import ReviewRenter from './pages/frontend/review/Renter'
-import Account from './pages/frontend/user/Index'
+import Renter from './pages/frontend/user/Index'
+import Account from './pages/frontend/user/Account'
 import JoinRoom from './pages/frontend/user/JoinRoom'
-import Payment from './pages/frontend/user/Payment'
+import RentedRoom from './pages/frontend/user/Room'
+import RoomPayMethod from './pages/frontend/user/RoomPayMethods'
 import PaymentRoom from './pages/frontend/user/room_payment/Index'
 import PaymentRoomList from './pages/frontend/user/room_payment/List'
 import PaymentRoomDetail from './pages/frontend/user/room_payment/Detail'
@@ -112,41 +113,51 @@ const router = new Router({
       }
     },
     {
-      path: '/hoa-don',
-      component: Payment,
+      path: '/nguoi-thue',
+      component: Renter,
       children: [
         {
+          path: 'tai-khoan',
+          name: 'account',
+          component: Account,
+          beforeEnter(to, from, next) {
+            if ($auth.check) {
+              $auth.forget('old_route')
+              next()
+            }
+            else {
+              $auth.remember('old_route', to)
+              router.push({name: 'login'})
+            }
+          }
+        },
+        {
           path: 'phong',
+          name: 'rented-room',
+          component: RentedRoom
+        },
+        {
+          path: 'phong/:id/thanh-toan',
+          name: 'room-pay-method',
+          component: RoomPayMethod
+        },
+        {
+          path: 'hoa-don-phong',
           component: PaymentRoom,
           children: [
             {
-              path: 'chi-tiet/:id',
-              name: 'payment-room-detail',
-              component: PaymentRoomDetail
-            },
-            {
-              path: ':room_id',
+              path: '',
               name: 'payment-room-list',
               component: PaymentRoomList
+            },
+            {
+              path: ':id',
+              name: 'payment-room-detail',
+              component: PaymentRoomDetail
             }
           ]
         }
       ]
-    },
-    {
-      path: '/:id/tai-khoan',
-      name: 'account',
-      component: Account,
-      beforeEnter(to, from, next) {
-        if ($auth.check) {
-          $auth.forget('old_route')
-          next()
-        }
-        else {
-          $auth.remember('old_route', to)
-          router.push({name: 'login'})
-        }
-      }
     },
     {
       path: '/danh-gia',

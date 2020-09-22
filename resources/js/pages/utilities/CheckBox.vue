@@ -19,7 +19,8 @@ export default {
       required: true
     },
     label: {
-      required: true,
+      required: false,
+      default: '',
       type: String
     }
   },

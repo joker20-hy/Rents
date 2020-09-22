@@ -92,7 +92,7 @@ export default {
     },
   	list () {
   	  this.loading = true
-  	  $request.get(this.listApi)
+  	  ajax().get(this.listApi)
   	  .then(res => {
   	  	this.loading = false
         this.per_page = res.data.per_page
@@ -117,7 +117,7 @@ export default {
       this.$modal.show('delete-review')
     },
     destroy () {
-      $request.delete(`/api/review/${this.chosen.id}`)
+      ajax().delete(`/api/review/${this.chosen.id}`)
       .then(res => {
         this.$modal.hide('delete-review')
         this.success('The review has been deleted successfully')

@@ -57,7 +57,7 @@ export default {
   methods: {
     suggestAddress (keywords) {
       if (keywords.length < 2) return false
-      $request.get(`/api/sg/address?keywords=${keywords}`)
+      ajax().get(`/api/sg/address?keywords=${keywords}`)
       .then(res => this.addresses = res.data )
       .catch(err => console.log(err.response.data) )
     },

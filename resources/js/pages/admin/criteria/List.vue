@@ -62,7 +62,7 @@ export default {
   methods: {
   	list (page = 1) {
 	  this.page = page
-  	  $request.get(`/api/criteria/list?page=${this.page}`)
+  	  ajax().get(`/api/criteria/list?page=${this.page}`)
   	  .then(res => {
   	  	this.page_count = res.data.last_page
   	  	this.per_page = res.data.per_page
@@ -89,7 +89,7 @@ export default {
   	  this.$modal.show('delete-criteria')
   	},
   	destroy () {
-  	  $request.delete(`/api/criteria/${this.chosen.id}`)
+  	  ajax().delete(`/api/criteria/${this.chosen.id}`)
   	  .then(res => {
   	  	$eventHub.$emit('success-alert', {
           title: 'Success',

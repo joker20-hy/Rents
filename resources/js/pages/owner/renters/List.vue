@@ -25,7 +25,7 @@ export default {
   },
   methods: {
     list () {
-      $request.get(`/api/room/${this.id}/renters`)
+      ajax().get(`/api/room/${this.id}/renters`)
       .then(res => {
         this.$store.commit('users/users', res.data)
       })

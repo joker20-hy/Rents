@@ -48,7 +48,7 @@ class House extends Model
         return $this->hasMany(Room::class);
     }
 
-    public function users()
+    public function owners()
     {
         return $this->belongsToMany(User::class, 'user_houses');
     }

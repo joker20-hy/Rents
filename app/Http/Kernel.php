@@ -65,6 +65,7 @@ class Kernel extends HttpKernel
         'admin-role' => \App\Http\Middleware\AdminRole::class,
         'owner-role' => \App\Http\Middleware\OwnerRole::class,
         'admin-owner-role' => \App\Http\Middleware\AdminOwnerRole::class,
-        'owner-renter-role' => \App\Http\Middleware\OwnerRenterRole::class
+        'owner-renter-role' => \App\Http\Middleware\OwnerRenterRole::class,
+        'renter-role' => \App\Http\Middleware\RenterRole::class
     ];
 }
