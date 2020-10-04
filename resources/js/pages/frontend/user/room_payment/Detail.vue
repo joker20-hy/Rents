@@ -10,6 +10,10 @@
       <label>Tiền phòng</label>
       <div class="ml-auto">{{ range(payment.bill.room_price) }} vnđ</div>
     </div>
+    <div class="form-group" v-if="payment.bill.note">
+      <label>Ghi chú</label>
+      <div class="ml-auto p-1">{{ payment.bill.note }}</div>
+    </div>
     <hr>
     <div class="form-group d-flex">
       <label>Tổng</label>

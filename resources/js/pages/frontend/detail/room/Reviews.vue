@@ -24,10 +24,14 @@
           </div>
         </div>
         <div class="pt-1" v-if="review.review_rooms">
-          Cơ sở vật chất: {{ review.review_rooms.infra_rate }} <i class="fas fa-star"></i>
+          <b>Cơ sở vật chất:</b> {{ review.review_rooms.infra_rate }} <i class="fas fa-star"></i>
         </div>
         <div class="pt-1" v-if="review.review_rooms">
-          An ninh: {{ review.review_rooms.secure_rate }} <i class="fas fa-star"></i>
+          <b>An ninh:</b> {{ review.review_rooms.secure_rate }} <i class="fas fa-star"></i>
+        </div>
+        <div class="pt-1" v-if="review.description">
+          <b>Nhận xét: </b>
+          {{ review.description }}
         </div>
       </div>
     </transition-group>
@@ -44,17 +48,35 @@ export default {
   props: {
     id: {
       required: true
+    },
+    perpage: {
+      required: false,
+      default: 5,
+      type: Number
     }
   },
   data () {
     return {
+      query: {
+        id: this.id,
+        perpage: this.perpage
+      },
       reviews: [],
       next_page_url: null
+    }
+  },
+  watch: {
+    id (value) {
+      this.query.id = value
+      this.get()
     }
   },
   computed: {
     anonymous_img() {
       return $config.ANONYMOUS
+    },
+    type () {
+      return $config.REVIEW.TYPE.ROOM
     }
   },
   mounted() {
@@ -62,8 +84,8 @@ export default {
   },
   methods: {
     get (url=null) {
-      url = url==null?`/api/review/${$config.REVIEW.TYPE.ROOM}/${this.id}?perpage=5`:this.next_page_url
-      ajax().get(`/api/review/${$config.REVIEW.TYPE.ROOM}/${this.id}?perpage=5`)
+      url = url==null?`/api/review/${this.type}?${serialize.fromObj(this.query)}`:this.next_page_url
+      ajax().get(url)
       .then(res => {
         res.data.data.forEach(review => this.reviews.push(review))
         this.next_page_url = res.data.next_page_url

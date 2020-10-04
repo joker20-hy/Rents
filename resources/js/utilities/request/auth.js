@@ -27,7 +27,7 @@ export default {
     return this._user.user
   },
   get check() {
-    if ($token.access_token==null||this._user==null) return false
+    if ($token.access==null||this.user==null) return false
     let now = new Date()
     return now.getTime() <= $token.expires
   },

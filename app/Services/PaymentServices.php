@@ -74,8 +74,7 @@ class PaymentServices
     public function update($id, $params)
     {
         $payment = $this->paymentRepository->findById($id);
-        $rent = $this->roomRepository->getRentById($payment->rent_room_id);
-        if (!$this->permission($rent->room_id)) {
+        if (!$this->permission($payment->room_id)) {
             return abort(403, "Bạn không có quyền thực hiện hành động này");
         }
         if (array_key_exists('bill', $params)) {

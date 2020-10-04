@@ -5,7 +5,13 @@
         {{ `Hóa đơn tháng ${payment.month}/${payment.year}` }}
       </div>
       <div class="col-6 col-md-4 px-1 d-flex justify-content-center align-items-center">
-        <switch-box v-model="payment.status" :class="payment.status?'bg-primary':''" @change="changeStatus"></switch-box>&nbsp;
+        <switch-box
+          v-model="payment.status"
+          :class="payment.status?'bg-primary':''"
+          :locked="payment.status!=0"
+          @change="changeStatus"
+          @click="alertPayment()"
+        ></switch-box>&nbsp;
         <span v-if="payment.status">Đã thanh toán</span>
         <span v-else>Chưa thanh toán</span>
       </div>
@@ -37,6 +43,13 @@ export default {
     return {}
   },
   methods: {
+    alertPayment () {
+      $eventHub.$emit('warning-alert', {
+        title: 'Thông báo',
+        message: "Bạn không thể thay đổi trạng thái sau khi xác nhận 'Đã thanh toán'",
+        timeout: 3000
+      })
+    },
     changeStatus () {
       $eventHub.$emit('on-loading')
       ajax().put(`/api/payment/${this.payment.id}/status`, {status: this.payment.status})

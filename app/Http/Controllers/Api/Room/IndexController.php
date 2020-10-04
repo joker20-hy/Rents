@@ -34,6 +34,7 @@ class IndexController extends Controller
             'price' => 'nullable|integer|min:0',
             'acreage' => 'nullable|integer|min:0',
             'criterias' => 'nullable|string',
+            'sort' => 'nullable|integer'
         ]);
     }
 }

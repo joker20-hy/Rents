@@ -1,4 +1,5 @@
 import axios from 'axios'
+import config from '../config'
 import $auth from './auth'
 import $token from './token'
 
@@ -7,9 +8,9 @@ import $token from './token'
  */
 function ajax() {
   return axios.create({
-    baseURL: `${$auth.baseUrl}/`,
+    baseURL: `${config.base_url}/`,
     headers: {
-      Authorization: `Bearer ${$token.access_token}`
+      Authorization: `Bearer ${$token.access}`
     }
   })
 }
@@ -33,9 +34,7 @@ function login(credentials, success=null, error=null) {
  * @param {Function} error 
  */
 function refresh(success=null, error=null) {
-  ajax().post($auth.api.refresh, {
-    refresh_token: $token.refresh_token
-  })
+  ajax().post($auth.api.refresh, { refresh_token: $token.refresh })
   .then(res => {
     $token.store(res.data)
     if (success!=null) success()

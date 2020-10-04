@@ -55,20 +55,10 @@ class ReviewRepository
     {
         $reviews = $this->review->selectRaw("
             reviews.*,
-            if (
-                reviews.anonymous,
-                null,
-                (select name from users where id=reviews.user_id)
-            ) as user_name,
-            if (
-                reviews.anonymous,
-                null,
-                (select image from profiles where profiles.user_id=reviews.user_id)
-            ) as user_avatar
+            if (reviews.anonymous, null, (select name from users where id=reviews.user_id)) as user_name,
+            if (reviews.anonymous, null, (select image from profiles where profiles.user_id=reviews.user_id)) as user_avatar
         ")->join('review_owners', 'reviews.id', '=', 'review_owners.review_id');
-        if (is_null($ownerId)) {
-            $reviews = $reviews->where('review_owners.owner_id', $ownerId);
-        }
+        $reviews = $reviews->where('review_owners.owner_id', $ownerId);
         return $reviews->paginate($paginate);
     }
 
@@ -95,9 +85,7 @@ class ReviewRepository
                 (select image from profiles where profiles.user_id=reviews.user_id)
             ) as user_avatar
         ")->join('review_renters', 'reviews.id', '=', 'review_renters.review_id');
-        if (is_null($renterId)) {
-            $reviews = $reviews->where('review_renters.renter_id', $renterId);
-        }
+        $reviews = $reviews->where('review_renters.renter_id', $renterId);
         return $reviews->paginate($paginate);
         
     }
@@ -125,9 +113,7 @@ class ReviewRepository
                 (select image from profiles where profiles.user_id=reviews.user_id)
             ) as user_avatar
         ")->join('review_houses', 'reviews.id', '=', 'review_houses.review_id');
-        if (is_null($houseId)) {
-            $reviews = $reviews->where('review_houses.house_id', $houseId);
-        }
+        $reviews = $reviews->where('review_houses.house_id', $houseId);
         return $reviews->paginate($paginate);
     }
 
@@ -154,9 +140,7 @@ class ReviewRepository
                 (select image from profiles where profiles.user_id=reviews.user_id)
             ) as user_avatar
         ")->join('review_rooms', 'reviews.id', '=', 'review_rooms.review_id');
-        if (is_null($roomId)) {
-            $reviews = $reviews->where('review_rooms.room_id', $roomId);
-        }
+        $reviews = $reviews->where('review_rooms.room_id', $roomId);
         return $reviews->with('reviewRooms')->paginate($paginate);
     }
 
@@ -170,31 +154,32 @@ class ReviewRepository
      */
     public function store($type, $params)
     {
-        $review = DB::transaction(function () use ($params) {
-            return $this->review->create($params);
+        $review = DB::transaction(function () use ($type, $params) {
+            $review = $this->review->create($params);
+            switch ($type) {
+                case config('const.REVIEW.TYPE.ROOM'):
+                    $room = $this->room->findOrFail($params['criteria_id']);
+                    $this->storeByRoom($review, $room, [
+                        'infra_rate' => $params['infra_rate'],
+                        'secure_rate' => $params['secure_rate'],
+                        'owner_rate' => $params['owner_rate']
+                    ]);
+                    break;
+                case config('const.REVIEW.TYPE.RENTER'):
+                    # code...
+                    break;
+                case config('const.REVIEW.TYPE.HOUSE'):
+                    # code...
+                    break;
+                case config('const.REVIEW.TYPE.OWNER'):
+                    # code...
+                    break;
+                default:
+                    throw "";
+                    break;
+            }
+            return $review;
         });
-        switch ($type) {
-            case config('const.REVIEW.TYPE.ROOM'):
-                $room = $this->room->findOrFail($params['criteria_id']);
-                $this->storeByRoom($review, $room, [
-                    'infra_rate' => $params['infra_rate'],
-                    'secure_rate' => $params['secure_rate'],
-                    'owner_rate' => $params['owner_rate']
-                ]);
-                break;
-            case config('const.REVIEW.TYPE.RENTER'):
-                # code...
-                break;
-            case config('const.REVIEW.TYPE.HOUSE'):
-                # code...
-                break;
-            case config('const.REVIEW.TYPE.OWNER'):
-                # code...
-                break;
-            default:
-                throw "";
-                break;
-        }
         return $review;
     }
 

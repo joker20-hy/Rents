@@ -34,6 +34,11 @@
             width: 50%;
             box-shadow: unset;
         }
+        svg {
+            width: 24px;
+            height: 24px;
+            fill: $gray;
+        }
         .tool {
             display: block;
             text-align: center;
@@ -67,10 +72,5 @@
             display: inline-block;
             }
         }
-    }
-    svg {
-        width: 24px;
-        height: 24px;
-        fill: $gray;
     }
   }

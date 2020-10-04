@@ -3,22 +3,21 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
-class UserHouse extends Model
+class Verification extends Model
 {
+    use SoftDeletes;
+
     protected $fillable = [
         'user_id',
-        'house_id',
-        'role'
+        'code',
+        'expire_at',
+        'token'
     ];
 
     public function user()
     {
         return $this->belongsTo(User::class);
-    }
-
-    public function house()
-    {
-        return $this->belongsTo(House::class);
     }
 }

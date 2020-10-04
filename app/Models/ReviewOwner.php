@@ -3,13 +3,10 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ReviewOwner extends Model
 {
-    use SoftDeletes;
-
-    protected $primaryKey = null;
+    protected $primaryKey = ['review_id', 'owner_id'];
     public $incrementing = false;
 
     protected $fillable = [

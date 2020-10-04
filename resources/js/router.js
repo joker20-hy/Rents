@@ -18,6 +18,8 @@ import RoomPayMethod from './pages/frontend/user/RoomPayMethods'
 import PaymentRoom from './pages/frontend/user/room_payment/Index'
 import PaymentRoomList from './pages/frontend/user/room_payment/List'
 import PaymentRoomDetail from './pages/frontend/user/room_payment/Detail'
+import ForgotPassword from './pages/auth/ForgotPassword'
+import ResetPassword from './pages/auth/ResetPassword'
 /** Auth components */
 import Login from './pages/auth/Login'
 import Register from './pages/auth/Register'
@@ -207,6 +209,16 @@ const router = new Router({
         if ($auth.check) router.push({name: 'home'})
         else next()
       }
+    },
+    {
+      path: '/quen-mat-khau',
+      name: 'forgot-password',
+      component: ForgotPassword
+    },
+    {
+      path: '/khoi-phuc-mat-khau/:id/:token',
+      name: 'reset-password',
+      component: ResetPassword
     },
     {
       path: '/cn',

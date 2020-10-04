@@ -4,20 +4,13 @@
     <form @submit.prevent="search">
       <h1 class="text-center py-3 text-light">Tìm kiếm nhà trọ, phòng trọ trên toàn quốc</h1>
       <div class="row position-relative mb-3">
-        <div class="col-12" v-click-outside="hideAddressSuggest">
+        <div class="col-md-8" v-click-outside="hideAddressSuggest">
           <input type="search" class="search-input" @search="clear()" placeholder="Nhập địa chỉ, quận huyện" v-model="keywords" @keyup="suggestAddress(keywords)" @focus="suggest.address=true">
           <transition name="slide-fade">
             <suggest-box :options="addresses" :show="suggest.address" @choose="chooseAddress"/>
           </transition>
         </div>
-      </div>
-      <div class="row mb-3">
-        <div class="col-7 pr-0">
-          <button type="button" class="search-input bg-light text-dark text-bold">
-            <i class="fas fa-street-view"></i> Tìm xung quanh
-          </button>
-        </div>
-        <div class="col-5">
+        <div class="col-md-4 mt-2 mt-md-0">
           <button class="search-input bg-danger text-light">
             <i class="fas fa-search"></i>
           </button>

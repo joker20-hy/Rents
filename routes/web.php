@@ -15,4 +15,3 @@ use Illuminate\Support\Facades\Auth;
 */
 
 Route::any('/{all}', 'HomeController@index')->where(['all' => '.*']);
-

@@ -10958,6 +10958,12 @@ a.text-dark:focus {
   }
 }
 
+#header .tools svg {
+  width: 24px;
+  height: 24px;
+  fill: #6c757d;
+}
+
 #header .tools .tool {
   display: block;
   text-align: center;
@@ -10998,12 +11004,6 @@ a.text-dark:focus {
   #header .user .btn-auth {
     display: inline-block;
   }
-}
-
-#header svg {
-  width: 24px;
-  height: 24px;
-  fill: #6c757d;
 }
 
 [side-menu] {

@@ -1,20 +1,12 @@
-/**
- * Token handlers
- * @private
- */
+import config from '../config'
+
 export default {
-  /**
-   * Keys to tokens
-   */
-  keys: {
-    get access() { return '_access_token' },
-    get refresh() { return '_refresh_token' },
-    get expires() { return '_expires_in' }
+  get keys () {
+    return config.token_keys
   },
   /**
    * Store tokens
-   * @param {String} accessToken
-   * @param {String} refreshToken
+   * @param {*} data
    */
   store (data) {
     localStorage.setItem(this.keys.access, data.access_token)
@@ -30,15 +22,18 @@ export default {
   /**
    * Get access token
    */
-  get access_token () {
+  get access () {
     return localStorage.getItem(this.keys.access)
   },
   /**
    * Get refresh token
    */
-  get refresh_token () {
+  get refresh () {
     return localStorage.getItem(this.keys.refresh)
   },
+  /**
+   * Get expire time of token
+   */
   get expires () {
     return parseInt(localStorage.getItem(this.keys.expires))
   }
