@@ -1,7 +1,6 @@
 <template>
-  <div contain-box class="bg-white mt-1">
-    <h2>Thông tin tài khoản</h2>
-    <form @submit.prevent="update">
+  <div class="mt-1">
+    <form contain-box class="bg-white mb-2" @submit.prevent="update">
       <div class="d-flex">
         <button type="button" v-show="!edit" class="btn text-primary ml-auto" @click="enterEdit()">
           <i class="fas fa-pencil"></i> <span style="font-weight: 600">Chỉnh sửa</span>
@@ -69,20 +68,32 @@
       </div>
     </form>
     <input type="file" id="profile-image" @change="previewImage" class="d-none">
+    <form contain-box class="bg-white">
+      <div class="holder">
+        <router-link :to="{name: 'forgot-password'}">
+          <i class="fas fa-lock"></i> Thay đổi mật khẩu
+        </router-link>
+      </div>
+    </form>
+    <change-password :show="change_password" @close="change_password=false"></change-password>
   </div>
 </template>
 <script>
 import NavHeader from '../layouts/Header'
+import ChangePassword from './ChangePassword'
+
 export default {
   components: {
     NavHeader,
+    ChangePassword
   },
   data () {
     return {
       edit: false,
       backup_data: {},
       image: '',
-      edit_avatar: false
+      edit_avatar: false,
+      change_password: false
     }
   },
   computed: {

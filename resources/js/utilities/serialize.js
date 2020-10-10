@@ -1,10 +1,16 @@
-const $serialize = {
-  fromObj (obj) {
-    let str = []
-    for (var p in obj) {
-      if (obj.hasOwnProperty(p) && obj[p]!='' && obj[p]!=undefined && obj[p]!=null) str.push(`${encodeURIComponent(p)}=${encodeURIComponent(obj[p])}`)
+export default {
+  /**
+   * Serialize object into query string
+   * @param {Object} obj
+   * @return String
+   */
+  fromObj (obj, glue='&') {
+    let params = []
+    for (let key in obj) {
+      if (!(obj[key]===''||obj[key]==null)) {
+        params.push(`${key}=${obj[key]}`)
+      }
     }
-    return str.join("&")
+    return params.join(glue)
   }
 }
-export default $serialize

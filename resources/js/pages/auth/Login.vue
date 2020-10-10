@@ -2,8 +2,9 @@
   <div class="auth-container p-2">
     <div class="login-form">
       <form action="" class="px-3 pt-4 pb-3" @submit.prevent="login()">
-        <div class="text-center text-muted mb-4">
-          <h2 class="mb-0">Đăng nhập</h2>
+        <h2 class="text-center text-primary">Rent</h2>
+        <div class="text-center mb-2">
+          <h5 class="mb-0">Đăng nhập</h5>
         </div>
         <div class="form-group mb-4">
           <input type="email" class="input" placeholder="Email" v-model="credentials.username" required>
@@ -17,7 +18,7 @@
           </button>
         </div>
         <div class="text-center pb-2">
-          <a href="" class="text-dark">Quên mật khẩu ?</a>
+          <router-link :to="{name: 'forgot-password'}" class="text-dark">Quên mật khẩu ?</router-link>
         </div>
       </form>
       <div class="w-100 text-center pt-3">

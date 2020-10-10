@@ -18,7 +18,6 @@ class StoreController extends Controller
     public function main(Request $request)
     {
         $params = $this->validation($request);
-        dd($params);
         $review = $this->reviewServices->store($params, $request->type);
         return response()->json($review, 201);
     }
@@ -33,7 +32,7 @@ class StoreController extends Controller
             'renter_rate' => 'nullable|integer|min:1|max:10',
             'infra_rate' => 'nullable|integer|min:1|max:10',
             'anonymous' => 'nullable|boolean',
-            'comment' => 'nullable|string'
+            'description' => 'nullable|string'
         ]);
     }
 }

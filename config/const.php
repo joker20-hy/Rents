@@ -16,6 +16,11 @@ return [
         'UNVERIFIED' => 0,
         'VERIFIED' => 1
     ],
+    'VERIFICATION' => [
+        'CODE_LENGTH' => 7,
+        'TOKEN_LENGTH' => 64,
+        'EXPIRE' => 10
+    ],
     'PLACE_TYPE' => [
         'PROVINCE' => 1,
         'DISTRICT' => 2,
@@ -82,19 +87,24 @@ return [
         ],
         'ACREAGE' => [
             [
-                'title' => 'Dưới 11 m2',
+                'title' => 'Dưới 14 m2',
                 'min' => 0,
-                'max' => 11
+                'max' => 14
             ],
             [
-                'title' => 'Từ 11 - 16m2',
-                'min' => 11,
-                'max' => 16
+                'title' => 'Từ 14 - 18 m2',
+                'min' => 14,
+                'max' => 18
             ],
             [
-                'title' => 'Từ 16 - 20m2',
-                'min' => 16,
-                'max' => 20
+                'title' => 'Từ 18 - 24m2',
+                'min' => 18,
+                'max' => 24
+            ],
+            [
+                'title' => 'Trên 24m2',
+                'min' => 24,
+                'max' => null
             ]
         ]
     ],
@@ -107,12 +117,12 @@ return [
         [
             'title' => 'Giá tăng dần',
             'feild' => 'price',
-            'order' => 'desc'
+            'order' => 'asc'
         ],
         [
             'title' => 'Giá giảm dần',
             'feild' => 'price',
-            'order' => 'asc'
+            'order' => 'desc'
         ]
     ],
     'ROOM_STATUS' => [

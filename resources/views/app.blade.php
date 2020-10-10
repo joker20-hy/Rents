@@ -41,6 +41,7 @@
         return result
       }
       const $config = {
+        APP_NAME: `{!! env('APP_NAME') !!}`,
         user: {!! json_encode(config('const.USER')) !!},
         ANONYMOUS: `{!! asset('images/anonymous.svg') !!}`,
         IMAGES: {

@@ -19,6 +19,9 @@ Route::group(['namespace' => 'Api'], function() {
 	Route::group(['namespace' => 'Auth'], function() {
 		Route::post('login', 'LoginController@login');
 		Route::post('register', 'RegisterController@main');
+		Route::post('verify/{id}', 'VerifyController@main');
+		Route::get('forgot-password', 'ForgotPasswordController@main');
+		Route::put('change-password/{id}', 'UpdatePasswordController@main');
 	});
 	Route::group([
 		'namespace' => 'Suggest',
@@ -63,7 +66,7 @@ Route::group(['namespace' => 'Api'], function() {
 		'namespace' => 'Review',
 		'prefix' => 'review'
 	], function () {
-		Route::get('{type}/{id}', 'IndexController@main');
+		Route::get('{type}', 'IndexController@main');
 		Route::post('{type}', 'StoreController@main')->middleware('auth:api');
 	});
 

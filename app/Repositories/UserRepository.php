@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\Profile;
 use App\Models\Setting;
 use App\Models\RentRoom;
+use App\Models\Verification;
 
 class UserRepository
 {
@@ -15,13 +16,20 @@ class UserRepository
     protected $profile;
     protected $setting;
     protected $rentRoom;
+    protected $verification;
 
-    public function __construct(User $user, Profile $profile, Setting $setting, RentRoom $rentRoom)
-    {
+    public function __construct(
+        User $user,
+        Profile $profile,
+        Setting $setting,
+        RentRoom $rentRoom,
+        Verification $verification
+    ) {
         $this->user = $user;
         $this->profile = $profile;
         $this->setting = $setting;
         $this->rentRoom = $rentRoom;
+        $this->verification = $verification;
     }
 
     /**
@@ -32,6 +40,20 @@ class UserRepository
     public function findById($id)
     {
         return $this->user->findOrFail($id);
+    }
+
+    /**
+     * Find user record by email
+     *
+     * @param integer $email
+     */
+    public function findByEmail($email)
+    {
+        $user = $this->user->where('email', $email)->first();
+        if (is_null($user)) {
+            return abort(404, 'User not found');
+        }
+        return $user;
     }
 
     /**
@@ -132,6 +154,20 @@ class UserRepository
             return $this->setting->where('user_id', $id)->first();
         });
         return $setting;
+    }
+
+    /**
+     * Update or create verification record
+     *
+     * @param integer $id
+     * @param array $params
+     *
+     * @return \App\Models\Verification
+     */
+    public function updateVerification($id, $params)
+    {
+        $verification = $this->verification->updateOrCreate(['user_id' => $id], $params);
+        return $verification;
     }
 
     /**

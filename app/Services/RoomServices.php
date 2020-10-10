@@ -24,14 +24,25 @@ class RoomServices
     }
 
     /**
-     * List rooms
+     * Get an paginate rooms
      *
-     * @param array $params
+     * @param array $conditions
      * @param integer $paginate
+     *
+     * @return Illuminate\Pagination\LengthAwarePaginator
      */
-    public function index($conditions = [], $paginate = 10)
+    public function index(array $conditions = [], $paginate = 10)
     {
-        return $this->roomRepository->get($conditions, $paginate);
+        if (array_key_exists('sort', $conditions)) {
+            $conditions['sort'] = config('const.ROOM_SORT')[$conditions['sort']];
+        }
+        if (array_key_exists('price', $conditions)) {
+            $conditions['price'] = config('const.ROOM_FILTER.PRICE')[$conditions['price']];
+        }
+        if (array_key_exists('acreage', $conditions)) {
+            $conditions['acreage'] = config('const.ROOM_FILTER.ACREAGE')[$conditions['acreage']];
+        }
+        return $this->roomRepository->index($conditions, $paginate);
     }
 
     /**
@@ -39,6 +50,8 @@ class RoomServices
      *
      * @param array $conditions
      * @param integer $paginate
+     *
+     * @return Illuminate\Pagination\LengthAwarePaginator
      */
     public function list($conditions = [], $paginate = 10)
     {

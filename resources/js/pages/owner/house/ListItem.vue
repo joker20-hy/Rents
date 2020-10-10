@@ -1,8 +1,7 @@
 <template>
   <transition name="slide-fade">
     <div list-item>
-      <div img-wrap>
-        <img src="/images/photo.svg" :alt="house.name">
+      <div img-wrap :style="`background-image: url(${avatar})`">
       </div>
       <div class="pl-2">
         <div class="text-bold">
@@ -42,6 +41,11 @@ export default {
   name: 'list-item',
   data () {
     return {}
+  },
+  computed: {
+    avatar () {
+      return this.house.images.length>0?this.house.images[0]:'/images/default.png'
+    }
   },
   methods: {
     destroy () {

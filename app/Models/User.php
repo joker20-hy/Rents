@@ -34,7 +34,7 @@ class User extends Authenticatable implements MustVerifyEmail
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'password', 'remember_token'
     ];
 
     /**
@@ -90,5 +90,10 @@ class User extends Authenticatable implements MustVerifyEmail
     public function rentroom()
     {
         return $this->hasMany(RentRoom::class);
+    }
+
+    public function verification()
+    {
+        return $this->hasOne(Verification::class);
     }
 }

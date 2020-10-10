@@ -1,5 +1,5 @@
 <template>
-  <div class="container" style="margin-bottom: 64px" v-if="room!=null">
+  <div class="container" v-if="room!=null">
     <image-gallary :images="images" @detail="slideshow"/>
     
     <div class="d-flex" v-if="hasRight">

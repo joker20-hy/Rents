@@ -39,6 +39,7 @@ import SideSearch from '../../layouts/SideSearch'
 import ListItem from './ListItem'
 import RoomFilter from './Filter'
 import ToolBar from './ToolBar'
+
 export default {
   components: {
     NavHeader,

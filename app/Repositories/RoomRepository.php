@@ -28,8 +28,15 @@ class RoomRepository
         $this->roomPayMethod = $roomPayMethod;
     }
 
-
-    public function get($conditions = [], $paginate = 10)
+    /**
+     * Get an paginate rooms
+     *
+     * @param array $conditions
+     * @param integer $paginate
+     *
+     * @return Illuminate\Pagination\LengthAwarePaginator
+     */
+    public function index($conditions = [], $paginate = 10)
     {
         $query = $this->room->selectRaw("
             rooms.*,
@@ -40,6 +47,7 @@ class RoomRepository
         ->join("areas", "houses.area_id", "=", "areas.id");
         $query = $this->addressFilter($query, $conditions);
         $query = $this->criteriaFilter($query, $conditions);
+        $query = $this->sort($query, $conditions);
         return $query->with('criterias')->paginate($paginate);
     }
 
@@ -78,12 +86,20 @@ class RoomRepository
     private function criteriaFilter($query, array $conditions)
     {
         if (array_key_exists('price', $conditions)) {
-            $prices = config('const.ROOM_FILTER.PRICE')[$conditions['price']];
-            $query = $query->whereBetween("rooms.price", [$prices['min'], $prices['max']]);
+            $prices = (object)$conditions['price'];
+            if (is_null($prices->max)) {
+                $query = $query->where("rooms.price", ">", $prices->min);
+            } else {
+                $query = $query->whereBetween("rooms.price", [$prices->min, $prices->max]);
+            }
         }
         if (array_key_exists('acreage', $conditions)) {
-            $acreages = config('const.ROOM_FILTER.ACREAGE')[$conditions['acreage']];
-            $query = $query->whereBetween("rooms.acreage", [$acreages['min'], $acreages['max']]);
+            $acreages = (object)$conditions['acreage'];
+            if (is_null($acreages->max)) {
+                $query = $query->where("rooms.acreage", ">", $acreages->min);
+            } else {
+                $query = $query->whereBetween("rooms.acreage", [$acreages->min, $acreages->max]);
+            }
         }
         if (array_key_exists('criterias', $conditions)) {
             $query = $query->whereRaw("(
@@ -96,8 +112,29 @@ class RoomRepository
     }
 
     /**
+     * Sort rooms
+     *
+     * @param QueryBuilder $query
+     * @param array $conditions
+     *
+     * @return QueryBuilder
+     */
+    private function sort($query, $conditions)
+    {
+        if (array_key_exists('sort', $conditions)) {
+            $sort = (object)$conditions['sort'];
+            $query = $query->orderBy("rooms.$sort->feild", $sort->order);
+        } else {
+            $query = $query->orderBy('rooms.avg_rate', 'desc');
+        }
+        return $query;
+    }
+
+    /**
      * List rooms [for dashboard]
      *
+     * @param array $conditions
+     * @param integer $ownerId
      * @param integer $paginate
      *
      * @return mixed
@@ -148,10 +185,17 @@ class RoomRepository
      * Find room record by id
      *
      * @param integer $id
+     * @param array $select Select list
+     *
+     * @return \App\Models\Room
      */
     public function findById($id, $select = ['*'])
     {
-        return $this->room->select($select)->findOrFail($id);
+        $room = $this->room->select($select)->where('id', $id)->first();
+        if (is_null($room)) {
+            return abort(404, 'Không tìm thấy phòng');
+        }
+        return $room;
     }
 
     /**
