@@ -83,10 +83,8 @@ export default {
     "$route.params.id": {
       handler (id) {
         this.id = id
-        if (this.room==undefined) {
-          this.getRoom()
-          this.getCriterias()
-        }
+        if (this.room==undefined) this.getRoom()
+        this.getCriterias()
       },
       deep: true,
       immediate: true
@@ -135,7 +133,7 @@ export default {
     },
     getRoom() {
       $eventHub.$emit('on-loading')
-      $request.get(`/api/room/${this.id}`)
+      ajax().get(`/api/room/${this.id}`)
       .then(res => {
         res.data.images = JSON.parse(res.data.images)
         res.data.description = utf8.decode(res.data.description)
@@ -151,7 +149,7 @@ export default {
       this.criterias[criteria.index].checked = criteria.checked
     },
     getCriterias () {
-      $request.get('/api/criteria')
+      ajax().get('/api/criteria')
       .then(res => {
         res.data.forEach(cri => cri.checked = false)
         this.$store.commit('criterias/criterias', res.data)
@@ -160,7 +158,7 @@ export default {
     },
     update () {
       $eventHub.$emit('on-loading')
-      $request.put(`/api/room/${this.room.id}`, this.getData)
+      ajax().put(`/api/room/${this.room.id}`, this.getData)
       .then(res => {
         $eventHub.$emit('off-loading')
         $eventHub.$emit('success-alert', {

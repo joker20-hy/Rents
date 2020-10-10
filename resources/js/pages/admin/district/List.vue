@@ -78,7 +78,7 @@ export default {
     },
     list () {
       this.loading = true
-      $request.get(`/api/district/list?page=${this.page}`)
+      ajax().get(`/api/district/list?page=${this.page}`)
       .then(res => {
         this.page_count = res.data.last_page
         this.per_page = res.data.per_page
@@ -100,7 +100,7 @@ export default {
       }
     },
     destroy () {
-      $request.delete('/api/district/'+this.chosen.id)
+      ajax().delete('/api/district/'+this.chosen.id)
       .then(res => {
         this.$store.commit('districts/remove', this.chosen.id)
         this.$modal.hide('delete-district')

@@ -1,0 +1,4 @@
+docker exec -i db mysql -uroot -psecret rents < database/local.sql
+
+mysql:
+	

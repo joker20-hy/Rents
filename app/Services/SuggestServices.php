@@ -9,7 +9,7 @@ class SuggestServices
 {
     public function provinces($keywords, $limit = null)
     {
-        $query = "select id, name, slug from provinces where name like '%$keywords%' and deleted_at is null";
+        $query = "select id, name, slug from provinces where match(name) against('$keywords') and deleted_at is null";
         if (!is_null($limit)) {
             $query = "$query limit $limit";
         }
@@ -23,7 +23,7 @@ class SuggestServices
         if (!is_null($province)) {
             array_push($where, "province_id=$province");
         }
-        array_push($where, "name like '%$keywords%'");
+        array_push($where, "match(name) against('$keywords')");
         $where = implode(" and ", $where);
         $query = "select id, name, slug from districts where $where and deleted_at is null";
         if (!is_null($limit)) {
@@ -41,7 +41,7 @@ class SuggestServices
         } elseif (!is_null($province)) {
             array_push($where, "province_id=$province");
         }
-        array_push($where, "name like '%$keywords%'");
+        array_push($where, "match(name) against('$keywords')");
         $where = implode(" and ", $where);
         $query = "select id, name, slug from areas where $where and deleted_at is null limit $limit";
         $areas = DB::select($query);
@@ -61,7 +61,7 @@ class SuggestServices
         } elseif (!is_null($condition['province'])) {
             array_push($where, "province_id=".$condition['province']);
         }
-        array_push($where, "concat(h.address,', ',a.name,', ',d.name,', ',p.name) like '%$keywords%'");
+        array_push($where, "h.address_detail like '%$keywords%'");
         $where = implode(" and ", $where);
         $from = "houses h 
             join
@@ -76,7 +76,7 @@ class SuggestServices
         $query = "
             select
                 h.id,
-                concat(h.address,', ',a.name,', ',d.name,', ',p.name) as name
+                h.address_detail as name
             from $from
             where $where
             limit $limit";
@@ -95,7 +95,7 @@ class SuggestServices
         from
             areas a join provinces p on a.province_id = p.id
             join districts d on a.district_id = d.id
-        where a.name like '%$keywords%' and a.deleted_at is null limit 4");
+        where match(a.name) against('$keywords') and a.deleted_at is null limit 5");
         $districts = DB::select("
         select
             d.id as id,
@@ -104,18 +104,8 @@ class SuggestServices
             concat(d.name, ', ', p.name) as name
         from
             districts d join provinces p on d.province_id = p.id
-        where d.name like '%$keywords%' and d.deleted_at is null limit 4");
-        $provinces = DB::select("
-        select
-            id,
-            slug,
-            1 as type,
-            name
-        from
-            provinces
-        where name like '%$keywords%' and deleted_at is null limit 2");
-        $results = array_merge($provinces, $districts);
-        $results = array_merge($results, $areas);
+        where match(d.name) against('$keywords') and d.deleted_at is null limit 5");
+        $results = array_merge($districts, $areas);
         return $results;
     }
 }

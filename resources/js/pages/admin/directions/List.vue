@@ -85,7 +85,7 @@ export default {
       }
     },
     list () {
-      $request.get('/api/direction')
+      ajax().get('/api/direction')
       .then(res => {
         res.data.forEach(dir => {
           dir.edit = false
@@ -98,7 +98,7 @@ export default {
       })
     },
     store () {
-      $request.post('/api/direction', this.direction)
+      ajax().post('/api/direction', this.direction)
       .then(res => {
         this.direction.name = ''
         res.data.edit = false
@@ -111,7 +111,7 @@ export default {
       })
     },
     update (dir) {
-      $request.put(`/api/direction/${dir.id}`, dir)
+      ajax().put(`/api/direction/${dir.id}`, dir)
       .then(res => {
         dir.edit = false
         this.success('Record has been updated')
@@ -123,7 +123,7 @@ export default {
       })
     },
     destroy () {
-      $request.delete(`/api/direction/${this.chosen.id}`)
+      ajax().delete(`/api/direction/${this.chosen.id}`)
       .then(res => {
         this.directions = this.directions.filter(dir => dir.id!=this.chosen.id)
         this.success('Record has been deleted')

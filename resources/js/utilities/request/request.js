@@ -1,49 +1,17 @@
 import axios from 'axios'
+import $auth from './auth'
 import $token from './token'
-import $user from './user'
 
-const $auth = {
-  _data: {},
-  remember (key, value) {
-    this._data[key] = value 
-  },
-  forget (key) {
-    this._data[key] = undefined
-  },
-  data (key) {
-    return this._data[key]
-  },
-  get api() {
-    return {
-      login: '/api/login',
-      refresh: '/api/refresh',
-      logout: '/api/logout'
+/**
+ * Create ajax object
+ */
+function ajax() {
+  return axios.create({
+    baseURL: `${$auth.baseUrl}/`,
+    headers: {
+      Authorization: `Bearer ${$token.access_token}`
     }
-  },
-  get baseUrl () {
-    return 'http://rent.joker.com'
-  },
-  get user () {
-    return this._user.user
-  },
-  get check() {
-    if ($token.access_token==null||this._user==null) return false
-    let now = new Date()
-    return now.getTime() <= $token.expires
-  },
-  init (object=null) {
-    this._user = $user()
-    if (object!=null) this._user.user = object
-    return this
-  },
-  clear() {
-    this._user.remove()
-    return true
-  },
-  remove() {
-    this.clear()
-    $token.remove()
-  }
+  })
 }
 /**
  * Login
@@ -52,7 +20,7 @@ const $auth = {
  * @param {Function} error 
  */
 function login(credentials, success=null, error=null) {
-  axios.post($auth.api.login, credentials)
+  ajax().post($auth.api.login, credentials)
   .then(res => {
     $token.store(res.data)
     if (success!=null) success()
@@ -65,7 +33,7 @@ function login(credentials, success=null, error=null) {
  * @param {Function} error 
  */
 function refresh(success=null, error=null) {
-  $request.post($auth.api.refresh, {
+  ajax().post($auth.api.refresh, {
     refresh_token: $token.refresh_token
   })
   .then(res => {
@@ -80,7 +48,7 @@ function refresh(success=null, error=null) {
  * @param {Function} error 
  */
 function logout(success=null, error=null) {
-  $request.post($auth.api.logout)
+  ajax().post($auth.api.logout)
   .then(() => {
     $auth.remove()
     if (success!=null) success()
@@ -90,10 +58,14 @@ function logout(success=null, error=null) {
     if (error!=null) error(err)
   })
 }
-const request = axios.create({
-  baseURL: `${$auth.baseUrl}/`,
-  headers: {
-    Authorization: `Bearer ${$token.access_token}`
-  }
-})
-export { $auth, login, refresh, logout, request }
+/**
+ * Get user info
+ * @param {Function} success 
+ * @param {Function} error 
+ */
+function user(success, error) {
+  ajax().get($auth.api.user)
+  .then(res => success(res))
+  .catch(err => error(err))
+}
+export { $auth, login, refresh, logout, user, ajax }

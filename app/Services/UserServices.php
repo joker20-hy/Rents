@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Repositories\UserRepository;
@@ -170,6 +171,23 @@ class UserServices
     }
 
     /**
+     * Get user's rented room
+     *
+     * @return \App\Models\Room
+     */
+    public function room()
+    {
+        $authUser = Auth::user();
+        $room = $authUser->room;
+        if (is_null($room)) {
+            return abort(404, 'Không thể tìm thấy phòng đã thuê');
+        }
+        $room->house;
+        $room->payments;
+        return $room;
+    }
+
+    /**
      * Rent room
      *
      * @param integer $roomId
@@ -180,6 +198,10 @@ class UserServices
     public function rentRoom($roomId, $id = null)
     {
         $id = is_null($id) ? Auth::user()->id : $id;
+        $user = $this->userRepository->findById($id);
+        if ($roomId==$user->room_id) {
+            return abort(400, 'You are already in this room');
+        }
         return $this->userRepository->rentRoom($id, $roomId);
     }
 

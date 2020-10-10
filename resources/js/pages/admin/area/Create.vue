@@ -51,7 +51,7 @@ export default {
       this.area.name = ''
     },
     getProvinces () {
-      $request.get('/api/province/all')
+      ajax().get('/api/province/all')
       .then(res => {
         this.provinces = res.data
       })
@@ -61,7 +61,7 @@ export default {
     },
     getDistricts () {
       this.area.district_id = ''
-      $request.get(`/api/district/${this.area.province_id}`)
+      ajax().get(`/api/district/${this.area.province_id}`)
       .then(res => {
         this.districts = res.data
       })
@@ -70,7 +70,7 @@ export default {
       })
     },
     store () {
-      $request.post('/api/area', this.area)
+      ajax().post('/api/area', this.area)
       .then(res => {
         this.reset()
         this.$emit('created', res.data)

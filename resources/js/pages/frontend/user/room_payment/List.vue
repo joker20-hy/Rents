@@ -1,6 +1,9 @@
 <template>
   <div class="container mt-3 mb-5">
-    <h1>Danh sách hóa đơn</h1>
+    <h1 class="row py-3 px-2 bg-primary text-light">Danh sách hóa đơn</h1>
+    <div v-if="payments.length==0" class='text-center text-muted'>
+      Hiện chưa có hóa đơn nào
+    </div>
     <transition-group name="slide-fade">
       <div v-for="payment in payments" :key="payment.id" class="list-item row mx-0">
         <div class="col-12 px-0 d-flex align-items-center" style="font-weight: 600">
@@ -19,23 +22,23 @@
 </template>
 <script>
 export default {
-  data () {
-    return {
-      room_id: this.$route.params.room_id
-    }
-  },
   mounted () {
-    this.get()
+    if (this.payments.length==0) this.get()
   },
   computed: {
+    user () {
+      return this.$store.getters['auth/user']
+    },
     payments () {
       return this.$store.getters['payments/payments']
     }
   },
   methods: {
     get () {
-      $request.get(`/api/payment/list?room_id=${this.room_id}`)
+      $eventHub.$emit('on-loading')
+      ajax().get(`/api/payment/list?room_id=${this.user.room_id}`)
       .then(res => {
+        $eventHub.$emit('off-loading')
         res.data.data.forEach(payment => {
           payment.bill = JSON.parse(payment.bill)
           let time = new Date(payment.time)
@@ -44,7 +47,10 @@ export default {
         });
         this.$store.commit('payments/payments', res.data.data)
       })
-      .catch(err => console.log(err))
+      .catch(err => {
+        $eventHub.$emit('off-loading')
+        console.log(err)
+      })
     }
   }
 }

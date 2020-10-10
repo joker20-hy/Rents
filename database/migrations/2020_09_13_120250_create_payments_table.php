@@ -21,6 +21,7 @@ class CreatePaymentsTable extends Migration
             $table->foreign('creater_id')->references('id')->on('users');
             $table->date('time');
             $table->text('bill');
+            $table->boolean('status')->default(false);
             $table->timestamps();
             $table->softDeletes();
         });

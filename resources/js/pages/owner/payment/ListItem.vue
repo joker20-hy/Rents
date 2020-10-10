@@ -10,8 +10,12 @@
         <span v-else>Chưa thanh toán</span>
       </div>
       <div class="col-6 col-md-4 px-0 text-right">
-        <router-link :to="{name: 'owner-detail-payment', params: {id: payment.id}}" class="btn btn-outline-primary">Chi tiết</router-link>
-        <button class="btn btn-outline-danger" @click="$emit('delete', payment.id)">Xóa</button>
+        <router-link :to="{name: 'owner-detail-payment', params: {id: payment.id}}" class="btn text-primary">
+          <i class="fas fa-info-circle"></i> Chi tiết
+        </router-link>
+        <button class="btn text-danger" @click="$emit('delete', payment.id)">
+          <i class="fas fa-trash"></i> Xóa
+        </button>
       </div>
     </div>
   </transition>
@@ -35,7 +39,7 @@ export default {
   methods: {
     changeStatus () {
       $eventHub.$emit('on-loading')
-      $request.put(`/api/payment/${this.payment.id}/status`, {status: this.payment.status})
+      ajax().put(`/api/payment/${this.payment.id}/status`, {status: this.payment.status})
       .then(res => {
         $eventHub.$emit('off-loading')
         $eventHub.$emit('success-alert', {

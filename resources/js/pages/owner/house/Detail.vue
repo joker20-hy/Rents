@@ -43,7 +43,7 @@
       <choose-service :list="services" :chosens="serviceIds" @delete="deleteService" @add="addService" :editable="edit"/>
       <!--  -->
       <div class="form-group d-flex">
-        <label for="">Nhà để cho thuê?</label>
+        <label for="">Cho thuê nguyên căn?</label>
         <switch-box v-model="house.rent" class="ml-auto" :class="house.rent==1?'on':''" :locked="!edit"/>
       </div>
       <div class="form-group" v-show="house.rent==1">
@@ -147,12 +147,12 @@ export default {
   },
   methods: {
     getDirection () {
-      $request.get('/api/direction')
+      ajax().get('/api/direction')
       .then(res => this.directions = res.data )
       .catch(err => console.log(err.response.data.message))
     },
     getServices() {
-      $request.get('/api/service')
+      ajax().get('/api/service')
       .then(res => {
         res.data.forEach(item => {
           item.price = ''
@@ -172,7 +172,7 @@ export default {
       this.house.area_id = area.id
     },
     getHouse () {
-      $request.get(`/api/house/${this.id}`)
+      ajax().get(`/api/house/${this.id}`)
       .then(res => {
         res.data.images = res.data.images==null?[]:JSON.parse(res.data.images)
         res.data.description = res.data.description==null?'':utf8.decode(res.data.description)
@@ -184,7 +184,7 @@ export default {
       this.house.images = images
     },
     update () {
-      $request.put(`/api/house/${this.house.id}`, this.data)
+      ajax().put(`/api/house/${this.house.id}`, this.data)
       .then(res => {
         $eventHub.$emit('success-alert', {
           title: 'Thành công',

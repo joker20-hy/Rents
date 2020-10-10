@@ -19,9 +19,11 @@ services:
       - ./php/local.ini:/usr/local/etc/php/conf.d/local.ini
     # networks:
     #   - app-network
+    extra_hosts:
+      - "dockerhost:10.5.0.6"
+      - "rent.joker.com:10.5.0.6"
     networks:
       vpcbr:
-        ipv4_address: 10.5.0.5
 
   #Nginx Service
   webserver:

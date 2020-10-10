@@ -48,7 +48,7 @@ export default {
         return false
       }
       this.showSuggest=true
-      $request.get(`/api/sg/address?keywords=${this.keywords}`)
+      ajax().get(`/api/sg/address?keywords=${this.keywords}`)
       .then(res => {
         this.addresses = res.data
       })

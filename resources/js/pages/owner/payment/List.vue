@@ -4,7 +4,9 @@
       <div class="col-12 col-md-10 col-xl-6">
         <div class="d-flex">
           <h3>Danh sách hóa đơn</h3> 
-          <router-link style="font-weight: 600" :to="{name: 'owner-create-payment', params: {id: query.room_id}}" class="ml-auto"><i class="fas fa-money-check"></i> Tạo hóa đơn</router-link>
+          <router-link style="font-weight: 600" :to="{name: 'owner-create-payment', params: {id: query.room_id}}" class="ml-auto">
+            <i class="fas fa-money-check-alt"></i> Tạo hóa đơn
+          </router-link>
         </div>
         <div class="text-muted text-center" v-if="payments.length==0">
           Hiện chưa có hóa đơn nào
@@ -63,7 +65,7 @@ export default {
   methods: {
     list () {
       $eventHub.$emit('on-loading')
-      $request.get(`/api/payment/list?${serialize.fromObj(this.query)}`)
+      ajax().get(`/api/payment/list?${serialize.fromObj(this.query)}`)
       .then(res => {
         $eventHub.$emit('off-loading')
         res.data.data.forEach(payment => {
@@ -88,7 +90,7 @@ export default {
     destroy () {
       this.$modal.hide('delete-payment')
       $eventHub.$emit('on-loading')
-      $request.delete(`/api/payment/${this.chosen}`)
+      ajax().delete(`/api/payment/${this.chosen}`)
       .then(res => {
         this.$store.commit('payments/delete', this.chosen)
         $eventHub.$emit('off-loading')

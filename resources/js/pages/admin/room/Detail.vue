@@ -106,7 +106,7 @@ export default {
       this.room.images = images
     },
     update () {
-      $request.put(`/api/room/${this.room.id}`, this.room)
+      ajax().put(`/api/room/${this.room.id}`, this.room)
       .then(res => {
         this.leaveEdit()
         $eventHub.$emit('success-alert', {

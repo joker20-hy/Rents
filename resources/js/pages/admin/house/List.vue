@@ -87,7 +87,7 @@ export default {
     },
     list () {
       this.loading = true
-      $request.get(this.listApi())
+      ajax().get(this.listApi())
       .then(res => {
         this.loading = false
         res.data.data.forEach(dat => {
@@ -109,7 +109,7 @@ export default {
       this.$modal.show('delete-house')
     },
     destroy () {
-      $request.delete(`/api/house/${this.chosen}`)
+      ajax().delete(`/api/house/${this.chosen}`)
       .then(res => {
         this.$modal.hide('delete-house')
         $eventHub.$emit('success-alert', {

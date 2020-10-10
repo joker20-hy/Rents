@@ -29,14 +29,22 @@ export default {
       this.$modal.hide('logout-form')
     },
     logout () {
+      $eventHub.$emit('on-loading')
       logout(this.logoutSuccess, this.logoutError)
     },
     logoutSuccess () {
       this.hide()
+      $eventHub.$emit('off-loading')
       window.location.href = '/'
+      $eventHub.$emit('success-alert', {
+        title: 'Thành công',
+        message: 'Đăng xuất thành công',
+        timeout: 4000
+      })
     },
     logoutError (err) {
-      $eventHub.$emit('success-alert', {
+      $eventHub.$emit('off-loading')
+      $eventHub.$emit('error-alert', {
         title: 'Error',
         message: err.response.data.message
       })

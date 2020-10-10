@@ -62,7 +62,7 @@ export default {
   	},
    	update () {
    	  this.updating = true
-   	  $request.put(`/api/service/${this.service.id}`, {
+   	  ajax().put(`/api/service/${this.service.id}`, {
 		name: this.service.name,
 		unit: this.service.unit	 
    	  })

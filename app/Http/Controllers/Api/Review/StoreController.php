@@ -18,6 +18,7 @@ class StoreController extends Controller
     public function main(Request $request)
     {
         $params = $this->validation($request);
+        dd($params);
         $review = $this->reviewServices->store($params, $request->type);
         return response()->json($review, 201);
     }

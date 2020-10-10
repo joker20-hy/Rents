@@ -14,5 +14,6 @@ class User {
     localStorage.removeItem(`_auth`)
   }
 }
-function user () { return new User() }
-export default user
+export default function () {
+  return new User()
+}

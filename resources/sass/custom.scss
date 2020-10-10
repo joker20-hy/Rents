@@ -57,6 +57,7 @@
   margin-left: auto;
   margin-right: auto;
   padding: 10px;
+  margin-bottom: 60px;
 }
 .records-list {
   background-color: var(--white);
@@ -404,8 +405,20 @@ $side-search-header: 240px;
 }
 [page-section] {
   padding: 10px;
-  background-color: $white;
+  position: relative;
   border-radius: 6px;
-  box-shadow: 0px 0px 2px #d0d0d0;
   margin-bottom: 10px;
+  background-color: $white;
+  box-shadow: 0px 0px 2px #d0d0d0;
+}
+.img-preview {
+  width: 80px;
+  height: 80px;
+}
+.contain-sm {
+  width: 600px;
+  max-width: 100%;
+  padding: 0px 10px;
+  margin-right: auto;
+  margin-left: auto;
 }

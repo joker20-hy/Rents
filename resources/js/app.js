@@ -1,10 +1,11 @@
 window.Vue = require('vue')
 window.$eventHub = new Vue()
 window.utf8 = require('utf8')
-import { $auth } from './utilities/request/request'
+import { $auth, ajax } from './utilities/request/request'
 window.$auth = $auth.init()
-import { request } from './utilities/request/request'
-window.$request = request
+window.ajax = ajax
+import $number from './utilities/number'
+window.$number = $number
 import serialize from './utilities/serialize'
 window.serialize = serialize
 import merge from './utilities/merge'
@@ -18,9 +19,30 @@ import { store } from './stores/store.js'
 import CKEditor from '@ckeditor/ckeditor5-vue'
 import App from './pages/App'
 import Clipboard from 'v-clipboard'
-// import VueCarousel from 'vue-carousel';
+import vueDebounce from 'vue-debounce'
+ 
+Vue.use(vueDebounce)
+ 
+// Or if you want to pass in the lock option
+Vue.use(vueDebounce, {
+  lock: true
+})
+ 
+// Setting a different event to listen to
+Vue.use(vueDebounce, {
+  listenTo: 'input'
+})
+ 
+// Listening to multiple events
+Vue.use(vueDebounce, {
+  listenTo: ['input', 'keyup']
+})
+ 
+// Setting a default timer This is set to '300ms' if not specified
+Vue.use(vueDebounce, {
+  defaultTime: '200ms'
+})
 
-// Vue.use(VueCarousel)
 Vue.use(Clipboard)
 Vue.use( CKEditor )
 Vue.use(VModal, { dialog: true })

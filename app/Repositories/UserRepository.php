@@ -2,22 +2,26 @@
 
 namespace App\Repositories;
 
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 use App\Models\User;
 use App\Models\Profile;
 use App\Models\Setting;
-use Illuminate\Support\Facades\DB;
+use App\Models\RentRoom;
 
 class UserRepository
 {
     protected $user;
     protected $profile;
     protected $setting;
+    protected $rentRoom;
 
-    public function __construct(User $user, Profile $profile, Setting $setting)
+    public function __construct(User $user, Profile $profile, Setting $setting, RentRoom $rentRoom)
     {
         $this->user = $user;
         $this->profile = $profile;
         $this->setting = $setting;
+        $this->rentRoom = $rentRoom;
     }
 
     /**
@@ -141,15 +145,43 @@ class UserRepository
     public function rentRoom($id, $roomId)
     {
         $user = $this->user->findOrFail($id);
-        $user = $this->update($id, [
-            'role' => config('const.USER.ROLE.RENTER'),
-            'room_id' => $roomId
-        ]);
-        $user = DB::transaction(function () use ($user) {
-            $user->room->update(['status' => config('const.ROOM_STATUS.rented')]);
+        $user = DB::transaction(function () use ($user, $roomId) {
+            $user = $this->update($user->id, [
+                'role' => config('const.USER.ROLE.RENTER'),
+                'room_id' => $roomId
+            ]);
+            $this->createContract($user->id, $roomId);
+            if ($user->room->status!=config('const.ROOM_STATUS.rented')) {
+                $user->room->update(['status' => config('const.ROOM_STATUS.rented')]);
+            }
             return $user;
         });
         return $user;
+    }
+
+    /**
+     * Create contract between user and room
+     *
+     * @param integer $userId
+     * @param integer $roomId
+     *
+     * @return \App\Models\RentRoom
+     */
+    public function createContract($userId, $roomId)
+    {
+        $rentRoom = $this->rentRoom->where('renter_id', $userId)
+                ->where('room_id', $roomId)
+                ->whereNotNull('to')
+                ->first();
+        if (is_null($rentRoom)) {
+            $rentRoom = $this->rentRoom->create([
+                'renter_id' => $userId,
+                'room_id' => $roomId,
+                'from' => Carbon::now(),
+                'to' => null
+            ]);
+        }
+        return $rentRoom;
     }
 
     /**
@@ -162,16 +194,31 @@ class UserRepository
     public function leaveRoom($id)
     {
         $user = $this->user->findOrFail($id);
-        $user = $this->update($id, [
-            'role' => config('const.USER.ROLE.RENTER'),
-            'room_id' => null
-        ]);
-        $user = DB::transaction(function () use ($user) {
-            if (count($user->room->renters) == 0) {
-                $user->room->update(['status', config('const.ROOM_STATUS.waiting')]);
+        $rentRoom = $this->findContract($user);
+        $user = DB::transaction(function () use ($user, $rentRoom) {
+            $room = $user->room;
+            $rentRoom->update(['to' => Carbon::now(), 'deleted_at' => Carbon::now()]);
+            $user = $this->update($user->id, [
+                'role' => config('const.USER.ROLE.RENTER'),
+                'room_id' => null
+            ]);
+            if (count($room->renters) == 0) {
+                $room->update(['status', config('const.ROOM_STATUS.waiting')]);
             }
         });
         return $user;
+    }
+
+    public function findContract(User $user)
+    {
+        $rentRoom = $this->rentRoom->where('room_id', $user->room_id)
+                        ->where('renter_id', $user->id)
+                        ->whereNotNull('to')
+                        ->first();
+        if (is_null($rentRoom)) {
+            return abort(404, 'rent contract not found');
+        }
+        return $rentRoom;
     }
 
     /**

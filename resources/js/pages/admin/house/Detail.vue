@@ -133,7 +133,7 @@ export default {
       this.house.images = images
     },
     getDirection () {
-      $request.get('/api/direction')
+      ajax().get('/api/direction')
       .then(res => {
         this.directions = res.data
       })
@@ -147,7 +147,7 @@ export default {
       this.$modal.show('detail-house')
     },
     update () {
-      $request.put(`/api/house/${this.house.id}`, {
+      ajax().put(`/api/house/${this.house.id}`, {
         name: this.house.name,
         province_id: this.house.province_id,
         district_id: this.house.district_id,

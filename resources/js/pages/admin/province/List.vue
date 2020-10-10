@@ -76,7 +76,7 @@ export default {
     },
     list () {
       this.loading = true
-      $request.get(`/api/province?page=${this.page}`)
+      ajax().get(`/api/province?page=${this.page}`)
       .then(res => {
         this.per_page = res.data.per_page
         this.page_count = res.data.last_page
@@ -97,7 +97,7 @@ export default {
       }
     },
     destroy () {
-      $request.delete(`/api/province/${this.chosen.id}`)
+      ajax().delete(`/api/province/${this.chosen.id}`)
       .then(res => {
         this.$store.commit('provinces/remove', this.chosen.id)
         this.$modal.hide('delete-province')

@@ -16,8 +16,15 @@ export default {
       confirming: false
     }
   },
-  created () {
-    this.getRoom()
+  watch: {
+    '$route.params.room_id': {
+      handler: function (room_id) {
+        this.room_id = room_id
+        this.getRoom(room_id)
+      },
+      deep: true,
+      immediate: true
+    }
   },
   computed: {
     user () {
@@ -25,9 +32,9 @@ export default {
     }
   },
   methods: {
-    getRoom () {
+    getRoom (id) {
       $eventHub.$emit('on-loading')
-      $request.get(`/api/room/${this.room_id}`)
+      ajax().get(`/api/room/${id}`)
       .then(res => {
         this.room_name = `${res.data.name}, ${res.data.house.address_detail}`
         $eventHub.$emit('off-loading')
@@ -39,19 +46,19 @@ export default {
     confirm () {
       this.confirming = true
       $eventHub.$emit('on-loading')
-      $request.post(`/api/user/rent-room/${this.room_id}`, {})
+      ajax().post(`/api/user/rent-room/${this.room_id}`, {})
       .then(res => {
         this.confirming = false
         $eventHub.$emit('off-loading')
-        this.user.room_id = this.room_id
         $eventHub.$emit('success-alert', {
           title: 'Thành công',
           message: 'Đã xác nhận thành công',
           timeout: 3000
         })
-        this.$route.push({name: 'home'})
+        window.location.href='/'
       })
       .catch(err => {
+        console.log(err)
         this.confirming = false
         $eventHub.$emit('off-loading')
         $eventHub.$emit('error-alert', {

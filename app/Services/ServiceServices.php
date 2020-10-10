@@ -35,6 +35,7 @@ class ServiceServices
      */
     public function store(array $params)
     {
+        $params['unit'] = array_key_exists('unit', $params)?$params['unit']:'người';
         $params['unit'] = $params['type']==config('const.SERVICE_TYPE.BY_RENTERS')?'người':$params['unit'];
         return $this->serviceRepository->store($params);
     }

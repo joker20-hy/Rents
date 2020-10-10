@@ -65,8 +65,13 @@ export default {
     },
     register () {
       if(!this.validate()) return false
-      $request.post('/api/register', this.user)
+      ajax().post('/api/register', this.user)
       .then(res => {
+        $eventHub.$emit('success-alert', {
+          title: 'Thành công',
+          message: 'Bạn đã đăng ký tài khoản thành công',
+          timeout: 4000
+        })
         this.$router.push({name: 'login'})
       })
       .catch(err => {

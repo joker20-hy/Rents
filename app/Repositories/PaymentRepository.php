@@ -26,6 +26,11 @@ class PaymentRepository
         return $this->payment->findOrFail($id);
     }
 
+    public function findByRoom($roomId)
+    {
+        //
+    }
+
     /**
      * List payment
      *

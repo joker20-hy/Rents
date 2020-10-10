@@ -8,7 +8,7 @@
       </button>
       <input type="file" id="images" class="d-none" ref="images" @change="getImages" accept="image/*" multiple>
       <div class="ml-auto" v-show="editable">
-        <button type="button" class="btn text-primary" v-show="!edit" @click="enterEdit">Chọn</button>
+        <button type="button" class="btn text-primary" v-show="!edit&&bucket.length>=0" @click="enterEdit">Chọn</button>
         <button type="button" class="btn text-danger" v-show="edit" @click="showDelete()">
           <i class="far fa-trash-alt"></i>
         </button>
@@ -20,8 +20,7 @@
     </div>
     <div v-show="bucket.length==0" class="text-center text-muted">Hiện chưa có ảnh</div>
     <transition-group name="slide-fade" tag="div" class="row photos-bucket">
-      <div class="col-4 py-2" v-for="img in bucket" :key="img.id">
-        <img :src="img.url" class="mw-100 mh-100" alt="">
+      <div class="img-item" v-for="img in bucket" :key="img.id" :style="`background-image: url(${img.url})`">
         <div class="choose-cover" @click="choose(img)" :class="img.choose?'show':''">
           <i class="fas fa-check fa-2x text-light"></i>
         </div>
@@ -125,7 +124,7 @@ export default {
       return data
     },
     upload () {
-      $request.post(this.updateApi, this.getData(), {
+      ajax().post(this.updateApi, this.getData(), {
         headers: {'Content-Type': 'multipart/form-data'}
       })
       .then(res => {
@@ -153,7 +152,7 @@ export default {
     remove () {
       let images = []
       this.bucket.filter(img => !img.choose).forEach(img => images.push(img.url))
-      $request.put(this.deleteApi, {
+      ajax().put(this.deleteApi, {
         images: images
       })
       .then(res => {
@@ -178,6 +177,16 @@ export default {
   .photos-bucket {
     max-height: 400px;
     overflow-y: scroll;
+  }
+  .img-item {
+    position: relative;
+    width: 33.333333%;
+    padding-top: 25%;
+    border: 2px solid #fff;
+    border-radius: 6px;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
   }
   .choose-cover {
     position: absolute;

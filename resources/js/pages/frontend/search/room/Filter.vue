@@ -84,7 +84,7 @@ export default {
   	  this.conditions.criterias[target.index].checked = target.checked
     },
     getcriterias () {
-      $request.get(`/api/criteria`)
+      ajax().get(`/api/criteria`)
       .then(res => {
         res.data.forEach(criterias => {
           criterias.checked=this.criterias.includes(`${criterias.id}`)

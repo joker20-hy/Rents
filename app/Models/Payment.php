@@ -11,19 +11,19 @@ class Payment extends Model
 
     protected $fillable = [
         'room_id',
-        'time',
         'creater_id',
+        'time',
         'bill',
         'status'
     ];
 
-    public function room()
-    {
-        return $this->belongsTo(Room::class);
-    }
-
     public function creater()
     {
         return $this->belongsTo(User::class, 'creater_id');
+    }
+
+    public function room()
+    {
+        return $this->belongsTo(Room::class, 'room_id');
     }
 }

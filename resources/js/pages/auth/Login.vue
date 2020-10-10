@@ -11,11 +11,6 @@
         <div class="form-group mb-4">
           <input type="password" class="input" placeholder="Mật khẩu" v-model="credentials.password" required>
         </div>
-        <transition name="slide-fade">
-          <div class="py-2 text-center" v-show="logining_in">
-            <i class="fas fa-spinner fa-pulse fa-lg text-primary"></i>
-          </div>
-        </transition>
         <div class="form-group mb-4">
           <button class="btn btn-primary w-100 text-center" :disabled="logining_in">
             Đăng nhập
@@ -34,7 +29,7 @@
   </div>
 </template>
 <script>
-import { login } from '../../utilities/request/request'
+import { login, user } from '../../utilities/request/request'
 
 export default {
   name: 'login-form',
@@ -48,19 +43,25 @@ export default {
       }
     }
   },
-  created () {
-    $eventHub.$emit('on-loading')
-  },
   methods: {
     login () {
+      $eventHub.$emit('on-loading')
       this.logining_in = true
       login(this.credentials, this.loginSuccess, this.loginError)
     },
     loginSuccess () {
-      this.logining_in = false
-      window.location.href = this.redirectTo
+      user(res => {
+        $eventHub.$emit('off-loading')
+        this.logining_in = false
+        $auth = $auth.init(res.data)
+        this.$store.commit('auth/user', $auth.user)
+        this.$router.push(this.redirectTo)
+      }, err => {
+        console.log(err)
+      })
     },
     loginError (err) {
+      $eventHub.$emit('off-loading')
       this.logining_in = false
       $eventHub.$emit('error-alert', {
         title: `${err.response.status} ${err.response.statusText}`,

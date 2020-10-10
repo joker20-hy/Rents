@@ -19,7 +19,6 @@ class CreateRoomCriteriasTable extends Migration
             $table->unsignedSmallInteger('criteria_id');
             $table->foreign('criteria_id')->references('id')->on('criterias');
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 

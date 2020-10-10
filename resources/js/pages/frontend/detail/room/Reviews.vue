@@ -5,16 +5,18 @@
       <router-link class="btn text-primary ml-auto" :to="{name:'review-room', params: {id: this.id}}">
         <i class="fas fa-pencil"></i> đánh giá</router-link>
     </div>
+    <div v-if="reviews.length==0" class="text-muted text-center">
+      Hiện chưa có đánh giá nào
+    </div>
     <transition-group name="slide-fade">
       <div v-for="review in reviews" :key="review.id" item-review>
         <div class="intro">
           <div class="avt-contain">
-            <!-- <img :src="review.user_avatar" alt="" v-if="review.anonymous"> -->
-            <img :src="anonymous_img" alt="">
+            <img :src="review.anonymous?anonymous_img:review.user_avatar">
           </div>
           <div class="summary">
             <div class="text-bold">
-              {{ review.user_name }}
+              {{ review.anonymous?'Anonymous':review.user_name }}
             </div>
             <div>
               <i class="fas fa-chevron-right"></i> {{ review.title }}
@@ -61,7 +63,7 @@ export default {
   methods: {
     get (url=null) {
       url = url==null?`/api/review/${$config.REVIEW.TYPE.ROOM}/${this.id}?perpage=5`:this.next_page_url
-      $request.get(`/api/review/${$config.REVIEW.TYPE.ROOM}/${this.id}?perpage=5`)
+      ajax().get(`/api/review/${$config.REVIEW.TYPE.ROOM}/${this.id}?perpage=5`)
       .then(res => {
         res.data.data.forEach(review => this.reviews.push(review))
         this.next_page_url = res.data.next_page_url

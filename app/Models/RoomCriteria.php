@@ -3,13 +3,10 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class RoomCriteria extends Model
 {
-	use SoftDeletes;
-
-	protected $primaryKey = null;
+	protected $primaryKey = ['room_id', 'criteria_id'];
     public $incrementing = false;
 
     protected $fillable = [

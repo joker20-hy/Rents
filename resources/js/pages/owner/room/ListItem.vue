@@ -19,7 +19,11 @@
         Số lượng người thuê trọ: {{ room.renters_count }}
       </div>
       <div class="d-flex align-items-center pt-2">
-        <switch-box v-model="room.status" :class="room.status?'bg-success':'bg-danger'" @change="changeStatus()"></switch-box>&nbsp;&nbsp;
+        <switch-box
+          v-model="room.status"
+          :class="room.status?'bg-success':'bg-danger'"
+          @change="$emit('changestatus')"
+        ></switch-box>&nbsp;&nbsp;
         <span v-if="status_waiting" class="text-danger">
           <i class="fas fa-caret-right"></i> Nhà chưa được thuê
         </span>
@@ -28,14 +32,30 @@
         </span>
       </div>
       <div class="py-2 text-right text-md-center row mx-0">
-        <div class="col-md-4">
-          <router-link v-if="status_rented" :to="{name: 'owner-list-payment', params: {id: room.id}}"><i class="fas fa-list-ul"></i> Danh sách hóa đơn</router-link>
+        <div class="col-md-3 pt-2" v-if="status_rented">
+          <router-link :to="{name: 'owner-list-payment', params: {id: room.id}}">
+            <i class="fas fa-money-check-alt"></i> Danh sách hóa đơn
+          </router-link>
         </div>
-        <div class="col-md-4">
-          <router-link v-if="status_rented" :to="{name: 'owner-create-payment', params: {id: room.id}}"><i class="fas fa-money-check"></i> Tạo hóa đơn</router-link>
+        <div class="col-md-3 pt-2" v-if="status_rented">
+          <router-link :to="{name: 'owner-create-payment', params: {id: room.id}}">
+            <i class="fas fa-plus"></i> Tạo hóa đơn
+          </router-link>
         </div>
-        <div class="col-md-4">
-          <router-link :to="{name: 'owner-join-room-qr', params: {id: room.id}}">Thêm người thuê</router-link>
+        <div class="col-md-3 pt-2">
+          <router-link :to="{name: 'owner-add-renter', params: {room: room.id}}">
+            <i class="fas fa-user-plus"></i> Thêm người thuê
+          </router-link>
+        </div>
+        <div class="col-md-3 pt-2">
+          <router-link :to="{name: 'owner-list-renter', params: {room: room.id}}">
+            <i class="fas fa-user"></i> Người thuê
+          </router-link>
+        </div>
+        <div class="col-md-3 pt-2">
+          <button class="btn text-primary" @click="$emit('add-pay-method', item)">
+            <i class="fas fa-dollar-sign"></i> Thanh toán
+          </button>
         </div>
       </div>
     </div>
@@ -67,26 +87,7 @@ export default {
     }
   },
   methods: {
-    changeStatus () {
-      $request.put(`/api/room/${this.room.id}/status`, {
-        status: this.room.status
-      })
-      .then(res => {
-        $eventHub.$emit('success-alert', {
-          title: 'Thành công',
-          message: 'Đã lưu trạng thái thành công',
-          timeout: 3000
-        })
-      })
-      .catch(err => {
-        this.room.status=this.room.status==1?0:1
-        $eventHub.$emit('error-alert', {
-          title: 'Không thành công',
-          message: 'Không thể lưu trạng thái mới',
-          timeout: 3000
-        })
-      })
-    }
+
   }
 }
 </script>

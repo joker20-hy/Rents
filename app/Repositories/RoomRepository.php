@@ -2,19 +2,30 @@
 
 namespace App\Repositories;
 
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use App\Models\RoomCriteria;
+use App\Models\RentRoom;
 use App\Models\Room;
+use App\Models\RoomPayMethod;
 
 class RoomRepository
 {
     protected $room;
+    protected $rentRoom;
     protected $roomCriteria;
+    protected $roomPayMethod;
 
-    public function __construct(RoomCriteria $roomCriteria, Room $room)
-    {
+    public function __construct(
+        RoomCriteria $roomCriteria,
+        Room $room,
+        RentRoom $rentRoom,
+        RoomPayMethod $roomPayMethod
+    ) {
         $this->roomCriteria = $roomCriteria;
+        $this->rentRoom = $rentRoom;
         $this->room = $room;
+        $this->roomPayMethod = $roomPayMethod;
     }
 
 
@@ -100,7 +111,8 @@ class RoomRepository
         )->join("houses", "rooms.house_id", "=", "houses.id")
         ->join("provinces", "houses.province_id", "=", "provinces.id")
         ->join("districts", "houses.district_id", "=", "districts.id")
-        ->with('criterias');
+        ->with('criterias')
+        ->with('paymethods');
         if (!is_null($ownerId)) {
             $query = $query->join("user_houses", "user_houses.house_id", "=", "houses.id")
                         ->where('user_houses.user_id', $ownerId);
@@ -137,9 +149,37 @@ class RoomRepository
      *
      * @param integer $id
      */
-    public function findById($id)
+    public function findById($id, $select = ['*'])
     {
-        return $this->room->findOrFail($id);
+        return $this->room->select($select)->findOrFail($id);
+    }
+
+    /**
+     * Find rent room contract
+     *
+     * @param integer $roomId
+     *
+     * @return \App\Models\RentRoom
+     */
+    public function getRent($roomId)
+    {
+        $rentRoom = $this->rentRoom->where('room_id', $roomId)->first();
+        if (is_null($rentRoom)) {
+            return abort(404, 'Rent room contract not found');
+        }
+        return $rentRoom;
+    }
+
+    /**
+     * Find rent room contract
+     *
+     * @param integer $id
+     *
+     * @return \App\Models\RentRoom
+     */
+    public function getRentById($id)
+    {
+        return $this->rentRoom->findOrFail($id);
     }
 
     /**
@@ -152,14 +192,18 @@ class RoomRepository
     public function store(array $params)
     {
         $room = DB::transaction(function () use ($params) {
-            return $this->room->create($params);
-        });
-        $roomCriterias = [];
-        foreach ($params['criterias'] as $criteria) {
-            array_push($roomCriterias, ['room_id' => $room->id, 'criteria_id' => $criteria]);
-        }
-        DB::transaction(function () use ($roomCriterias) {
+            $room = $this->room->create($params);
+            $roomCriterias = [];
+            foreach ($params['criterias'] as $criteria) {
+                array_push($roomCriterias, [
+                    'room_id' => $room->id,
+                    'criteria_id' => $criteria,
+                    'created_at' => Carbon::now(),
+                    'updated_at' => Carbon::now()
+                ]);
+            }
             $this->roomCriteria->insert($roomCriterias);
+            return $room;
         });
         $room->criterias;
         return $room;
@@ -178,8 +222,40 @@ class RoomRepository
         $room = $this->room->findOrFail($id);
         $room = DB::transaction(function () use ($room, $params) {
             $room->update($params);
+            if (array_key_exists('criterias', $params)) {
+                $this->updateCriterias($room, $params['criterias']);
+            }
             return $room;
         });
+        return $room;
+    }
+
+    /**
+     * Update room criterias
+     *
+     * @param \App\Models\Room $room
+     * @param array $criteriaIds
+     *
+     * @return \App\Models\Room
+     */
+    private function updateCriterias(Room $room, array $criteriaIds)
+    {
+        $roomCriterias = [];
+        $criterias = $room->criterias()->pluck('id');
+        foreach ($criteriaIds as $id) {
+            if (!$criterias->contains($id)) {
+                array_push($roomCriterias, [
+                    'room_id' => $room->id,
+                    'criteria_id' => $id,
+                    'created_at' => Carbon::now(),
+                    'updated_at' => Carbon::now()
+                ]);
+            }
+        }
+        $this->roomCriteria->insert($roomCriterias);
+        $this->roomCriteria->where('room_id', $room->id)
+            ->whereNotIn('criteria_id', $criteriaIds)
+            ->delete();
         return $room;
     }
 
@@ -203,17 +279,46 @@ class RoomRepository
         return $images;
     }
 
+    public function updatePayMethods($id, array $paymethodIds)
+    {
+        $room = $this->findById($id);
+        $paymethods = $room->paymethods->pluck('id');
+        $params = [];
+        foreach ($paymethodIds as $id) {
+            if (!$paymethods->contains($id)) {
+                array_push($params, [
+                    'room_id' => $room->id,
+                    'pay_method_id' => $id,
+                    'created_at' => Carbon::now(),
+                    'updated_at' => Carbon::now()
+                ]);
+            }   
+        }
+        $this->roomPayMethod->insert($params);
+        $this->roomPayMethod->where('room_id', $room->id)
+                ->whereNotIn('pay_method_id', $paymethodIds)
+                ->delete();
+        return $room;
+    }
+
     /**
+     * Remove all renter from room
      * @param integer $id
      */
     public function emptyRoom($id)
     {
         $room = $this->room->findOrFail($id);
         DB::transaction(function () use ($room) {
-            $room->renters->update([
-                'role' => config('const.USER.ROLE.NORMAL'),
-                'room_id' => null
-            ]);
+            foreach ($room->renters as $renter) {
+                $renter->update([
+                    'role' => config('const.USER.ROLE.NORMAL'),
+                    'room_id' => null
+                ]);   
+            }
+            $room->update(['status' => false]);
+            $this->rentRoom->where('room_id', $room->id)
+                ->whereNull('to')
+                ->update(['to' => Carbon::now(), 'deleted_at' => Carbon::now()]);
         });
     }
 
