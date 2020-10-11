@@ -20,7 +20,7 @@ export default {
   name: 'tool-bar',
   computed: {
     sort_conditions () {
-      return $room_sort
+      return $config.ROOM.SORT
     }
   },
   watch: {

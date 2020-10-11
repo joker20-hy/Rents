@@ -1,16 +1,16 @@
 <template>
-  <div>
-    <side-search></side-search>
+  <div style="min-height: 100vh">
+    <nav-header/>
     <router-view></router-view>
   </div>
 </template>
 <script>
-import SideSearch from '../layouts/SideSearch'
+import NavHeader from './layouts/Header'
 export default {
   components: {
-    SideSearch
+    NavHeader
   },
-  data () {
+  data() {
     return {}
   }
 }

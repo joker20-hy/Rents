@@ -6,7 +6,7 @@
       <p>Giá thuê: {{ range(room.price) }} vnđ</p>
     </div>
 
-    <router-link :to="{name: 'payment-room-list'}" class="bg-white p-2 mb-2 d-flex align-items-center">
+    <router-link :to="{name: 'payment-room-list', params: {id: room.id}}" class="bg-white p-2 mb-2 d-flex align-items-center">
       <i class="fas fa-money-check-alt"></i>&nbsp;Hóa đơn phòng ({{ room.payments.length }})
       <button class="btn ml-auto text-primary">
         <i class="fas fa-chevron-right"></i>

@@ -2,7 +2,7 @@ const users = {
   namespaced: true,
   state: {
     users: [],
-    config: $config.user
+    config: $config.USER
   },
   getters: {
     users (state) {

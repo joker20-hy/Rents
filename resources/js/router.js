@@ -1,6 +1,12 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-
+/** */
+import Login from './pages/auth/Login'
+import Register from './pages/auth/Register'
+import ResetPassword from './pages/auth/ResetPassword'
+import ForgotPassword from './pages/auth/ForgotPassword'
+/** */
+import Frontend from './pages/frontend/Index'
 import Home from './pages/frontend/home/Index'
 import SearchRoom from './pages/frontend/search/room/Index'
 import Detail from './pages/frontend/detail/Index'
@@ -15,14 +21,8 @@ import Account from './pages/frontend/user/Account'
 import JoinRoom from './pages/frontend/user/JoinRoom'
 import RentedRoom from './pages/frontend/user/Room'
 import RoomPayMethod from './pages/frontend/user/RoomPayMethods'
-import PaymentRoom from './pages/frontend/user/room_payment/Index'
 import PaymentRoomList from './pages/frontend/user/room_payment/List'
 import PaymentRoomDetail from './pages/frontend/user/room_payment/Detail'
-import ForgotPassword from './pages/auth/ForgotPassword'
-import ResetPassword from './pages/auth/ResetPassword'
-/** Auth components */
-import Login from './pages/auth/Login'
-import Register from './pages/auth/Register'
 /** Owner components */
 import Owner from './pages/owner/Index'
 import OwnerHouse from './pages/owner/house/Index'
@@ -65,7 +65,6 @@ import Criteria from './pages/admin/criteria/Index'
 import CriteriaList from './pages/admin/criteria/List'
 import Reviews from './pages/admin/review/Index'
 import ReviewList from './pages/admin/review/List'
-import { $auth } from './utilities/request/request'
 
 Vue.use(Router)
 
@@ -74,59 +73,55 @@ const router = new Router({
   routes: [
     {
       path: '/',
-      name: 'home',
-      component: Home
-    },
-    {
-      path: '/phong-tro',
-      name: 'search-room',
-      component: SearchRoom
-    },
-    {
-      path: '/chi-tiet',
-      component: Detail,
+      component: Frontend,
       children: [
         {
-          path: 'nha-cho-thue/:id?',
-          name: 'house-for-rent',
-          component: DetailHouse
+          path: '',
+          name: 'home',
+          component: Home
         },
         {
-          path: 'phong-tro/:id?',
-          name: 'room-for-rent',
-          component: DetailRoom
-        }
-      ]
-    },
-    {
-      path: '/thue-phong/:room_id',
-      name: 'join-room',
-      component: JoinRoom,
-      beforeEnter(to, from, next) {
-        if ($auth.check) {
-          $auth.forget('old_route')
-          if ($auth.user.room_id==null) next()
-          else router.push({name: 'home'})
-        }
-        else {
-          $auth.remember('old_route', to)
-          router.push({name: 'login'})
-        }
-      }
-    },
-    {
-      path: '/nguoi-thue',
-      component: Renter,
-      children: [
+          path: 'tim-phong',
+          name: 'search-room',
+          component: SearchRoom
+        },
+        {
+          path: 'chi-tiet',
+          component: Detail,
+          children: [
+            {
+              path: 'nha/:id',
+              name: 'house-for-rent',
+              component: DetailHouse
+            },
+            {
+              path: 'phong/:id',
+              name: 'room-for-rent',
+              component: DetailRoom
+            }
+          ]
+        },
+        {
+          path: 'thue/phong/:room_id',
+          name: 'join-room',
+          component: JoinRoom,
+          beforeEnter(to, from, next) {
+            if ($auth.check) {
+              $auth.forget('old_route')
+              if ($auth.user.room_id==null) next()
+              else router.push({name: 'home'})
+            } else {
+              $auth.remember('old_route', to)
+              router.push({name: 'login'})
+            }
+          }
+        },
         {
           path: 'tai-khoan',
           name: 'account',
           component: Account,
           beforeEnter(to, from, next) {
-            if ($auth.check) {
-              $auth.forget('old_route')
-              next()
-            }
+            if ($auth.check) { $auth.forget('old_route'); next() }
             else {
               $auth.remember('old_route', to)
               router.push({name: 'login'})
@@ -134,63 +129,60 @@ const router = new Router({
           }
         },
         {
-          path: 'phong',
-          name: 'rented-room',
-          component: RentedRoom
-        },
-        {
-          path: 'phong/:id/thanh-toan',
-          name: 'room-pay-method',
-          component: RoomPayMethod
-        },
-        {
-          path: 'hoa-don-phong',
-          component: PaymentRoom,
+          path: 'nguoi-thue',
+          component: Renter,
           children: [
             {
-              path: '',
+              path: 'phong',
+              name: 'rented-room',
+              component: RentedRoom
+            },
+            {
+              path: 'phong/:id/thanh-toan',
+              name: 'room-pay-method',
+              component: RoomPayMethod
+            },
+            {
+              path: 'phong/:id/hoa-don',
               name: 'payment-room-list',
               component: PaymentRoomList
             },
             {
-              path: ':id',
+              path: 'hoa-don/:id',
               name: 'payment-room-detail',
               component: PaymentRoomDetail
             }
           ]
+        },
+        {
+          path: 'danh-gia',
+          component: Review,
+          children: [
+            {
+              path: 'nha/:id',
+              name: 'review-house',
+              component: ReviewHouse
+            },
+            {
+              path: 'phong/:id',
+              name: 'review-room',
+              component: ReviewRoom
+            },
+            {
+              path: 'nguoi-thue/:id',
+              name: 'review-renter',
+              component: ReviewRenter
+            }
+          ],
+          beforeEnter(to, from, next) {
+            if ($auth.check) { $auth.forget('old_route'); next() }
+            else {
+              $auth.remember('old_route', to)
+              router.push({name: 'login'})
+            }
+          }
         }
       ]
-    },
-    {
-      path: '/danh-gia',
-      component: Review,
-      children: [
-        {
-          path: 'nha/:id',
-          name: 'review-house',
-          component: ReviewHouse
-        },
-        {
-          path: 'phong-tro/:id',
-          name: 'review-room',
-          component: ReviewRoom
-        },
-        {
-          path: 'nguoi-thue-nha/:id',
-          name: 'review-renter',
-          component: ReviewRenter
-        }
-      ],
-      beforeEnter(to, from, next) {
-        if ($auth.check) {
-          $auth.forget('old_route')
-          next()
-        }
-        else {
-          $auth.remember('old_route', to)
-          router.push({name: 'login'})
-        }
-      }
     },
     {
       path: '/dang-nhap',
@@ -316,7 +308,7 @@ const router = new Router({
       ],
       beforeEnter(to, from, next) {
         if ($auth.check) {
-          if ($auth.user.role==$config.user.ROLE.OWNER) next()
+          if ($auth.user.role==$config.USER.ROLE.OWNER) next()
           else router.push({name: 'home'})
         }
         else router.push({name: 'login'})
@@ -444,7 +436,7 @@ const router = new Router({
       beforeEnter(to, from, next) {
         if ($auth.check) {
           $auth.forget('old_route')
-          if ($auth.user.role==$config.user.ROLE.ADMIN) next()
+          if ($auth.user.role==$config.USER.ROLE.ADMIN) next()
           else router.push({name: 'home'})
         }
         else {

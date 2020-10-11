@@ -7,15 +7,17 @@
 </template>
 <script>
 export default {
+  name: 'room-criterias',
   props: {
-    criterias: {
+    list: {
       required: true,
       type: Array
     }
   },
-  name: 'room-criterias',
   data () {
-    return {}
+    return {
+      criterias: this.list
+    }
   }
 }
 </script>

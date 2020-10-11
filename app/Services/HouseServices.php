@@ -142,6 +142,17 @@ class HouseServices
     }
 
     /**
+     * Get House services
+     * @param integer $id
+     *
+     * @return Collection
+     */
+    public function services($id)
+    {
+        return $this->houseRepository->services($id);
+    }
+
+    /**
      * Delete house
      *
      * @param integer $id

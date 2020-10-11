@@ -127,7 +127,14 @@ return [
     ],
     'ROOM_STATUS' => [
         'waiting' => 0,
-        'rented' => 1
+        'rented' => 1,
+        'half' => 2
     ],
-    'MAX_SIZE_IMAGE' => 2
+    'MAX_SIZE_IMAGE' => 2,
+    'SEARCH' => [
+        'TYPE' => [
+            'FREE' => 1,
+            'ROOMMATE' => 2
+        ]
+    ]
 ];

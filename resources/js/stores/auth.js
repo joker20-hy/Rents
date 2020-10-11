@@ -8,16 +8,16 @@ const auth = {
       return state.user
     },
     normal (state) {
-      return state.user.role==$config.user.ROLE.NORMAL
+      return state.user.role==$config.USER.ROLE.NORMAL
     },
     admin (state) {
-      return state.user.role==$config.user.ROLE.ADMIN
+      return state.user.role==$config.USER.ROLE.ADMIN
     },
     owner (state) {
-      return state.user.role==$config.user.ROLE.OWNER
+      return state.user.role==$config.USER.ROLE.OWNER
     },
     renter (state) {
-      return state.user.role==$config.user.ROLE.RENTER
+      return state.user.role==$config.USER.ROLE.RENTER
     }
   },
   mutations: {

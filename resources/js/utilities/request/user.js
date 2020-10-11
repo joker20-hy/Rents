@@ -2,19 +2,18 @@ import config from '../config'
 
 class User {
   constructor () {
-    this._store_key = config.user_store_key
-    this._user = JSON.parse(localStorage.getItem(this._store_key))
+    this._user = JSON.parse(localStorage.getItem(config.user_store_key))
   }
-  set user(user) {
-    this._user = user
-    localStorage.setItem(this._store_key, JSON.stringify(user))
+  set data(data) {
+    this._user = data
+    localStorage.setItem(config.user_store_key, JSON.stringify(data))
   }
-  get user() {
+  get data() {
     return this._user
   }
   remove() {
     this._user = null
-    localStorage.removeItem(this._store_key)
+    localStorage.removeItem(config.user_store_key)
   }
 }
 export default function () {

@@ -171,6 +171,15 @@ class HouseRepository
         return $images;
     }
 
+    public function services($id)
+    {
+        return $this->houseService->select(["services.name", "house_services.price", "services.unit"])
+                    ->join("services", "services.id", "=", "house_services.service_id")
+                    ->where('house_id', $id)
+                    ->with('service')
+                    ->get();
+    }
+
     /**
      * Delete house by id
      *

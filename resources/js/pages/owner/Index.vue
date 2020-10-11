@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="min-height: 100vh">
     <header-bar></header-bar>
     <router-view></router-view>
     <div owner-bottom-nav>
@@ -8,7 +8,6 @@
         <router-link :to="{name: 'owner-list-house'}" class="mx-2">Danh sách nhà</router-link>
         <router-link :to="{name: 'owner-list-paymethod'}" class="mx-2">Thanh toán</router-link>
       </div>
-      <!-- <router-link :to="{name: 'owner-list-paymethod'}" class="mx-2">Danh sách hóa đơn</router-link> -->
     </div>
   </div>
 </template>

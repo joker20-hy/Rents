@@ -1,15 +1,8 @@
 <template>
-  <div>
-    <nav-header/>
-    <router-view/>
-  </div>
+  <router-view></router-view>
 </template>
 <script>
-import NavHeader from '../layouts/Header'
 export default {
-  components: {
-    NavHeader
-  },
   data () {
     return {
       sidemenu: false

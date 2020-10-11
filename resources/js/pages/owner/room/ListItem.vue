@@ -75,10 +75,10 @@ export default {
   },
   computed: {
     status_waiting () {
-      return this.room.status==$config.ROOM_STATUS.waiting
+      return this.room.status==$config.ROOM.STATUS.waiting
     },
     status_rented () {
-      return this.room.status==$config.ROOM_STATUS.rented
+      return this.room.status==$config.ROOM.STATUS.rented
     }
   },
   data () {

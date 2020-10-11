@@ -25,7 +25,6 @@ class CreateRoomsTable extends Migration
             $table->unsignedTinyInteger('cycle')->default(1);
             $table->text('images');
             $table->text('description')->nullable();
-            //should be boolean
             $table->unsignedTinyInteger('status')->default(config('const.ROOM_STATUS.waiting'));
             $table->timestamps();
             $table->softDeletes();
