@@ -1,16 +1,19 @@
 import $token from './token'
 import $user from './user'
 
+const _data = {
+  old_route: {},
+  user: {}
+}
 export default {
-  _data: {},
   remember (key, value) {
-    this._data[key] = value 
+    _data.old_route[key] = value
   },
   forget (key) {
-    this._data[key] = undefined
+    _data.old_route[key] = undefined
   },
   data (key) {
-    return this._data[key]
+    return _data.old_route[key]
   },
   get api() {
     return {
@@ -23,8 +26,11 @@ export default {
   get baseUrl () {
     return 'http://rent.joker.com'
   },
+  set user(obj) {
+    _data.user = obj
+  },
   get user () {
-    return this._user.user
+    return _data.user.data
   },
   get check() {
     if ($token.access==null||this.user==null) return false
@@ -32,12 +38,12 @@ export default {
     return now.getTime() <= $token.expires
   },
   init (object=null) {
-    this._user = $user()
-    if (object!=null) this._user.user = object
+    this.user = $user()
+    if (object!=null) this.user.data = object
     return this
   },
   clear() {
-    this._user.remove()
+    _data.user.remove()
     return true
   },
   remove() {

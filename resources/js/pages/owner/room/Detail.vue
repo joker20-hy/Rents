@@ -104,7 +104,9 @@ export default {
       return criterias
     },
     criteriaIds () {
-      return select(this.room.criterias, ['id'])
+      return this.room.map(item => {
+        return {id: item.id}
+      })
     },
     getData () {
       let criterias = []

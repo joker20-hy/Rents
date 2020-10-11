@@ -79,12 +79,10 @@
   </div>
 </template>
 <script>
-import NavHeader from '../layouts/Header'
 import ChangePassword from './ChangePassword'
 
 export default {
   components: {
-    NavHeader,
     ChangePassword
   },
   data () {

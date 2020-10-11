@@ -1,9 +1,10 @@
+const data = {}
 class Config {
   constructor () {}
   set (name, value) {
-    this[`_${name}`] = value
-    this.__defineGetter__(name, function(){return this[`_${name}`]})
-    this.__defineSetter__(name, function(val){return this[`_${name}`]=val})
+    data[name] = value
+    this.__defineGetter__(name, () => data[name])
+    this.__defineSetter__(name, val => data[name]=val)
   }
 }
 const config = new Config()

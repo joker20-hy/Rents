@@ -1,6 +1,5 @@
 <template>
-  <div class="bg-light" style="padding-bottom: 60px">
-    <nav-header/>
+  <div class="bg-light">
     <div class="container px-2" style="">
       <h4 class="pt-3">Danh sách phòng trọ</h4>
       <!-- toolbar -->
@@ -33,7 +32,6 @@
   </div>
 </template>
 <script>
-import NavHeader from '../../layouts/Header'
 import SelectBox from '../../../utilities/SelectBox'
 import SideSearch from '../../layouts/SideSearch'
 import ListItem from './ListItem'
@@ -42,7 +40,6 @@ import ToolBar from './ToolBar'
 
 export default {
   components: {
-    NavHeader,
     ListItem,
     SelectBox,
     SideSearch,

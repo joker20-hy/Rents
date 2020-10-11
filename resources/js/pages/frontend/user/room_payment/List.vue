@@ -1,6 +1,6 @@
 <template>
   <div class="container mt-3 mb-5">
-    <h1 class="row py-3 px-2 bg-primary text-light">Danh sách hóa đơn</h1>
+    <h1 class="py-3 px-2">Danh sách hóa đơn</h1>
     <div v-if="payments.length==0" class='text-center text-muted'>
       Hiện chưa có hóa đơn nào
     </div>
@@ -22,6 +22,11 @@
 </template>
 <script>
 export default {
+  data() {
+    return {
+      id: this.$route.params.id
+    }
+  },
   mounted () {
     if (this.payments.length==0) this.get()
   },
@@ -36,7 +41,7 @@ export default {
   methods: {
     get () {
       $eventHub.$emit('on-loading')
-      ajax().get(`/api/payment/list?room_id=${this.user.room_id}`)
+      ajax().get(`/api/payment/list?room_id=${this.id}`)
       .then(res => {
         $eventHub.$emit('off-loading')
         res.data.data.forEach(payment => {

@@ -12,6 +12,7 @@ import merge from './utilities/merge'
 window.merge = merge
 window.$old_route = ''
 
+window.clickTarget = id => document.querySelector(id).click()
 import router from './router.js'
 import VModal from 'vue-js-modal'
 import Paginate from 'vuejs-paginate'

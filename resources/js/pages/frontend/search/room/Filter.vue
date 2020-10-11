@@ -70,8 +70,8 @@ export default {
       price: '',
       criterias: [],
       conditions: {
-        acreage: $room_filter.acreage,
-        price: $room_filter.price,
+        acreage: $config.ROOM.FILTER.acreage,
+        price: $config.ROOM.FILTER.price,
         criterias: []
       }
     }

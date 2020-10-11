@@ -210,8 +210,8 @@ class UserServices
     {
         $id = is_null($id) ? Auth::user()->id : $id;
         $user = $this->userRepository->findById($id);
-        if ($roomId==$user->room_id) {
-            return abort(400, 'You are already in this room');
+        if (!is_null($user->room_id)) {
+            return abort(400, "Bạn đã đang là người thuê phòng");
         }
         return $this->userRepository->rentRoom($id, $roomId);
     }
@@ -225,8 +225,25 @@ class UserServices
      */
     public function leaveRoom($id = null)
     {
-        $id = is_null($id) ? Auth::user()->id : $id;
-        return $this->userRepository->leaveRoom($id);
+        $authUser = Auth::user();
+        if (!is_null($id)) {
+            $renter = $this->userRepository->findById($id);
+            if (is_null($renter->room_id)) {
+                return abort(400, "Người này hiện không thuê trọ");
+            }
+            if ($authUser->role == config('const.USER.ROLE.OWNER')) {
+                $ownerIds = $renter->room->house->owner->pluck('id');
+                if (!$ownerIds->contains($authUser->id)) {
+                    return abort(403, 'Người thuê trọ này không thuê nhà trọ của bạn');
+                }
+            }
+        } else {
+            $renter = Auth::user();
+            if ($renter->role != config('const.USER.ROLE.RENTER')) {
+                return abort(403, "Bạn không thể thực hiện hành động này");
+            }
+        }
+        return $this->userRepository->leaveRoom($renter->id);
     }
 
     /**

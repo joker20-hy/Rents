@@ -44,7 +44,8 @@ class RoomRepository
         )->join("houses", "rooms.house_id", "=", "houses.id")
         ->join("provinces", "houses.province_id", "=", "provinces.id")
         ->join("districts", "houses.district_id", "=", "districts.id")
-        ->join("areas", "houses.area_id", "=", "areas.id");
+        ->join("areas", "houses.area_id", "=", "areas.id")
+        ->where("rooms.status", "<>", config('const.ROOM_STATUS.rented'));
         $query = $this->addressFilter($query, $conditions);
         $query = $this->criteriaFilter($query, $conditions);
         $query = $this->sort($query, $conditions);
@@ -235,10 +236,11 @@ class RoomRepository
      */
     public function store(array $params)
     {
-        $room = DB::transaction(function () use ($params) {
-            $room = $this->room->create($params);
+        $room = $this->room->create($params);
+        $criterias = $params['criterias'];
+        $room = DB::transaction(function () use ($room, $criterias) {
             $roomCriterias = [];
-            foreach ($params['criterias'] as $criteria) {
+            foreach ($criterias as $criteria) {
                 array_push($roomCriterias, [
                     'room_id' => $room->id,
                     'criteria_id' => $criteria,
@@ -247,7 +249,6 @@ class RoomRepository
                 ]);
             }
             $this->roomCriteria->insert($roomCriterias);
-            return $room;
         });
         $room->criterias;
         return $room;
@@ -296,10 +297,11 @@ class RoomRepository
                 ]);
             }
         }
-        $this->roomCriteria->insert($roomCriterias);
-        $this->roomCriteria->where('room_id', $room->id)
-            ->whereNotIn('criteria_id', $criteriaIds)
-            ->delete();
+        DB::transaction(function ($roomCriterias, $room, $criteriaIds) {
+            $this->roomCriteria->insert($roomCriterias);
+            $this->roomCriteria->where('room_id', $room->id)->whereNotIn('criteria_id', $criteriaIds)->delete();
+        });
+        
         return $room;
     }
 
@@ -338,10 +340,11 @@ class RoomRepository
                 ]);
             }   
         }
-        $this->roomPayMethod->insert($params);
-        $this->roomPayMethod->where('room_id', $room->id)
-                ->whereNotIn('pay_method_id', $paymethodIds)
-                ->delete();
+        DB::transaction(function () use ($params, $room, $paymethodIds) {
+            $this->roomPayMethod->insert($params);
+            $this->roomPayMethod->where('room_id', $room->id)->whereNotIn('pay_method_id', $paymethodIds)->delete();
+        });
+        
         return $room;
     }
 
@@ -354,15 +357,11 @@ class RoomRepository
         $room = $this->room->findOrFail($id);
         DB::transaction(function () use ($room) {
             foreach ($room->renters as $renter) {
-                $renter->update([
-                    'role' => config('const.USER.ROLE.NORMAL'),
-                    'room_id' => null
-                ]);   
+                $renter->update(['room_id' => null, 'role' => config('const.USER.ROLE.NORMAL')]);   
             }
-            $room->update(['status' => false]);
-            $this->rentRoom->where('room_id', $room->id)
-                ->whereNull('to')
-                ->update(['to' => Carbon::now(), 'deleted_at' => Carbon::now()]);
+            $room->update(['status' => false, 'renter_count' => 0]);
+            $updateParams = ['to' => Carbon::now(), 'deleted_at' => Carbon::now()];
+            $this->rentRoom->where('room_id', $room->id)->whereNull('to')->update($updateParams);
         });
     }
 

@@ -20,12 +20,12 @@ class ReviewRepository
     protected $room;
 
     public function __construct(
+        Room $room,
         Review $review,
-        ReviewRenter $reviewRenter,
+        ReviewRoom $reviewRoom,
         ReviewHouse $reviewHouse,
         ReviewOwner $reviewOwner,
-        ReviewRoom $reviewRoom,
-        Room $room
+        ReviewRenter $reviewRenter
     ) {
         $this->review = $review;
         $this->reviewRenter = $reviewRenter;

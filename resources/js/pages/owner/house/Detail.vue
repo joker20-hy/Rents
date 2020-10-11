@@ -121,7 +121,9 @@ export default {
       return this.$store.getters['services/services']
     },
     serviceIds () {
-      return select(this.house.house_services, ['service_id', 'price'])
+      return this.house.house_services.map(item => {
+        return {service_id: item.service_id, price: item.price}
+      })
     },
     data() {
       return {

@@ -1,22 +1,26 @@
 <template>
   <div id="search-form">
     <div bg-cover></div>
-    <form @submit.prevent="search">
-      <h1 class="text-center py-3 text-light">Tìm kiếm nhà trọ, phòng trọ trên toàn quốc</h1>
-      <div class="row position-relative mb-3">
-        <div class="col-md-8" v-click-outside="hideAddressSuggest">
-          <input type="search" class="search-input" @search="clear()" placeholder="Nhập địa chỉ, quận huyện" v-model="keywords" @keyup="suggestAddress(keywords)" @focus="suggest.address=true">
-          <transition name="slide-fade">
-            <suggest-box :options="addresses" :show="suggest.address" @choose="chooseAddress"/>
-          </transition>
-        </div>
-        <div class="col-md-4 mt-2 mt-md-0">
-          <button class="search-input bg-danger text-light">
-            <i class="fas fa-search"></i>
-          </button>
-        </div>
+    <div class="row mx-0" style="max-width: 640px;width: 100%;z-index: 1">
+      <h1 class="w-100 text-center py-3 text-light">Tìm kiếm nhà trọ, phòng trọ trên toàn quốc</h1>
+      <div class="col-12 text-center py-3">
+        <button class="btn" :class="type==searchTypes.FREE?'btn-primary':'text-light'" @click="type=searchTypes.FREE">Tìm phòng</button>
+        &nbsp;
+        <button class="btn" :class="type==searchTypes.ROOMMATE?'btn-primary':'text-light'" @click="type=searchTypes.ROOMMATE">Tìm người ở ghép</button>
       </div>
-    </form>
+      <div class="col-md-8 px-0" v-click-outside="hide">
+        <input type="search" class="search-input" placeholder="Nhập địa chỉ" v-model="keywords" @keyup="getSuggest(keywords)" @search="clear()" @focus="suggest=true">
+        <transition name="slide-fade">
+          <suggest-box :options="results" :show="suggest" @choose="choose"/>
+        </transition>
+      </div>
+      <form class="col-md-4 px-0 mt-2 mt-md-0" @submit.prevent="search">
+        <input type="hidden" name="type" value="">
+        <button class="search-input bg-danger text-light">
+          <i class="fas fa-search"></i>
+        </button>
+      </form>
+    </div>
   </div>
 </template>
 <script>
@@ -30,41 +34,33 @@ export default {
   data () {
     return {
       keywords: '',
-      addresses: [],
+      results: [],
       address: {},
-      district: {
-        id: '',
-        slug: '',
-        name: 'Quận huyện'
-      },
-      province: {
-        id: '',
-        slug: '',
-        name: 'Tỉnh thành'
-      },
-      suggest: {
-        address: false
-      }
+      type: $config.SEARCH.TYPE.FREE,
+      suggest: false
+    }
+  },
+  computed: {
+    searchTypes() {
+      return $config.SEARCH.TYPE
     }
   },
   methods: {
-    suggestAddress (keywords) {
+    getSuggest (keywords) {
       if (keywords.length < 2) return false
       ajax().get(`/api/sg/address?keywords=${keywords}`)
-      .then(res => this.addresses = res.data )
+      .then(res => this.results = res.data )
       .catch(err => console.log(err.response.data) )
     },
-    chooseAddress (address) {
+    choose (address) {
       this.address = address
       this.keywords = address.name
-      this.suggest.address = false
+      this.suggest = false
     },
     clear () {
       if (this.keywords=='') this.address={}
     },
-    hideAddressSuggest() {
-      this.suggest.address = false
-    },
+    hide() { this.suggest = false },
     search () {
       if (this.address.name!=undefined) {
         let query = {}

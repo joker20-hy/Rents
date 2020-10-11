@@ -46,13 +46,13 @@ export default {
       return this.$store.getters['auth/user']
     },
     admin () {
-      return this.auth.role==$config.user.ROLE.ADMIN
+      return this.auth.role==$config.USER.ROLE.ADMIN
     },
     owner () {
-      return this.auth.role==$config.user.ROLE.OWNER
+      return this.auth.role==$config.USER.ROLE.OWNER
     },
     renter () {
-      return this.auth.role==$config.user.ROLE.RENTER
+      return this.auth.role==$config.USER.ROLE.RENTER
     }
   },
   methods: {

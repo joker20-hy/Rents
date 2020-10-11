@@ -85,7 +85,6 @@ class RoomServices
         $room = $this->roomRepository->findById($id);
         $room->criterias;
         $room->house;
-        $room->renters_count = $room->renters->count();
         return $room;
     }
 

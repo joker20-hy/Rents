@@ -9,9 +9,7 @@ import $token from './token'
 function ajax() {
   return axios.create({
     baseURL: `${config.base_url}/`,
-    headers: {
-      Authorization: `Bearer ${$token.access}`
-    }
+    headers: { Authorization: `Bearer ${$token.access}` }
   })
 }
 /**

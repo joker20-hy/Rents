@@ -1,15 +1,15 @@
 <template>
   <div class="container" v-if="room!=null">
     <image-gallary :images="images" @detail="slideshow"/>
-    
-    <div class="d-flex" v-if="hasRight">
+    <div class="d-flex">
       <h3>{{ room.name }}</h3>
-      <router-link class="ml-auto btn text-primary" :to="{name: 'owner-detail-room', params: {id: room.id}}">
-        <i class="fas fa-pen"></i> Chỉnh sửa
+      <router-link v-if="hasRight" class="ml-auto btn" :to="{name: 'owner-detail-room', params: {id: room.id}}">
+        <i class="fas fa-pen text-primary"></i> Chỉnh sửa
       </router-link>
     </div>
-
-    <small class="text-muted" v-if="room.house">{{ room.house.address_detail }}</small>    
+    <div class="text-dark" v-if="room.house">
+      <i class="fas fa-map-marker-alt"></i> {{ room.house.address_detail }}
+    </div>    
     <div class="d-flex my-3">
       <div>
         <strong>Giá: </strong>
@@ -21,7 +21,11 @@
     </div>
     <div page-section>
       <h2>Cơ Sở vật chất</h2>
-      <room-criterias v-if="room.criterias" :criterias="room.criterias" class="mb-3"/>
+      <room-criterias v-if="room.criterias" :list="room.criterias" class="mb-3"/>
+    </div>
+    <div page-section>
+      <h2>Dịch vụ</h2>
+      <room-services v-if="room.house" :id="room.house.id" class="mb-3"/>
     </div>
     <div page-section>
       <h2>Mô tả</h2>
@@ -44,11 +48,14 @@
 import { Carousel, Slide } from 'vue-carousel';
 import ImageGallary from './Images'
 import RoomCriterias from './Criterias'
+import RoomServices from './Services'
 import ReviewList from './Reviews'
+
 export default {
   components: {
     ImageGallary,
     RoomCriterias,
+    RoomServices,
     ReviewList,
     Carousel,
     Slide

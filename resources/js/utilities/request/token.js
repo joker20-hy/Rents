@@ -9,9 +9,9 @@ export default {
    * @param {*} data
    */
   store (data) {
+    let now = new Date()
     localStorage.setItem(this.keys.access, data.access_token)
     localStorage.setItem(this.keys.refresh, data.refresh_token)
-    let now = new Date()
     localStorage.setItem(this.keys.expires, now.valueOf()+data.expires_in*1000)
   },
   remove () {

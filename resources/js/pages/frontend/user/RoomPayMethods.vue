@@ -3,8 +3,8 @@
     <h1 style="font-size: large">Phương thức thanh toán của phòng</h1>
     <div v-for="item in paymethods" :key="item.id" page-section>
       <h4 class="text-primary">{{ item.name }}</h4>
-      <div v-show="!edit">Số tài khoản: {{ item.account }}</div>
-      <div v-show="!edit">Ghi chú: {{ item.note }}</div>
+      <div>Số tài khoản: {{ item.account }}</div>
+      <div>Ghi chú: {{ item.note }}</div>
     </div>
   </div>
 </template>

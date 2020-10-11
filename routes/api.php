@@ -46,6 +46,7 @@ Route::group(['namespace' => 'Api'], function() {
 	], function () {
 		Route::get('', 'IndexController@main');
 		Route::get('list', 'ListController@main')->middleware(['auth:api', 'admin-owner-role']);
+		Route::get('{id}/services', 'ServicesController@main');
 		Route::get('{id}', 'ShowController@main');
 	});
 	Route::group([
@@ -115,7 +116,7 @@ Route::group(['namespace' => 'Api'], function() {
 			Route::put('{id}/setting', 'UpdateSettingController@main');
 			Route::put('{id}/verify', 'VerifyController@main')->middleware('admin-role');
 			Route::get('{id}', 'ShowControler@main');
-			Route::put('leave-room', 'LeaveRoomController@main');
+			Route::put('leave-room', 'LeaveRoomController@main')->middleware('owner-renter-role');
 			Route::put('{id}', 'UpdateController@main');
 			Route::post('rent-room/{room_id}', 'RentRoomController@main');
 		});

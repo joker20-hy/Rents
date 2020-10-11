@@ -86,7 +86,7 @@ export default {
   },
   computed: {
     maxSize () {
-      return $config.MAX_SIZE_IMAGE
+      return $config.IMAGES.MAX_SIZE
     }
   },
   methods: {

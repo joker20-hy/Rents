@@ -17,8 +17,6 @@ services:
     volumes:
       - ./:/var/www
       - ./php/local.ini:/usr/local/etc/php/conf.d/local.ini
-    # networks:
-    #   - app-network
     extra_hosts:
       - "dockerhost:10.5.0.6"
       - "rent.joker.com:10.5.0.6"
@@ -37,8 +35,6 @@ services:
     volumes:
       - ./:/var/www
       - ./nginx/conf.d/:/etc/nginx/conf.d/
-    # networks:
-    #   - app-network
     networks:
       vpcbr:
         ipv4_address: 10.5.0.6
@@ -59,21 +55,18 @@ services:
     volumes:
       - dbdata:/var/lib/mysql
       - ./mysql/my.cnf:/etc/mysql/my.cnf
-    # networks:
-    #   - app-network
     networks:
       vpcbr:
         ipv4_address: 10.5.0.4
+
 #Docker Networks
 networks:
-  # app-network:
-  #   driver: bridge
   vpcbr:
     driver: bridge
     ipam:
       config:
         - subnet: 10.5.0.0/16
-          # gateway: 10.5.0.1
+
 #Volumes
 volumes:
   dbdata:
