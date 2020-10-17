@@ -65,7 +65,7 @@ export default {
   methods: {
     list () {
       $eventHub.$emit('on-loading')
-      ajax().get(`/api/payment/list?${serialize.fromObj(this.query)}`)
+      ajax().get(`/api/payment/room/list?${serialize.fromObj(this.query)}`)
       .then(res => {
         $eventHub.$emit('off-loading')
         res.data.data.forEach(payment => {
@@ -90,7 +90,7 @@ export default {
     destroy () {
       this.$modal.hide('delete-payment')
       $eventHub.$emit('on-loading')
-      ajax().delete(`/api/payment/${this.chosen}`)
+      ajax().delete(`/api/payment/room/${this.chosen}`)
       .then(res => {
         this.$store.commit('payments/delete', this.chosen)
         $eventHub.$emit('off-loading')

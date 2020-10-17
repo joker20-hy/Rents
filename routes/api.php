@@ -121,6 +121,13 @@ Route::group(['namespace' => 'Api'], function() {
 			Route::post('rent-room/{room_id}', 'RentRoomController@main');
 		});
 		Route::group([
+			'namespace' => 'Renter',
+			'prefix' => 'renter'
+		], function () {
+			Route::post('rent-room', 'RentRoomController@main');
+			Route::put('leave-room/{userId?}', 'LeaveRoomController@main');
+		});
+		Route::group([
 			'namespace' => 'Direction',
 			'prefix' => 'direction'
 		], function () {
@@ -145,15 +152,15 @@ Route::group(['namespace' => 'Api'], function() {
 			'prefix' => 'room',
 			'middleware' => ['admin-owner-role']
 		], function () {
-			Route::post('', 'StoreController@main');
-			Route::put('{id}', 'UpdateController@main');
+			Route::get('{id}/renters', 'RenterController@main');
 			Route::get('{id}/services', 'GetServicesController@main');
+			Route::post('', 'StoreController@main');
 			Route::post('{id}/images', 'UploadImagesController@main');
 			Route::post('{id}/pay-methods', 'AddPayMethodController@main');
+			Route::put('{id}', 'UpdateController@main');
 			Route::put('{id}/images', 'UpdateImagesController@main');
 			Route::put('{id}/status', 'UpdateStatusController@main');
 			Route::delete('{id}', 'DestroyController@main');
-			Route::get('{id}/renters', 'RenterController@main');
 		});
 		Route::group([
 			'namespace' => 'Service',
@@ -193,11 +200,17 @@ Route::group(['namespace' => 'Api'], function() {
 			'namespace' => 'Payment',
 			'prefix' => 'payment'
 		], function () {
-			Route::get('list', 'ListController@main')->middleware('owner-renter-role');
-			Route::get('{id}', 'ShowController@main')->middleware('owner-renter-role');
-			Route::post('', 'StoreController@main')->middleware('admin-owner-role');
-			Route::put('{id}/status', 'UpdateStatusController@main')->middleware('admin-owner-role');
-			Route::delete('{id}', 'DestroyController@main')->middleware('admin-owner-role');
+			Route::group([
+				'namespace' => 'Room',
+				'prefix' => 'room'
+			], function () {
+				Route::get('list', 'ListController@main')->middleware('owner-renter-role');
+				Route::get('{id}', 'ShowController@main')->middleware('owner-renter-role');
+				Route::post('', 'StoreController@main')->middleware('admin-owner-role');
+				Route::put('{id}', 'UpdateController@main')->middleware('admin-owner-role');
+				Route::put('{id}/status', 'UpdateStatusController@main')->middleware('admin-owner-role');
+				Route::delete('{id}', 'DestroyController@main')->middleware('admin-owner-role');
+			});
 		});
 		Route::group([
 			'namespace' => 'PayMethod',

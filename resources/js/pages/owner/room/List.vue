@@ -8,12 +8,18 @@
         </router-link>
       </div>
       <small class="text-muted" v-if="rooms.length==0">Hiện chưa có phòng nào</small>
-      <list-item v-for="room in rooms" :key="room.id" :item="room" @add-pay-method="payMethods" @changestatus="confirmChangeStatus(room)"></list-item>
+      <list-item
+        v-for="room in rooms"
+        :key="room.id"
+        :item="room"
+        @add-pay-method="payMethods"
+        @changestatus="confirmChangeStatus(room)"
+      />
     </div>
     <confirm-box
       :name="'change-status-confirm'"
       :title="'Xác nhận thay đổi'"
-      :message="`Việc thay đổi này sẽ xóa bỏ hoàn toàn thông tin về những người thuê phòng này và phòng sẽ trở lại trạng thái 'còn trống'`"
+      :message="`Việc thay đổi này sẽ xóa bỏ hoàn toàn thông tin về những người thuê phòng này và phòng sẽ trở lại trạng thái <u>'còn trống'</u>`"
       @confirm="changeStatus()"
       @cancel="cancelChangeStatus()"
       ></confirm-box>
@@ -21,7 +27,6 @@
   </div>
 </template>
 <script>
-import { ajax } from '../../../utilities/request/request'
 import ConfirmBox from '../../utilities/ConfirmBox'
 import ListItem from './ListItem'
 import PayMethods from './PayMethods'
@@ -79,14 +84,11 @@ export default {
     },
     confirmChangeStatus (room) {
       this.chosen = room
-      if (this.chosen.status) {
-        this.changeStatus()
-      } else {
-        this.$modal.show('change-status-confirm')
-      }
+      if (this.chosen.status) this.changeStatus()
+      else this.$modal.show('change-status-confirm')
     },
     cancelChangeStatus () {
-      this.chosen.status=this.chosen.status==1?0:1
+      this.chosen.status = this.chosen.status==TRUE?FALSE:TRUE
     },
     changeStatus () {
       $eventHub.$emit('on-loading')
@@ -95,6 +97,7 @@ export default {
       })
       .then(res => {
         $eventHub.$emit('off-loading')
+        this.$modal.hide('change-status-confirm')
         $eventHub.$emit('success-alert', {
           title: 'Thành công',
           message: 'Đã lưu trạng thái thành công',
@@ -102,8 +105,9 @@ export default {
         })
       })
       .catch(err => {
+        this.cancelChangeStatus()
         $eventHub.$emit('off-loading')
-        this.chosen.status=this.chosen.status==1?0:1
+        this.$modal.hide('change-status-confirm')
         $eventHub.$emit('error-alert', {
           title: 'Không thành công',
           message: 'Không thể lưu trạng thái mới',

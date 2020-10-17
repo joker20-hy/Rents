@@ -23,7 +23,7 @@
         </div>
         <div class="form-group" v-show="!edit">
           <label>Số người thuê phòng này: </label>
-          <div class="holder">{{ room.renters_count }}</div>
+          <div class="holder">{{ room.renter_count }}</div>
         </div>
         <div class="form-group">
           <label for="">Diện tích</label>
@@ -104,9 +104,7 @@ export default {
       return criterias
     },
     criteriaIds () {
-      return this.room.map(item => {
-        return {id: item.id}
-      })
+      return this.room.criterias.map(item => { return {id: item.id} })
     },
     getData () {
       let criterias = []

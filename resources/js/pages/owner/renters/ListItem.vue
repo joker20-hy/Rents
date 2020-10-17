@@ -4,6 +4,10 @@
       <div><i class="fas fa-user"></i> {{ item.name }}</div>
       <div>Email: {{ item.email }}</div>
       <div v-if="item.profile">Số điện thoại: {{ item.profile.phone?item.profile.phone:'Chưa rõ' }}</div>
+      <div v-if="item.profile">Ngày sinh: {{ date_of_birth }}</div>
+      <div class="text-right">
+        <button class="btn text-danger" @click="$emit('remove', item)">Rời phòng</button>
+      </div>
     </div>
   </transition>
 </template>
@@ -17,6 +21,11 @@ export default {
   },
   data () {
     return {}
+  },
+  computed: {
+    date_of_birth() {
+      return this.item.profile.date_of_birth.split('-').reverse().join('/')
+    }
   },
   methods: {
     

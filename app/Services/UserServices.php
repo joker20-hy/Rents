@@ -36,6 +36,18 @@ class UserServices
     }
 
     /**
+     * Find user by user id
+     *
+     * @param integer $id
+     *
+     * @return \App\Models\User
+     */
+    public function findById($id)
+    {
+        return $this->userRepository->findById($id);
+    }
+
+    /**
      * Create user record
      *
      * @param array $params
@@ -82,7 +94,7 @@ class UserServices
      */
     public function updateVerifyStatus($id, $verifyStatus)
     {
-        return $this->userRepository->update($id, ['verify' => $verifyStatus]);
+        return $this->userRepository->update(['id' => $id], ['verify' => $verifyStatus]);
     }
 
     /**
@@ -168,7 +180,7 @@ class UserServices
         $setting = $params['setting'];
         $this->userRepository->updateSetting($id, $setting);
         unset($params['setting']);
-        return $this->userRepository->update($id, $params);
+        return $this->userRepository->update(['id' => $id], $params);
     }
 
     /**
@@ -196,54 +208,6 @@ class UserServices
         $room->house;
         $room->payments;
         return $room;
-    }
-
-    /**
-     * Rent room
-     *
-     * @param integer $roomId
-     * @param integer|null $id
-     *
-     * @return \App\Models\User
-     */
-    public function rentRoom($roomId, $id = null)
-    {
-        $id = is_null($id) ? Auth::user()->id : $id;
-        $user = $this->userRepository->findById($id);
-        if (!is_null($user->room_id)) {
-            return abort(400, "Bạn đã đang là người thuê phòng");
-        }
-        return $this->userRepository->rentRoom($id, $roomId);
-    }
-
-    /**
-     * Leave room
-     *
-     * @param integer $id
-     *
-     * @return \App\Models\User
-     */
-    public function leaveRoom($id = null)
-    {
-        $authUser = Auth::user();
-        if (!is_null($id)) {
-            $renter = $this->userRepository->findById($id);
-            if (is_null($renter->room_id)) {
-                return abort(400, "Người này hiện không thuê trọ");
-            }
-            if ($authUser->role == config('const.USER.ROLE.OWNER')) {
-                $ownerIds = $renter->room->house->owner->pluck('id');
-                if (!$ownerIds->contains($authUser->id)) {
-                    return abort(403, 'Người thuê trọ này không thuê nhà trọ của bạn');
-                }
-            }
-        } else {
-            $renter = Auth::user();
-            if ($renter->role != config('const.USER.ROLE.RENTER')) {
-                return abort(403, "Bạn không thể thực hiện hành động này");
-            }
-        }
-        return $this->userRepository->leaveRoom($renter->id);
     }
 
     /**
@@ -307,7 +271,10 @@ class UserServices
             return abort(403, 'You do not have permission');
         }
         $this->verifyToken($id, $params['token']);
-        $user = $this->userRepository->update($id, ['password' => Hash::make($params['password'])]);
+        $user = $this->userRepository->update(
+            ['id' => $id],
+            ['password' => Hash::make($params['password'])]
+        );
         return $user;
     }
 

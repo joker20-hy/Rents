@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Controllers\Api\Payment;
+namespace App\Http\Controllers\Api\Payment\Room;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Services\PaymentServices;
+use Illuminate\Http\Request;
 
-class StoreController extends Controller
+class UpdateController extends Controller
 {
     protected $paymentServices;
 
@@ -18,16 +18,15 @@ class StoreController extends Controller
     public function main(Request $request)
     {
         $params = $this->validation($request);
-        $payment = $this->paymentServices->store($params);
-        return response()->json($payment, 201);
+        $this->paymentServices->updateByRoom($request->id, $params);
+        return response()->json([], 204);
     }
 
-    private function validation(Request $request)
+    public function validation(Request $request)
     {
-        return $request->validate([
-            'room_id' => 'required|exists:rooms,id',
+    	return $request->validate([
             'time' => 'required|date',
             'bill' => 'required|array'
-        ]);
+    	]);
     }
 }

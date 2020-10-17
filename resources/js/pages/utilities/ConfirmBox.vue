@@ -2,7 +2,7 @@
   <modal :name="name" :classes="['confirm-box']" @before-close="beforeClose">
     <div class="mx-2 p-2 text-center">
       <h4 class="py-2">{{ title }}</h4>
-      <p>{{ message }}</p>
+      <div v-html="message"></div>
       <div>
         <button type="button" class="btn text-primary" @click="confirm()">Xác nhận</button>
         <button type="button" class="btn text-danger" @click="cancel()">Hủy</button>

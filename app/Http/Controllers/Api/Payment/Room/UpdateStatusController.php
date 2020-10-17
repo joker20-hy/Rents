@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\Api\Payment;
+namespace App\Http\Controllers\Api\Payment\Room;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Services\PaymentServices;
+use Illuminate\Http\Request;
 
 class UpdateStatusController extends Controller
 {
@@ -18,7 +18,7 @@ class UpdateStatusController extends Controller
     public function main(Request $request)
     {
         $params = $this->validation($request);
-        $this->paymentServices->update($request->id, $params);
+        $this->paymentServices->updateByRoom($request->id, $params);
         return response()->json([], 204);
     }
 

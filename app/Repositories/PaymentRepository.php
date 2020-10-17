@@ -3,63 +3,48 @@
 namespace App\Repositories;
 
 use Illuminate\Support\Facades\DB;
-use App\Models\Payment;
+use App\Models\RoomPayment;
 
 class PaymentRepository
 {
-    protected $payment;
+    protected $roomPayment;
 
-    public function __construct(Payment $payment)
+    public function __construct(RoomPayment $roomPayment)
     {
-        $this->payment = $payment;
+        $this->roomPayment = $roomPayment;
     }
 
     /**
-     * Show payment
+     * Find first RoomPayment with conditions
      *
-     * @param integer $id
-     *
-     * @return \App\Models\Payment
+     * @param array $where
      */
-    public function findById($id)
+    public function firstByRoom(array $where)
     {
-        return $this->payment->findOrFail($id);
-    }
-
-    public function findByRoom($roomId)
-    {
-        //
+        return $this->roomPayment->where($where)->firstOrFail();
     }
 
     /**
-     * List payment
+     * List payments by room
      *
+     * @param integer $roomId
      * @param integer $paginate
-     *
-     * @return mixed
      */
-    public function list($roomId = null, $paginate = 10)
+    public function listByRoom($roomId, $paginate)
     {
-        $payments = $this->payment;
-        if (!is_null($roomId)) {
-            $payments = $payments->where('room_id', $roomId);
-        }
-        return $payments->orderBy('created_at', 'desc')->paginate($paginate);
+        return $this->roomPayment->where('room_id', $roomId)->paginate($paginate);
     }
 
     /**
-     * Create payment
+     * Create payment for room
      *
      * @param array $params
      *
-     * @return \App\Models\Payment
+     * @return \App\Models\RoomPayment
      */
-    public function store(array $params)
+    public function storeForRoom(array $params)
     {
-        $payment = DB::transaction(function () use ($params) {
-            return $this->payment->create($params);
-        });
-        return $payment;
+        return $this->roomPayment->create($params);
     }
 
     /**
@@ -70,10 +55,10 @@ class PaymentRepository
      *
      * @return \App\Models\Payment
      */
-    public function update($id, array $params)
+    public function updateByRoom($id, array $params)
     {
-        $payment = $this->payment->findOrFail($id);
-        $payment = DB::transaction(function () use ($payment, $params) {
+        $payment = $this->roomPayment->findOrFail($id);
+        return DB::transaction(function () use ($payment, $params) {
             $payment->update($params);
             return $payment;
         });
@@ -85,11 +70,8 @@ class PaymentRepository
      * 
      * @param integer $id
      */
-    public function destroy($id)
+    public function destroyByRoom($id)
     {
-        $payment = $this->payment->findOrFail($id);
-        DB::transaction(function () use ($payment) {
-            $payment->delete();
-        });
+        return $this->roomPayment->where('room_id', $id)->delete();
     }
 }

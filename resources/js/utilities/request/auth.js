@@ -27,7 +27,7 @@ export default {
     return 'http://rent.joker.com'
   },
   set user(obj) {
-    _data.user = obj
+    _data.user.data = obj
   },
   get user () {
     return _data.user.data
@@ -38,8 +38,8 @@ export default {
     return now.getTime() <= $token.expires
   },
   init (object=null) {
-    this.user = $user()
-    if (object!=null) this.user.data = object
+    if (object!=null) this.user = object
+    else _data.user = $user()
     return this
   },
   clear() {

@@ -19,17 +19,9 @@ class PaymentServices
         $this->roomRepository = $roomRepository;
     }
 
-    /**
-     * List payment
-     *
-     * @param integer $paginate
-     *
-     * @return mixed
-     */
-    public function list($roomId = null, $paginate = 10)
+    public function listByRoom($roomId, $paginate = 10)
     {
-        $rent = $this->roomRepository->getRent($roomId);
-        return $this->paymentRepository->list($rent->id, $paginate);
+        return $this->paymentRepository->listByRoom($roomId, $paginate);
     }
 
     /**
@@ -39,58 +31,43 @@ class PaymentServices
      *
      * @return \App\Models\Payment
      */
-    public function show($id)
+    public function showByRoom($roomId)
     {
-        return $this->paymentRepository->findById($id);
+        return $this->paymentRepository->firstByRoom(['room_id' => $roomId]);
     }
 
     /**
-     * Create payment
+     * Create RoomPayment record
      *
      * @param array $params
      *
-     * @return \App\Models\Payment
+     * @return \App\Models\RoomPayment
      */
-    public function store(array $params)
+    public function storeForRoom(array $params)
     {
         if (!$this->permission($params['room_id'])) {
             return abort(403, "Bạn không có quyền thực hiện hành động này");
         }
-        $this->roomRepository->getRent($params['room_id']);
+        $params['creator_id'] = Auth::user()->id;
         $params['bill'] = json_encode($params['bill']);
-        $params['creater_id'] = Auth::user()->id;
-        $payment = $this->paymentRepository->store($params);
-        return $payment;
+        return $this->paymentRepository->storeForRoom($params);
     }
 
-    /**
-     * Update payment
-     *
-     * @param integer $id
-     * @param array $params
-     *
-     * @return \App\Models\Payment
-     */
-    public function update($id, $params)
+    public function updateByRoom($id, $params)
     {
-        $payment = $this->paymentRepository->findById($id);
+        $payment = $this->paymentRepository->firstByRoom(['id' => $id]);
         if (!$this->permission($payment->room_id)) {
             return abort(403, "Bạn không có quyền thực hiện hành động này");
         }
         if (array_key_exists('bill', $params)) {
             $params['bill'] = json_encode($params['bill']);
         }
-        return $this->paymentRepository->update($id, $params);
+        return $this->paymentRepository->updateByRoom(['id' => $payment->id], $params);
     }
 
-    /**
-     * Delete payment
-     *
-     * @param integer $id
-     */
-    public function destroy($id)
+    public function destroyByRoom($roomId)
     {
-        $this->paymentRepository->destroy($id);
+        $this->paymentRepository->destroyByRoom($roomId);
     }
 
     /**

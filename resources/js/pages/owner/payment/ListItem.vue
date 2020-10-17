@@ -52,7 +52,7 @@ export default {
     },
     changeStatus () {
       $eventHub.$emit('on-loading')
-      ajax().put(`/api/payment/${this.payment.id}/status`, {status: this.payment.status})
+      ajax().put(`/api/payment/room/${this.payment.id}/status`, {status: this.payment.status})
       .then(res => {
         $eventHub.$emit('off-loading')
         $eventHub.$emit('success-alert', {

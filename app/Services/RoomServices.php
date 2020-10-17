@@ -2,25 +2,35 @@
 
 namespace App\Services;
 
+use App\Repositories\PaymentRepository;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Repositories\RoomRepository;
+use App\Repositories\UserRepository;
+use App\Repositories\RenterRepository;
 
 class RoomServices
 {
     private $folder;
     protected $imageServices;
-    protected $userServinces;
     protected $roomRepository;
+    protected $userRepository;
+    protected $renterRepository;
+    protected $paymentRepository;
 
     public function __construct(
         ImageServices $imageServices,
-        UserServices $userServinces,
-        RoomRepository $roomRepository
+        RoomRepository $roomRepository,
+        UserRepository $userRepository,
+        RenterRepository $renterRepository,
+        PaymentRepository $paymentRepository
     ) {
         $this->folder = config('const.FOLDER.ROOM');
         $this->imageServices = $imageServices;
-        $this->userServinces = $userServinces;
         $this->roomRepository = $roomRepository;
+        $this->userRepository = $userRepository;
+        $this->renterRepository = $renterRepository;
+        $this->paymentRepository = $paymentRepository;
     }
 
     /**
@@ -82,10 +92,7 @@ class RoomServices
      */
     public function show($id)
     {
-        $room = $this->roomRepository->findById($id);
-        $room->criterias;
-        $room->house;
-        return $room;
+        return $this->roomRepository->first(['id' => $id], ['criterias', 'house']);
     }
 
     /**
@@ -107,16 +114,52 @@ class RoomServices
         return $this->roomRepository->update($id, $params);
     }
 
+    /**
+     * Update status of room record
+     *
+     * @param integer $id
+     * @param array $params
+     *
+     * @return \App\Models\Room
+     */
     public function updateStatus($id, array $params)
     {
-        if ($params['status']) {
-            $this->roomRepository->update($id, ['status' => $params['status']]);
-        } else {
-            $this->roomRepository->emptyRoom($id);
+        switch ($params['status']) {
+            case config('const.ROOM_STATUS.waiting'):
+                return $this->empty($id);
+                break;
+            default:
+                return $this->roomRepository->update($id, ['status' => $params['status']]);
+                break;
         }
     }
 
-        /**
+    /**
+     * Remove all renter of a room
+     *
+     * @param integer $id
+     *
+     * @return \App\Models\Room
+     */
+    public function empty($id)
+    {
+        $room = $this->roomRepository->findById($id);
+        return DB::transaction(function () use ($room) {
+            $this->roomRepository->update($room->id, [
+                'status' => config('const.USER.ROLE.NORMAL'),
+                'renter_count' => 0
+            ]);
+            $this->userRepository->update(
+                ['room_id' => $room->id],
+                ['room_id' => null, 'role' => config('const.ROOM_STATUS.waiting')]
+            );
+            $this->renterRepository->destroyRentRoomContract($room->id);
+            $this->paymentRepository->destroyByRoom($room->id);
+            return $room;
+        });
+    }
+
+    /**
      * Upload new room's images
      *
      * @param integer $id
@@ -174,15 +217,11 @@ class RoomServices
             return abort(403, "Bạn không có quyền thực hiện hành động này");
         }
         $room = $this->roomRepository->findById($id);
-        $room->renters_count = $room->renters->count();
         $roomServices = $room->house->houseServices;
         foreach($roomServices as $roomService) {
             $roomService->service;
         }
-        return [
-            'room' => $room,
-            'room_services' => $roomServices
-        ];
+        return ['room' => $room, 'room_services' => $roomServices];
     }
 
     /**
@@ -199,22 +238,6 @@ class RoomServices
     }
 
     /**
-     * @param integer $id
-     * @param boolean $all
-     * @param array $userIds
-     */
-    public function leaveRoom($id, $all = false, $userIds = [])
-    {
-        if ($all) {
-            $this->roomRepository->emptyRoom($id);
-        } else {
-            foreach($userIds as $userId) {
-                $this->userServinces->leaveRoom($userId);
-            }
-        }
-    }
-
-    /**
      * Find all renters of a room by id
      *
      * @param integer $id
@@ -227,11 +250,7 @@ class RoomServices
             return abort(403, "Bạn không có quyền thực hiện hành động này");
         }
         $room = $this->roomRepository->findById($id);
-        $renters = $room->renters;
-        foreach ($renters as $renter) {
-            $renter->profile;
-        }
-        return $renters;
+        return $this->userRepository->find(['room_id' => $room->id], ['profile']);
     }
 
     /**

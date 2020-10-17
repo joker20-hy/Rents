@@ -28,6 +28,11 @@ class RoomRepository
         $this->roomPayMethod = $roomPayMethod;
     }
 
+    public function first(array $where, array $with = [])
+    {
+        return $this->room->where($where)->with($with)->firstOrFail();
+    }
+
     /**
      * Get an paginate rooms
      *

@@ -41,7 +41,7 @@ export default {
   methods: {
     get () {
       $eventHub.$emit('on-loading')
-      ajax().get(`/api/payment/list?room_id=${this.id}`)
+      ajax().get(`/api/payment/room/list?room_id=${this.id}`)
       .then(res => {
         $eventHub.$emit('off-loading')
         res.data.data.forEach(payment => {
