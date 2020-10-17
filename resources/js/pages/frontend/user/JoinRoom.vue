@@ -46,7 +46,7 @@ export default {
     confirm () {
       this.confirming = true
       $eventHub.$emit('on-loading')
-      ajax().post(`/api/user/rent-room/${this.room_id}`, {})
+      ajax().post(`/api/renter/rent-room`, {room_id: this.room_id})
       .then(res => {
         this.confirming = false
         $eventHub.$emit('off-loading')

@@ -1,9 +1,9 @@
 <template>
   <div class="contain">
-    <div v-if="room.renters_count==0" class="alert alert-danger">
+    <div v-if="room.renter_count==0" class="alert alert-danger">
       Phòng hiện chưa có người thuê
     </div>
-    <form v-if="room.renters_count>0" @submit.prevent="generate()">
+    <form v-if="room.renter_count>0" @submit.prevent="generate()">
       <h4 class="mb-3">Hóa đơn {{ room.name }}</h4>
       <div class="row form-group">
         <div class="col-6">
@@ -23,7 +23,7 @@
           <input type="text" class="form-control" v-model="service.amount" :placeholder="service.service.unit" required>
         </div>
         <div class="w-100 d-flex" v-else-if="service.service.type==service_types.BY_RENTERS.value">
-          <label>{{ service.service.name }}</label> <span class="ml-auto">{{ room.renters_count }} {{ service.service.unit}} x {{ service.price }} vnđ</span>
+          <label>{{ service.service.name }}</label> <span class="ml-auto">{{ room.renter_count }} {{ service.service.unit}} x {{ service.price }} vnđ</span>
         </div>
         <div class="w-100 d-flex" v-else-if="service.service.type==service_types.PERIODIC.value">
           <label>{{ service.service.name }}</label>
@@ -102,7 +102,7 @@ export default {
       this.bill.room_price = this.room.price
       this.bill.total = this.room.price
       this.room_services.forEach(serv => {
-        serv.amount = serv.service.type==this.service_types.BY_RENTERS.value?this.room.renters_count:serv.amount
+        serv.amount = serv.service.type==this.service_types.BY_RENTERS.value?this.room.renter_count:serv.amount
         let row = {
           servince_id: serv.service.id,
           servince_name: serv.service.name,
@@ -116,7 +116,7 @@ export default {
     store() {
       $eventHub.$emit('on-loading')
       this.storing = true
-      ajax().post(`/api/payment`, {
+      ajax().post(`/api/payment/room`, {
         room_id: this.id,
         time: `${this.today.getFullYear()}-${this.month>9?this.month:`0${this.month}`}-01`,
         bill: this.bill

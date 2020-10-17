@@ -45,7 +45,7 @@ export default {
   },
   computed: {
     target () {
-      return `${$auth.baseUrl}/thue-phong/${this.id}`
+      return `${$auth.baseUrl}/thue/phong/${this.id}`
     }
   },
   methods: {

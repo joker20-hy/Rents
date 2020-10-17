@@ -24,6 +24,8 @@
     <div id="app"></div>
     <!-- built files will be auto injected -->
     <script>
+      const TRUE = 1;
+      const FALSE = 0;
       const $config = {
         TRUE: 1,
         FALSE: 0,

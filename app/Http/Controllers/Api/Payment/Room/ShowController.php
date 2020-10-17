@@ -1,23 +1,23 @@
 <?php
 
-namespace App\Http\Controllers\Api\Payment;
+namespace App\Http\Controllers\Api\Payment\Room;
 
 use App\Http\Controllers\Controller;
 use App\Services\PaymentServices;
 use Illuminate\Http\Request;
 
-class DestroyController extends Controller
+class ShowController extends Controller
 {
     protected $paymentServices;
 
     public function __construct(PaymentServices $paymentServices)
     {
-        $this->paymentServices = $paymentServices;
+    	$this->paymentServices = $paymentServices;
     }
 
     public function main(Request $request)
     {
-        $this->paymentServices->destroy($request->id);
-        return response()->json([], 200);
+        $payment = $this->paymentServices->showByRoom($request->id);
+        return response()->json($payment, 200);
     }
 }

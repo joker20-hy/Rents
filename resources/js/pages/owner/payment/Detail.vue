@@ -52,7 +52,7 @@ export default {
       return $number.range(`${number}`)
     },
     get() {
-      ajax().get(`/api/payment/${this.id}`)
+      ajax().get(`/api/payment/room/${this.id}`)
       .then(res => {
         res.data.bill = JSON.parse(res.data.bill)
         let time = new Date(res.data.time)

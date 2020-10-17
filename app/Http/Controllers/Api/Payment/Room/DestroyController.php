@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Controllers\Api\Payment;
+namespace App\Http\Controllers\Api\Payment\Room;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Services\PaymentServices;
+use Illuminate\Http\Request;
 
-class ListController extends Controller
+class DestroyController extends Controller
 {
     protected $paymentServices;
 
@@ -17,7 +17,7 @@ class ListController extends Controller
 
     public function main(Request $request)
     {
-        $payments = $this->paymentServices->list($request->room_id);
-        return response()->json($payments, 200);
+        $this->paymentServices->destroyByRoom($request->id);
+        return response()->json([], 200);
     }
 }

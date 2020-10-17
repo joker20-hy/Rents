@@ -80,7 +80,7 @@ export default {
     },
     leaveRoom () {
       $eventHub.$emit('on-loading')
-      ajax().put('/api/user/leave-room')
+      ajax().put('/api/renter/leave-room')
       .then(res => {
         window.location.href = '/'
         $eventHub.$emit('off-loading')

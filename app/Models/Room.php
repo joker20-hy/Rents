@@ -40,7 +40,7 @@ class Room extends Model
 
 	public function payments()
 	{
-		return $this->hasMany(Payment::class);
+		return $this->hasMany(RoomPayment::class);
 	}
 
 	public function paymethods()

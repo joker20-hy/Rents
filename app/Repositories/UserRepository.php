@@ -32,6 +32,11 @@ class UserRepository
         $this->verification = $verification;
     }
 
+    public function find(array $where, array $with = [])
+    {
+        return $this->user->where($where)->with($with)->get();
+    }
+
     /**
      * Find user record by id
      *
@@ -89,19 +94,18 @@ class UserRepository
     /**
      * Update user record
      *
-     * @param integer $id
+     * @param array $where
      * @param array $params
      *
      * @return \App\Models\User
      */
-    public function update($id, array $params)
+    public function update(array $where, array $params)
     {
-        $user = $this->user->findOrFail($id);
-        $user = DB::transaction(function () use ($user, $params) {
+        $user = $this->user->where($where)->firstOrFail();
+        return DB::transaction(function () use ($user, $params) {
             $user->update($params);
             return $user;
         });
-        return $user;
     }
 
     /**
@@ -166,91 +170,6 @@ class UserRepository
     {
         $verification = $this->verification->updateOrCreate(['user_id' => $id], $params);
         return $verification;
-    }
-
-    /**
-     * User rent room
-     *
-     * @param integer $id
-     * @param integer $roomId
-     *
-     * @return \App\Models\User
-     */
-    public function rentRoom($id, $roomId)
-    {
-        $user = $this->user->findOrFail($id);
-        $user = DB::transaction(function () use ($user, $roomId) {
-            $user = $this->update($user->id, ['role' => config('const.USER.ROLE.RENTER'), 'room_id' => $roomId]);
-            $this->createContract($user->id, $roomId);  
-            $updateParams = ['renter_count' => $user->room->renter_count + 1];
-            if ($user->room->status!=config('const.ROOM_STATUS.rented')) {
-                $updateParams['status'] = config('const.ROOM_STATUS.rented');
-            }
-            $user->room->update($updateParams);
-            return $user;
-        });
-        return $user;
-    }
-
-    /**
-     * Create contract between user and room
-     *
-     * @param integer $id
-     * @param integer $roomId
-     *
-     * @return \App\Models\RentRoom
-     */
-    public function createContract($id, $roomId)
-    {
-        $rentRoom = $this->rentRoom->where('renter_id', $id)
-                ->where('room_id', $roomId)
-                ->whereNotNull('to')
-                ->first();
-        if (is_null($rentRoom)) {
-            $rentRoom = $this->rentRoom->create([
-                'renter_id' => $id,
-                'room_id' => $roomId,
-                'from' => Carbon::now(),
-                'to' => null
-            ]);
-        }
-        return $rentRoom;
-    }
-
-    /**
-     * User leave room
-     *
-     * @param integer $id
-     *
-     * @return \App\Models\User
-     */
-    public function leaveRoom($id)
-    {
-        $user = $this->user->findOrFail($id);
-        $rentRoom = $this->findContract($user);
-        return DB::transaction(function () use ($user, $rentRoom) {
-            $room = $user->room;
-            $rentRoom->update(['to' => Carbon::now(), 'deleted_at' => Carbon::now()]);
-            $user = $this->update($user->id, ['role' => config('const.USER.ROLE.RENTER'), 'room_id' => null]);
-            $roomUpdate = ['renter_count' => $room->renter_count - 1];
-            if ($room->renter_count == 1) {
-                $roomUpdate['status'] = config('const.ROOM_STATUS.waiting');
-            }
-            $room->update($roomUpdate);
-            return $user;
-        });
-    }
-
-    public function findContract(User $user)
-    {
-        $rentRoom = $this->rentRoom->where('room_id', $user->room_id)
-                        ->where('renter_id', $user->id)
-                        ->whereNotNull('to')
-                        ->first();
-        if (is_null($rentRoom)) {
-            return abort(404, 'Rent contract not found');
-        }
-        return $rentRoom;
     }
 
     /**

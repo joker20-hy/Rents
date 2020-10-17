@@ -1,5 +1,15 @@
 <template>
-  <input type="range" min="0" max="1" ref="val" @click="$emit('click')" @input="input()" switch-box @change="$emit('change')">
+  <input
+    type="range"
+    min="0"
+    max="1"
+    ref="val"
+    @input="input()"
+    @click="$emit('click')"
+    @change="change(value)"
+    :value="value"
+    switch-box
+  >
 </template>
 <script>
 export default {
@@ -9,20 +19,27 @@ export default {
       required: false,
       default: false,
       type: Boolean
+    },
+    value: {
+      required: false,
+      default: 0,
+      type: Number
     }
   },
   data () {
     return {
-      value: ''
+      val: ''
     }
   },
   methods: {
     input () {
-      if (!this.locked) {
-        this.value = parseInt(this.$refs.val.value)
-        this.$emit('input', this.value)
-      }
-      this.$refs.val.value = this.value
+      if (this.locked) return true
+      this.val = parseInt(this.$refs.val.value)
+      this.$emit('input', this.val)
+      this.$refs.val.value = this.val
+    },
+    change() {
+      this.$emit('change')
     }
   }
 }
