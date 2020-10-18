@@ -25573,7 +25573,7 @@ var render = function() {
                 }
               },
               [
-                _c("i", { staticClass: "fas fa-house-user" }),
+                _c("i", { staticClass: "fas fa-door-open" }),
                 _vm._v(" Phòng trọ\n    ")
               ]
             )
