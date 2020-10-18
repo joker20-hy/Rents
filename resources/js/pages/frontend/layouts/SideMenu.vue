@@ -11,7 +11,7 @@
       <i class="fas fa-user"></i> Tài khoản
     </div>
     <div v-if="renter" @click="routeTo({name: 'rented-room'})" item>
-      <i class="fas fa-house-user"></i> Phòng trọ
+      <i class="fas fa-door-open"></i> Phòng trọ
     </div>
 	  <div v-if="admin" @click="routeTo({name: 'user-list'})" item>
       <i class="fas fa-users-cog"></i> Quản lý
