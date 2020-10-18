@@ -17,7 +17,7 @@ class IndexController extends Controller
 
     public function main(Request $request)
     {
-        $reviews = $this->reviewServices->index($request->type, $request->id, $request->perpage);
+        $reviews = $this->reviewServices->list($request->type, $request->id, $request->perpage);
         return response()->json($reviews, 200);
     }
 }
