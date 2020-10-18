@@ -2,68 +2,24 @@
 
 namespace App\Services;
 
-use App\Models\Review;
-use App\Models\ReviewRenter;
-use App\Models\ReviewHouse;
-use App\Models\ReviewOwner;
-use App\Models\ReviewRoom;
-use App\Models\House;
-use App\Models\Room;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use App\Repositories\ReviewRepository;
+use App\Repositories\RoomRepository;
 
 class ReviewServices
 {
-    protected $review;
-    protected $reviewRenter;
-    protected $reviewOwner;
-    protected $reviewHouse;
-    protected $reviewRoom;
-    protected $house;
-    protected $room;
     protected $reviewRepository;
+    protected $roomRepository;
 
     public function __construct(
-        Review $review,
-        ReviewRenter $reviewRenter,
-        ReviewHouse $reviewHouse,
-        ReviewOwner $reviewOwner,
-        ReviewRoom $reviewRoom,
-        House $house,
-        Room $room,
-        ReviewRepository $reviewRepository
+        ReviewRepository $reviewRepository,
+        RoomRepository $roomRepository
     ) {
-        $this->review = $review;
-        $this->reviewRenter = $reviewRenter;
-        $this->reviewHouse = $reviewHouse;
-        $this->reviewOwner = $reviewOwner;
-        $this->reviewRoom = $reviewRoom;
-        $this->house = $house;
-        $this->room = $room;
         $this->reviewRepository = $reviewRepository;
+        $this->roomRepository = $roomRepository;
     }
 
-    public function list($type, $paginate = 10)
-    {
-        switch ($type) {
-            case config('const.REVIEW.TYPE.OWNER'):
-                return $this->reviewRepository->listOwner(null, $paginate);
-                break;
-            case config('const.REVIEW.TYPE.RENTER'):
-                return $this->reviewRepository->listRenter(null, $paginate);
-                break;
-            case config('const.REVIEW.TYPE.HOUSE'):
-                return $this->reviewRepository->listHouse(null, $paginate);
-                break;
-            case config('const.REVIEW.TYPE.ROOM'):
-                return $this->reviewRepository->listRoom(null, $paginate);
-                break;
-        }
-        return [];
-    }
-
-    public function index($type, $id, $paginate = 10)
+    public function list($type, $id = null, $paginate = 10)
     {
         switch ($type) {
             case config('const.REVIEW.TYPE.OWNER'):
@@ -82,57 +38,6 @@ class ReviewServices
         return [];
     }
 
-    public function renter($paginate)
-    {
-        $reviews = $this->review->where('receiver_type', config('const.REVIEW.RECEIVER_TYPE.RENTER'))
-                                ->with('user')
-                                ->paginate($paginate);
-        foreach($reviews as $review) {
-            $renter = DB::select("select * from users where id=$review->receiver_id");
-            $review->renter = $renter; 
-        }                                
-        return $reviews;
-    }
-
-    private function renterFilter($query, $conditions = [])
-    {
-        return $query;
-    }
-
-    public function house($paginate)
-    {
-        $reviews = $this->review->where('receiver_type', config('const.REVIEW.RECEIVER_TYPE.HOUSE'))
-                        ->with('user')
-                        ->paginate($paginate);
-        foreach ($reviews as $review) {
-            $house = DB::select("select * from houses where id=$review->receiver_id");
-            $review->house = $house;
-        }
-        return $reviews;
-    }
-
-    private function houseFilter($query, $conditions = [])
-    {
-        return $query;
-    }
-
-    public function room($paginate)
-    {
-        $reviews = $this->review->where('receiver_type', config('const.REVIEW.RECEIVER_TYPE.ROOM'))
-                                ->with('user')
-                                ->paginate($paginate);
-        foreach ($reviews as $review) {
-            $room = DB::select("select * from rooms where id=$review->receiver_id");
-            $review->room = $room;
-        }
-        return $reviews;
-    }
-
-    private function roomFilter($query, $conditions = [])
-    {
-        return $query;
-    }
-
     /**
      * Create review
      *
@@ -143,15 +48,52 @@ class ReviewServices
      */
     public function store(array $params, $type)
     {
-        $authUser = Auth::user();
-        $params['user_id'] = $authUser->id;
+        $params['user_id'] = Auth::user()->id;
         $review = $this->reviewRepository->store($type, $params);
-        return $review;
+        switch ($type) {
+            case config('const.REVIEW.TYPE.ROOM'):
+                $room = $this->roomRepository->findById($params['criteria_id']);
+                $this->storeForRoom($review, $room, $params);
+                break;
+            case config('const.REVIEW.TYPE.RENTER'):
+                # code...
+                break;
+            case config('const.REVIEW.TYPE.HOUSE'):
+                # code...
+                break;
+            case config('const.REVIEW.TYPE.OWNER'):
+                # code...
+                break;
+            default:
+                throw "";
+                break;
+        }
     }
 
-    private function storeForHouse()
+    /**
+     * Store room review
+     *
+     * @param \App\Models\Review $review
+     * @param \App\Models\Room $room
+     * @param array $rates
+     */
+    public function storeForRoom($review, $room, array $rates)
     {
-        //
+        $reviewRoom = $this->reviewRepository->storeReviewRoom([
+            'review_id' => $review->id,
+            'room_id' => $room->id,
+            'secure_rate' => $rates['secure_rate'],
+            'infra_rate' => $rates['infra_rate']
+        ]);
+        $owner = $this->findOwnerByRoom($room);
+        $this->reviewRepository->storeReviewOwner([
+            'review_id' => $review->id,
+            'owner_id' => $owner->id,
+            'rate' => $rates['owner_rate']
+        ]);
+        $this->reviewRepository->updateOwnerRate($owner, $rates['owner_rate']);
+        $roomRate = ($reviewRoom->secure_rate + $reviewRoom->infra_rate) / 2;
+        $this->reviewRepository->updateRoomRate($room, $roomRate);
     }
 
     /**
@@ -164,10 +106,9 @@ class ReviewServices
      */
     public function update($id, array $params)
     {
-        $review = $this->review->findOrFail($id);
+        $review = $this->reviewRepository->first(['id' => $id]);
         if ($this->permissible($review->user_id)) {
-            $review->update($params);
-            return $review;
+            return $this->reviewRepository->update(['id' => $id], $params);
         } else {
             return abort(403, "You have no permission to actions on the review");
         }
@@ -180,12 +121,27 @@ class ReviewServices
      */
     public function destroy($id)
     {
-        $review = $this->review->findOrFail($id);
+        $review = $this->reviewRepository->first(['id' => $id]);
         if ($this->permissible($review->user_id)) {
-            $review->delete();
+            $this->reviewRepository->destroy($id);
         } else {
             return abort(403, "You have no permission to actions on the review");
         }
+    }
+
+    /**
+     * Find owner and tenants of room
+     *
+     * @param \App\Models\Room $room
+     *
+     * @return object
+     */
+    private function findOwnerByRoom($room)
+    {
+        $userHouse = $room->house->userHouses->first(function ($item) {
+            return $item->role==config('const.OWNER_ROLE.OWNER');
+        });
+        return $userHouse->user;
     }
 
     /**
@@ -198,9 +154,6 @@ class ReviewServices
     private function permissible($userId)
     {
         $authUser = Auth::user();
-        if ($authUser->role==config('USER.ROLE.ADMIN') || $authUser->id==$userId) {
-            return true;
-        }
-        return false;
+        return $authUser->role==config('USER.ROLE.ADMIN')||$authUser->id==$userId;
     }
 }
