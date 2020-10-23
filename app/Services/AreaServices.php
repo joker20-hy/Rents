@@ -3,82 +3,59 @@
 namespace App\Services;
 
 use Illuminate\Support\Str;
-use App\Models\Area;
+use App\Repositories\AreaRepository;
 
 class AreaServices
 {
-    private const PLACE_TYPE = [
-        'PROVINCE' => 1,
-        'DISTRICT' => 2,
-    ];
-    private $area;
+    protected $areaRepository;
 
-    public function __construct(Area $area)
+    public function __construct(AreaRepository $areaRepository)
     {
-        $this->area = $area;
-    }
-
-    /**
-     * @param integer $id
-     * @return \App\Models\Area
-     */
-    public function find($id)
-    {
-        return $this->area->findOrFail($id);
+        $this->areaRepository = $areaRepository;
     }
 
     /**
      * List all area by conditions
      *
-     * @param integer $type
-     * @param integer $id
+     * @return mixed
      */
-    public function index($type, $id, $paginate = 10)
+    public function index($paginate = 10)
     {
-        switch ($type) {
-            case self::PLACE_TYPE['PROVINCE']:
-                return $this->area->where('province_id', $id)->paginate($paginate);
-                break;
-            case self::PLACE_TYPE['DISTRICT']:
-                return $this->area->where('district_id', $id)->paginate($paginate);
-                break;
-            default:
-                return $this->area->with('province')->with('district')->paginate($paginate);
-                break;
-        }
+        return $this->areaRepository->list($paginate);
     }
 
     /**
+     * Create area
+     *
      * @param array $params [
      *  'name',
      *  'province_id',
      *  'district_id'
      * ]
+     *
      * @return \App\Models\Area
      */
     public function create($params)
     {
         $params['slug'] = Str::slug($params['name'], '-');
         $params['slug'] = "khu-vuc-".$params['slug'];
-        $area = $this->area->create($params);
+        $area = $this->areaRepository->store($params);
         $area->province;
         $area->district;
         return $area;
     }
 
     /**
+     * Update service
+     *
      * @param integer $id
      * @param array $params [name, province_id, district_id]
+     *
      * @return \App\Models\Area
      */
     public function update($id, $params)
     {
-        $area = $this->area->findOrFail($id);
-        if ($params['name'] !== $area->name) {
-            $params['slug'] = Str::slug($params['name'], '-');
-            $params['slug'] = "khu-vuc-".$params['slug'];
-        }
-        $area->update($params);
+        $area = $this->areaRepository->update($id, $params);
         return $area;
     }
 
@@ -88,7 +65,7 @@ class AreaServices
      */
     public function destroy($id)
     {
-        $area = $this->area->findOrFail($id);
-        $area->delete();
+        $this->areaRepository->destroy($id);
+        return true;
     }
 }

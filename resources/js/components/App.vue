@@ -1,11 +1,6 @@
 <template>
-  <div id="app" class="d-flex">
-    <side-menu/>
-    <section class="float-left w-100">
-      <header-bar/>
-      <router-view/>
-    </section>
-    <!-- utilities components -->
+  <div id="app">
+    <router-view/>
     <alert-box/>
     <logout-form/>
   </div>
@@ -14,7 +9,7 @@
 import SideMenu from './layouts/SideMenu'
 import HeaderBar from './layouts/HeaderBar'
 import AlertBox from './utilities/AlertBox'
-import LogoutForm from './utilities/LogoutForm'
+import LogoutForm from './pages/Auth/Logout'
 
 export default {
   name: 'App',
@@ -29,3 +24,11 @@ export default {
   }
 }
 </script>
+<style scoped>
+  .dashboard-container {
+    background-image:url(/images/wave.svg);
+    background-position-x: center;
+    background-size:cover;
+    background-repeat:no-repeat;
+  }
+</style>

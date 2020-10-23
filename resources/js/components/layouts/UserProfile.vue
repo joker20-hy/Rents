@@ -1,6 +1,6 @@
 <template>
-  <modal name="user-profile" class="user-profile top0" :width="500">
-    <h3 class="px-3 pt-4 pb-1 d-flex text-primary">
+  <modal name="user-profile" class="p-2" :width="500">
+    <h3 class="p-3 mb-0 d-flex text-primary">
       User profile
       <button type="button" class="btn ml-auto" @click="toggleEdit()">
         <i :class="edit ? 'fas fa-times text-danger' : 'fas fa-pen'"></i>
@@ -8,7 +8,7 @@
     </h3>
     <form v-if="owner.profile" class="profile-detail" :class="edit ? 'edit': ''" @submit.prevent="update">
       <div class="form-group text-center">
-        <img v-if="owner.profile" :src="owner.profile.image" alt="">
+        <img :src="owner.profile.image==null?'/images/default.svg':owner.profile.image" alt="">
         <br>
         <button type="button" class="btn">
           <svg height="18" width="18" viewBox="0 -24 512.00046 512" xmlns="http://www.w3.org/2000/svg">
@@ -123,17 +123,13 @@ export default {
 }
 </script>
 <style scoped>
-  .user-profile {
-    display: flex;
-  }
-  .user-profile .vm--modal{
-    top: 0px!important;
-  }
   label {
     font-weight: 600;
   }
   .profile-detail {
     padding: 15px;
+    max-height: 80vh;
+    overflow-y: scroll;
   }
   .profile-detail .info {
     padding: 8px 15px;

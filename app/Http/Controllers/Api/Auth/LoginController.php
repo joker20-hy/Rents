@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Api\Auth;
 
-use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
@@ -13,10 +12,7 @@ class LoginController extends Controller
      */
     public function login(Request $request)
     {
-        $validator = $this->validation($request);
-        if ($validator->fails()) {
-            return response()->json('Your credentials are incorrect. Please try again', 400);
-        }
+        $this->validation($request);
         $http = new \GuzzleHttp\Client([
             'base_uri' => env('OAUTH_URL'),
             'headers'  => ['Accept' => 'application/json'],
@@ -48,7 +44,7 @@ class LoginController extends Controller
      */
     public function validation(Request $request)
     {
-        return Validator::make($request->all(), [
+        return $request->validate([
             'username' => 'required|string',
             'password' => 'required|string'
         ]);

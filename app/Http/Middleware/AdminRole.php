@@ -16,7 +16,7 @@ class AdminRole
      */
     public function handle($request, Closure $next)
     {
-        if (Auth::user()->role!=config('roles.ADMIN')) {
+        if (Auth::user()->role!=config('const.USER.ROLE.ADMIN')) {
             return response()->json([
                 'message' => 'You do not have permission to do this action'
             ], 403);

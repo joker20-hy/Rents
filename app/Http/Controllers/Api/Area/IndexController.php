@@ -17,7 +17,7 @@ class IndexController extends Controller
 
     public function main(Request $request)
     {
-        $areas = $this->areaServices->index($request->type, $request->id);
+        $areas = $this->areaServices->index();
         return response()->json($areas, 200);
     }
 }

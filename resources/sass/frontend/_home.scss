@@ -1,0 +1,69 @@
+@import '../variables';
+
+#search-form {
+    min-height: calc(100vh - #{$header-height});
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-image: url(/images/bg.svg);
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    padding: 15px;
+    position: relative;
+    [bg-cover] {
+        background-color: #00000080;
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0px;
+        left: 0px;
+    }
+    form {
+        z-index: 2;
+        width: 100%;
+        max-width: 640px;
+    }
+    h1 {
+        font-size: 32px;
+    }
+}
+$search-input-height: 72px;
+.search-input {
+  height: $search-input-height;
+  border: none;
+  outline: none;
+  width: 100%;
+  padding: 0px 10px;
+  background-color: var(--white);
+  font-weight: 600;
+  font-size: 15px;
+  color: #212529;
+}
+[suggests] {
+  z-index: 3;
+  width: 100%;
+  position: relative;
+  box-shadow: 0px 3px 3px #999;
+}
+.option-list {
+  position: absolute;
+  background-color: $light;
+  box-shadow: 0px 3px 3px #0009;
+  max-height: 300px;
+  overflow-y: scroll;
+  width: 100%;
+  border-radius: 6px;
+  top: 5px;
+  .option {
+    padding: 10px;
+    cursor: pointer;
+    transition: .3s;
+    font-weight: 600;
+    color: $dark;
+  }
+  .option:hover {
+    background-color: #3490dcab;
+    color: $light;
+  }
+}

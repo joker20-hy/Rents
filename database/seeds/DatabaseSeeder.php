@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Setting;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -13,7 +14,11 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             UserSeeder::class,
-            ProfileSeeder::class
+            ProfileSeeder::class,
+            SettingSeeder::class,
+            DirectionSeeder::class,
+            CriteriaSeeder::class,
+            ServiceSeeder::class
         ]);
     }
 }

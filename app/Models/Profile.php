@@ -10,8 +10,10 @@ class Profile extends Model
     use SoftDeletes;
 
     protected $fillable = [
+        'user_id',
         'firstname',
         'lastname',
+        'image',
         'phone',
         'address',
         'date_of_birth'

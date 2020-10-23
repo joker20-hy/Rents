@@ -24,7 +24,8 @@ class User extends Authenticatable implements MustVerifyEmail
         'role',
         'avg_rate',
         'rate_count',
-        'verify'
+        'verify',
+        'room_id'
     ];
 
     /**
@@ -33,7 +34,7 @@ class User extends Authenticatable implements MustVerifyEmail
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'password', 'remember_token'
     ];
 
     /**
@@ -59,5 +60,40 @@ class User extends Authenticatable implements MustVerifyEmail
     public function setting()
     {
         return $this->hasOne(Setting::class);
+    }
+
+    public function houses()
+    {
+        return $this->belongsToMany(House::class, 'user_houses');
+    }
+
+    public function userHouses()
+    {
+        return $this->hasMany(UserHouse::class);
+    }
+
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
+
+    public function room()
+    {
+        return $this->belongsTo(Room::class);
+    }
+
+    public function paymethods()
+    {
+        return $this->hasMany(PayMethod::class);
+    }
+
+    public function rentroom()
+    {
+        return $this->hasMany(RentRoom::class);
+    }
+
+    public function verification()
+    {
+        return $this->hasOne(Verification::class);
     }
 }

@@ -1,37 +1,16 @@
 // Fonts
 @import url('https://fonts.googleapis.com/css?family=Nunito');
-
 // Variables
 @import 'variables';
-
 // Bootstrap
 @import '~bootstrap/scss/bootstrap';
 
-#logout {
-  display: none;
-}
-.modal-backdrop {
-  background-color: #00000030!important;
-}
-.pagination {
-  justify-content: center;
-}
-.pagination li a {
-  padding: 10px 15px;
-  margin-right: 10px;
-  color: var(--info);
-  font-weight: 600;
-}
-.pagination li.active a {
-  border: 0px;
-  border-bottom: 2px solid var(--blue);
-}
-.vm--modal {
-  left: unset!important;
-  margin: auto!important;
-  height: auto!important;
-  max-width: 100%;
-}
-.vm--container.top0 .vm--modal {
-  top: 0px!important;
-}
+@import './frontend/layout/header';
+@import './frontend/layout/sidemenu';
+@import './admin/header';
+@import './admin/sidemenu';
+
+
+@import './frontend/home';
+@import './frontend/search';
+@import './frontend/detail';

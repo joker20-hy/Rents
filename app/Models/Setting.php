@@ -7,7 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class Setting extends Model
 {
     protected $fillable = [
-        '2_step_verification'
+        'user_id',
+        'verification_2_step'
     ];
 
     /**

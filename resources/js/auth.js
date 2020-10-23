@@ -21,7 +21,12 @@ const $token = {
     localStorage.setItem(this.keys.access, data.access_token)
     localStorage.setItem(this.keys.refresh, data.refresh_token)
     let now = new Date()
-    localStorage.setItem(this.keys.expires, now.valueOf()+data.expires_in)
+    localStorage.setItem(this.keys.expires, now.valueOf()+data.expires_in*1000)
+  },
+  remove () {
+    localStorage.removeItem(this.keys.access)
+    localStorage.removeItem(this.keys.refresh)
+    localStorage.removeItem(this.keys.expires)
   },
   /**
    * Get access token
@@ -42,7 +47,8 @@ const $token = {
 const $auth = {
   api: {
     login: '/api/login',
-    refresh: '/api/refresh'
+    refresh: '/api/refresh',
+    logout: '/api/logout'
   },
   /**
    * Object to make authentication request
@@ -54,6 +60,7 @@ const $auth = {
     }
   }),
   check () {
+    if ($token.access_token==null) return false
     let now = new Date()
     return now.valueOf() <= $token.expires
   },
@@ -61,13 +68,14 @@ const $auth = {
    * Login handler
    * @param {Object} credentials 
    */
-  login (credentials) {
+  login (credentials, success=null, error=null) {
     axios.post(this.api.login, credentials)
     .then(res => {
       $token.store(res.data)
+      if (success!=null) success()
     })
     .catch(err => {
-      console.log(err)
+      if (error!=null) error(err)
     })
   },
   refresh () {
@@ -81,8 +89,21 @@ const $auth = {
       console.log(err)
     })
   },
-  logout () {
-    //
+  logout (success=null, error=null) {
+    this.request.post(this.api.logout)
+    .then(() => {
+      $token.remove()
+      if (success!=null) success()
+    })
+    .catch((err) => {
+      if (error!=null) error(err)
+    })
   }
 }
-export { $auth }
+const $request = axios.create({
+  baseURL: 'http://rent.joker.com/',
+  headers: {
+    Authorization: 'Bearer '+$token.access_token
+  }
+})
+export { $auth, $token, $request }

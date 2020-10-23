@@ -18,25 +18,14 @@ class UpdateProfileController extends Controller
 
     public function main(Request $request)
     {
-        $params = $this->getParams($request);
-        $validator = $this->validation($params);
-        if ($validator->fails()) {
-            return response()->json([
-                'message' => $validator->errors()->first()
-            ], 422);
-        }
-        $this->userServices->updateProfile($request->userId, $params);
+        $params = $this->validation($request);
+        $this->userServices->updateProfile($request->id, $params);
         return response()->json([], 204);
     }
 
-    public function getParams(Request $request)
+    public function validation(Request $request)
     {
-        return $request->only('firstname', 'lastname', 'phone', 'address', 'date_of_birth');
-    }
-
-    public function validation(array $params)
-    {
-        return Validator::make($params, [
+        return $request->validate([
             'firstname' => 'required|string|min:0',
             'lastname' => 'required|string|min:0',
             'phone' => 'required|string|min:0',

@@ -11,6 +11,8 @@
   </modal>
 </template>
 <script>
+import { $auth } from '../../auth'
+
 export default {
   name: 'logout-form',
   data () {
@@ -27,8 +29,17 @@ export default {
       this.$modal.hide('logout-form')
     },
     logout () {
-      // actual action
-      console.log('logout')
+      $auth.logout(this.logoutSuccess, this.logoutError)
+    },
+    logoutSuccess () {
+      this.hide()
+      window.location.href = '/'
+    },
+    logoutError (err) {
+      $eventHub.$emit('success-alert', {
+        title: 'Error',
+        message: err.response.data.message
+      })
     }
   }
 }
