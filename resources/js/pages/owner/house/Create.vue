@@ -4,26 +4,12 @@
       <h3 class="py-3 px-2 bg-primary text-light" style="margin-left: -25px;margin-right: -25px;">
         Thêm nhà
       </h3>
-      <div class="row" v-if="bucket.length>0">
-        <div class="col-4" v-for="(temp, index) in bucket" :key="index">
-          <img :src="temp" alt="" class="w-100">
-        </div>
-      </div>
-      <div class="form-group d-flex align-items-center py-2">
-        <label for="" class="m-0">Ảnh nhà</label>
-        <div class="position-relative pl-3">
-          <button type="button" class="btn text-primary" onclick="clickTarget('#images')">
-            <i class="far fa-images fa-lg"></i>
-          </button>
-          <input type="file" id="images" class="d-none" ref="images" @change="getImages" accept="image/*" multiple>
-        </div>
-      </div>
       <label for="">
         Tên nhà
         <span class="text-danger" title="Required feild">*</span>
       </label>
       <div class="form-group">
-        <input type="text" class="input" v-model="house.name" placeholder="House name" required>
+        <input type="text" class="input" v-model="house.name" placeholder="vd: Số 20" required>
       </div>
       <div class="form-group row">
         <div class="col-md-4">
@@ -53,24 +39,25 @@
       <label>Dịch vụ của nhà trọ <span class="text-danger" title="Required feild">*</span></label>
       <small>(Những dịch vụ mà người thuê trọ cần trả trong quá trình thuê nhà)</small>
       <choose-service :list="services"/>
-      <div class="form-group d-flex">
-        <label for="">Nhà để cho thuê?</label>
-        <switch-box v-model="house.rent" class="ml-auto" :class="house.rent==1?'on':''"/>
+      <div class="form-group">
+        <label>Số điện thoại</label>
+        <input type="number" class="input" v-model="house.contact.phone" placeholder="vd: 0123456789" required>
+        <label>Liên hệ khác</label>
+        <textarea class="input" v-model="house.contact.others" placeholder="Liên hệ khác"></textarea>
       </div>
-      <div class="form-group" v-show="house.rent">
-        <label for="">Giá</label>
-        <input type="number" class="input" v-model="house.price" placeholder="Price of house">
+      <div class="form-group d-flex align-items-center py-2">
+        <label for="" class="m-0">Ảnh nhà</label>
+        <div class="position-relative pl-3">
+          <button type="button" class="btn text-primary" onclick="clickTarget('#images')">
+            <i class="far fa-images fa-lg"></i>
+          </button>
+          <input type="file" id="images" class="d-none" ref="images" @change="getImages" accept="image/*" multiple>
+        </div>
       </div>
-      <div class="form-group" v-show="house.rent">
-        <label for="">Hướng nhà</label>
-        <select class="input" v-model="house.direction">
-          <option value="">Hướng nhà</option>
-          <option v-for="dir in directions" :value="dir.id" :key="dir.id">{{ dir.name }}</option>
-        </select>
-      </div>
-      <div class="form-group" v-show="house.rent">
-        <label for="">Mô tả về ngôi nhà</label>
-        <ckeditor :editor="editor" v-model="house.description" :config="editorConfig"></ckeditor>
+      <div class="row" v-if="bucket.length>0">
+        <div class="col-4" v-for="(temp, index) in bucket" :key="index">
+          <img :src="temp" alt="" class="w-100">
+        </div>
       </div>
       <div class="form-group d-flex">
         <button class="btn btn-outline-primary ml-auto">Thêm</button>
@@ -84,6 +71,7 @@ import adapter from '../../../utilities/CKImageAdapter'
 import SuggestBox from '../../utilities/SuggestBox'
 import SwitchBox from '../../utilities/SwitchBox'
 import ChooseService from '../../admin/house/Services'
+import $number from '../../../utilities/number'
 export default {
   components: {
     SuggestBox,
@@ -111,7 +99,11 @@ export default {
         price: '',
         direction: '',
         description: '',
-        address: ''
+        address: '',
+        contact: {
+          phone: '',
+          others: ''
+        }
       }
     }
   },
@@ -137,6 +129,8 @@ export default {
       data.append('price', this.house.price)
       data.append('direction', this.house.direction)
       data.append('description', this.house.description)
+      data.append('contact[phone]', this.house.contact.phone)
+      data.append('contact[others]', this.house.contact.others)
       let count = 0
       this.services.forEach(serv => {
         if (serv.checked) data.append(`services[${count++}]`, JSON.stringify({
@@ -148,6 +142,9 @@ export default {
     }
   },
   methods: {
+    range(num) {
+      return $number.range(`${num}`)
+    },
     getProvince (obj) {
       this.house.province_id = obj.id
     },
@@ -207,3 +204,8 @@ export default {
   }
 }
 </script>
+<style scoped>
+label {
+  font-weight: 600;
+}
+</style>

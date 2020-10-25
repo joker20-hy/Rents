@@ -3,42 +3,41 @@
     <header>
       <span class="text-center">
         <img class="avatar" v-if="auth.profile" :src="auth.profile.image==null?'/images/default.svg':auth.profile.image" alt=""/>
-      <br>
-      {{ auth.name }}
+      <br> {{ auth.name }}
      </span>
     </header>
     <div>
       <ul class="list-group list-group-flush">
-        <li class="list-group-item">
-          <router-link :to="{name : 'user-list'}">Users</router-link>
-        </li>
-        <li class="list-group-item">
-          <router-link :to="{name : 'province-list'}">Provinces</router-link>
-        </li>
-        <li class="list-group-item">
-          <router-link :to="{name : 'district-list'}">Districts</router-link>
-        </li>
-        <li class="list-group-item">
-          <router-link :to="{name : 'area-list'}">Areas</router-link>
-        </li>
-        <li class="list-group-item">
-          <router-link :to="{name : 'direction-list'}">Directions</router-link>
-        </li>
-        <li class="list-group-item">
-          <router-link :to="{name : 'house-list'}">Houses</router-link>
-        </li>
-        <li class="list-group-item">
-          <router-link :to="{name : 'room-list'}">Rooms</router-link>
-        </li>
-        <li class="list-group-item">
-          <router-link :to="{name : 'service-list'}">Services</router-link>
-        </li>
-        <li class="list-group-item">
-          <router-link :to="{name: 'criteria-list'}">Criterias</router-link>
-        </li>
-        <li class="list-group-item">
-          <router-link :to="{name: 'review-list'}">Reviews</router-link>
-        </li>
+        <router-link :to="{name : 'user-list'}" item>
+          <i class="fas fa-users"></i> Users
+        </router-link>
+        <router-link :to="{name : 'province-list'}" item>
+          <i class="fas fa-city"></i> Provinces
+        </router-link>
+        <router-link :to="{name : 'district-list'}" item>
+          <i class="fas fa-map-marker-alt"></i> Districts
+        </router-link>
+        <router-link :to="{name : 'area-list'}" item>
+          <i class="fas fa-map-signs"></i> Areas
+        </router-link>
+        <router-link :to="{name : 'direction-list'}" item>
+          <i class="fas fa-directions"></i> Directions
+        </router-link>
+        <router-link :to="{name : 'house-list'}" item>
+          <i class="fab fa-houzz"></i> Houses
+        </router-link>
+        <router-link :to="{name : 'room-list'}" item>
+          <i class="fas fa-door-open"></i> Rooms
+        </router-link>
+        <router-link :to="{name : 'service-list'}" item>
+          <i class="fas fa-poll-h"></i> Services
+        </router-link>
+        <router-link :to="{name: 'criteria-list'}" item>
+          <i class="fas fa-check"></i> Criterias
+        </router-link>
+        <router-link :to="{name: 'review-list'}" item>
+          <i class="fas fa-user-edit"></i> Reviews
+        </router-link>
       </ul>
     </div>
   </section>

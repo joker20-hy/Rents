@@ -36,7 +36,10 @@ class UpdateController extends Controller
     		'addition_images' => 'nullable|array',
             'addition_images.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'add_services' => 'nullable|array',
-            'remove_services' => 'nullable|array'
+            'remove_services' => 'nullable|array',
+            'contact' => 'nullable|array',
+            'contact.phone' => 'nullable|numeric',
+            'contact.others' => 'nullable|string'
     	]);
     }
 }

@@ -1,5 +1,5 @@
 <template>
-  <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm pl-0">
+  <nav admin-nav-header class="navbar navbar-expand-md navbar-light shadow-sm pl-0">
     <button class="btn text-primary mx-2" @click="toggleSidebar()">
       <i class="fas fa-ellipsis-v"></i>
     </button>

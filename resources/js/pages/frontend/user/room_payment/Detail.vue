@@ -1,5 +1,5 @@
 <template>
-<div class="contain">
+<div contain-box>
   <div class="bill-contain" v-if="payment">
     <h4>Hóa đơn tháng {{ payment.month }}/{{ payment.year }}</h4>
     <div class="form-group d-flex" v-for="row in payment.bill.services" :key="row.servince_id">
@@ -74,13 +74,5 @@ export default {
 }
 label {
   font-weight: 600;
-}
-.contain {
-  width: 400px;
-  max-width: 100%;
-  margin-right: auto;
-  margin-left: auto;
-  margin-top: 40px;
-  padding: 10px;
 }
 </style>

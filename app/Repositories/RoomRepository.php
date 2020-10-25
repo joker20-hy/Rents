@@ -41,7 +41,7 @@ class RoomRepository
      *
      * @return Illuminate\Pagination\LengthAwarePaginator
      */
-    public function index($conditions = [], $paginate = 10)
+    public function index($conditions = [], $with = [], $paginate = 10)
     {
         $query = $this->room->selectRaw("
             rooms.*,
@@ -50,11 +50,11 @@ class RoomRepository
         ->join("provinces", "houses.province_id", "=", "provinces.id")
         ->join("districts", "houses.district_id", "=", "districts.id")
         ->join("areas", "houses.area_id", "=", "areas.id")
-        ->where("rooms.status", "<>", config('const.ROOM_STATUS.rented'));
+        ->where('rooms.status', $conditions['status']);
         $query = $this->addressFilter($query, $conditions);
         $query = $this->criteriaFilter($query, $conditions);
         $query = $this->sort($query, $conditions);
-        return $query->with('criterias')->paginate($paginate);
+        return $query->with($with)->paginate($paginate);
     }
 
     /**
@@ -155,7 +155,8 @@ class RoomRepository
         ->join("provinces", "houses.province_id", "=", "provinces.id")
         ->join("districts", "houses.district_id", "=", "districts.id")
         ->with('criterias')
-        ->with('paymethods');
+        ->with('paymethods')
+        ->with('roommateWanted');
         if (!is_null($ownerId)) {
             $query = $query->join("user_houses", "user_houses.house_id", "=", "houses.id")
                         ->where('user_houses.user_id', $ownerId);
@@ -302,7 +303,7 @@ class RoomRepository
                 ]);
             }
         }
-        DB::transaction(function ($roomCriterias, $room, $criteriaIds) {
+        DB::transaction(function () use ($roomCriterias, $room, $criteriaIds) {
             $this->roomCriteria->insert($roomCriterias);
             $this->roomCriteria->where('room_id', $room->id)->whereNotIn('criteria_id', $criteriaIds)->delete();
         });

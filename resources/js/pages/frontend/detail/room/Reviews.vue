@@ -1,5 +1,5 @@
 <template>
-  <div page-section>
+  <div :id="id" page-section>
     <div class="d-flex">
       <h2>Đánh giá</h2>
       <router-link class="btn text-primary ml-auto" :to="{name:'review-room', params: {id: this.id}}">
@@ -47,6 +47,9 @@ export default {
   name: 'review-list',
   props: {
     id: {
+      required: false
+    },
+    room: {
       required: true
     },
     perpage: {
@@ -58,10 +61,9 @@ export default {
   data () {
     return {
       query: {
-        id: this.id,
+        id: this.room,
         perpage: this.perpage
       },
-      reviews: [],
       next_page_url: null
     }
   },
@@ -72,6 +74,9 @@ export default {
     }
   },
   computed: {
+    reviews() {
+      return this.$store.getters['reviews/reviews']
+    },
     anonymous_img() {
       return $config.ANONYMOUS
     },
@@ -87,7 +92,10 @@ export default {
       url = url==null?`/api/review/${this.type}?${serialize.fromObj(this.query)}`:this.next_page_url
       ajax().get(url)
       .then(res => {
-        res.data.data.forEach(review => this.reviews.push(review))
+        this.$store.commit('reviews/total', res.data.total)
+        res.data.data.forEach(review => {
+          this.$store.commit('reviews/add', review)
+        })
         this.next_page_url = res.data.next_page_url
       })
       .catch(err => console.log(err))

@@ -2,6 +2,7 @@
   <div class="container mt-3 mb-5 px-0">
     <div class="col-md-10 mx-auto">
       <h4>Danh sách phòng trọ</h4>
+      <house-contact :houseid="$route.params.id"/>
       <div class="d-flex py-2">
         <router-link class="ml-auto" style="font-weight: 600" :to="{name: 'owner-create-room', params: {id: this.query.house}}">
           <i class="fa fa-plus"></i> Thêm phòng
@@ -30,12 +31,13 @@
 import ConfirmBox from '../../utilities/ConfirmBox'
 import ListItem from './ListItem'
 import PayMethods from './PayMethods'
-
+import HouseContact from './HouseContact'
 export default {
   components: {
     ListItem,
     ConfirmBox,
-    PayMethods
+    PayMethods,
+    HouseContact
   },
   data () {
     return {

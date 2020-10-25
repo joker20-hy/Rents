@@ -57,7 +57,7 @@ class PaymentRepository
      */
     public function updateByRoom($id, array $params)
     {
-        $payment = $this->roomPayment->findOrFail($id);
+        $payment = $this->roomPayment->where(['id' => $id])->firstOrFail();
         return DB::transaction(function () use ($payment, $params) {
             $payment->update($params);
             return $payment;

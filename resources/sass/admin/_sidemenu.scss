@@ -5,16 +5,37 @@
     max-width: 300px;
     min-height: 100vh;
     float: left;
+    background-color: $admin-theme-color;
     header {
         height: 200px;
         display: flex;
         align-items: flex-end;
         justify-content: center;
         padding-bottom: 15px;
+        color: $light;
+        font-weight: 600;
         .avatar {
             width: 100px;
             height: 100px;
             border-radius: 50%;
         }
+    }
+    .list-group {
+      [item] {
+        background-color: transparent;
+        display: block;
+        padding: 12px 10px;
+        font-weight: 600;
+        &.router-link-active {
+          color: $yellow;
+          background-color: #fff2;
+          border-left: 4px solid;
+        }
+        &:hover {
+          color: $yellow;
+          background-color: #fff2;
+          border-left: 4px solid;
+        }
+      }
     }
 }

@@ -174,10 +174,6 @@ export default {
 }
 </script>
 <style scoped>
-  .photos-bucket {
-    max-height: 400px;
-    overflow-y: scroll;
-  }
   .img-item {
     position: relative;
     width: 33.333333%;

@@ -1,6 +1,6 @@
 <template>
-  <div class="container mt-3 mb-5">
-    <form v-if="room" @submit.prevent="update()">
+  <div contain-box class="bg-white mt-2" v-if="room">
+    <form @submit.prevent="update()">
       <h3 class="d-flex sticky-top bg-white text-primary p-2 mb-0 align-items-center" style="font-size: large;z-index: 10" v-if="room">
         {{ `${room.name}` }}
         <div class="ml-auto">
@@ -9,53 +9,55 @@
           <button type="button" class="btn text-danger" v-show="edit" @click="leaveEdit()">Hủy</button>
         </div>
       </h3>
-      <image-library
-        class="form-group pt-3"
-        :images="room.images"
-        :editable="edit"
-        :updateApi="`/api/room/${id}/images`"
-        :deleteApi="`/api/room/${id}/images`"
-        @updated="getImages"/>
-        <div class="form-group">
-          <label for="">Tên phòng</label>
-          <div class="holder" v-show="!edit">{{ room.name }}</div>
-          <input type="text" class="input" v-model="room.name" v-show="edit" placeholder="Room name" required>
+      <div class="form-group">
+        <label for="">Tên phòng</label>
+        <div class="holder" v-show="!edit">{{ room.name }}</div>
+        <input type="text" class="input" v-model="room.name" v-show="edit" placeholder="Room name" required>
+      </div>
+      <div class="form-group" v-show="!edit">
+        <label>Số người thuê phòng này: </label>
+        <div class="holder">{{ room.renter_count }}</div>
+      </div>
+      <div class="form-group">
+        <label for="">Diện tích</label>
+        <div class="holder" v-show="!edit">{{ room.acreage }} m2</div>
+        <div class="align-items-end" :class="edit?'d-flex':'d-none'">
+          <input type="number" class="input" v-model="room.acreage" placeholder="Room acreage" required><span class="px-3">m2</span>
         </div>
-        <div class="form-group" v-show="!edit">
-          <label>Số người thuê phòng này: </label>
-          <div class="holder">{{ room.renter_count }}</div>
+      </div>
+      <div class="form-group">
+        <label for="">Giá</label>
+        <div class="holder" v-show="!edit">{{ room.price }} vnđ</div>
+        <div class="align-items-end" :class="edit?'d-flex':'d-none'">
+          <input type="number" class="input" v-model="room.price" placeholder="Room price" required><span class="px-3">vnđ</span>
         </div>
-        <div class="form-group">
-          <label for="">Diện tích</label>
-          <div class="holder" v-show="!edit">{{ room.acreage }} m2</div>
-          <div class="align-items-end" :class="edit?'d-flex':'d-none'">
-            <input type="number" class="input" v-model="room.acreage" placeholder="Room acreage" required><span class="px-3">m2</span>
-          </div>
+      </div>
+      <div class="form-group">
+        <label for="">Chu kỳ đóng tiền</label>
+        <div class="holder" v-show="!edit">{{ room.cycle }} tháng</div>
+        <div class="align-items-end" :class="edit?'d-flex':'d-none'">
+          <input type="number" class="input" v-model="room.cycle" placeholder="Pay cycle" required><span class="px-3">tháng</span>
         </div>
-        <div class="form-group">
-          <label for="">Giá</label>
-          <div class="holder" v-show="!edit">{{ room.price }} vnđ</div>
-          <div class="align-items-end" :class="edit?'d-flex':'d-none'">
-            <input type="number" class="input" v-model="room.price" placeholder="Room price" required><span class="px-3">vnđ</span>
-          </div>
+      </div>
+      <label>Tiêu chí của phòng trọ <span class="text-danger" title="Required feild">*</span></label>
+      <criteria-list :criterias="criterias" :editable="edit"></criteria-list>
+      <div class="form-group">
+        <label for="">Mô tả</label>
+        <div class="holder content-html" v-show="!edit" v-html="room.description"></div>
+        <div v-show="edit">
+          <ckeditor :editor="editor" v-model="room.description" :config="editorConfig"></ckeditor>
         </div>
-        <div class="form-group">
-          <label for="">Chu kỳ đóng tiền</label>
-          <div class="holder" v-show="!edit">{{ room.cycle }} tháng</div>
-          <div class="align-items-end" :class="edit?'d-flex':'d-none'">
-            <input type="number" class="input" v-model="room.cycle" placeholder="Pay cycle" required><span class="px-3">tháng</span>
-          </div>
-        </div>
-        <label>Tiêu chí của phòng trọ <span class="text-danger" title="Required feild">*</span></label>
-        <criteria-list :criterias="criterias"></criteria-list>
-        <div class="form-group">
-          <label for="">Mô tả</label>
-          <div class="holder content-html" v-show="!edit" v-html="room.description"></div>
-          <div v-show="edit">
-            <ckeditor :editor="editor" v-model="room.description" :config="editorConfig"></ckeditor>
-          </div>
-        </div>
+      </div>
     </form>
+    <image-library
+      class="form-group px-3"
+      :images="room.images"
+      :editable="edit"
+      :label="'Ảnh của phòng'"
+      :updateApi="`/api/room/${id}/images`"
+      :deleteApi="`/api/room/${id}/images`"
+      @updated="getImages"
+    />
   </div>
 </template>
 <script>
@@ -177,3 +179,8 @@ export default {
   }
 }
 </script>
+<style scoped>
+label {
+  font-weight: 600;
+}
+</style>

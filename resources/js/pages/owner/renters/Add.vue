@@ -1,7 +1,7 @@
 <template>
   <div contain-box>
     <div class="my-3 py-2 text-white text-center bg-primary">
-      Hãy gửi mã QR hoặc link thuê phòng này tới những nghời thuê trọ
+      Hãy gửi mã QR hoặc link thuê phòng này tới những người thuê trọ
     </div>
     <div class="row mx-0">
       <div class="col-6 text-center">
@@ -18,8 +18,9 @@
     <modal name="join-room-link" :width="360">
       <div class="p-2">
         <h4 class="mt-2 pb-3">Link giúp người thuê nhập phòng</h4>
-        <form class="form-inline my-2 my-lg-0">
-          <input class="form-control mr-sm-2" type="url" placeholder="Search" aria-label="Search" v-model="target">
+
+        <form class="d-flex">
+          <input class="form-control" style="width:calc(100% - 40px);margin-right: 3px" type="url" placeholder="Search" aria-label="Search" v-model="target">
           <button
             v-clipboard="target"
             v-clipboard:success="copySuccess"

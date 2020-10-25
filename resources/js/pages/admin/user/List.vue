@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <h1 class="d-flex align-items-end mt-5 py-3">
+    <h1 class="d-flex align-items-end py-3">
       User list
     </h1>
     <table class="records-list">

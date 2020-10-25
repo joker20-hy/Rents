@@ -207,6 +207,7 @@ class UserServices
         }
         $room->house;
         $room->payments;
+        $room->roommateWanted;
         return $room;
     }
 
