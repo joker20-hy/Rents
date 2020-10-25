@@ -1,6 +1,6 @@
 <template>
   <div class="container" v-if="room!=null">
-    <image-gallary :images="images" @detail="slideshow"/>
+    <image-gallary :images="room.images" @detail="slideshow"/>
     <div class="d-flex">
       <h3>{{ room.name }}</h3>
       <router-link v-if="hasRight" class="ml-auto btn" :to="{name: 'owner-detail-room', params: {id: room.id}}">
@@ -14,7 +14,7 @@
       <div>
         <span style="font-size: 60px;line-height: 1">{{ room.avg_rate }}</span>/10
       </div>
-      <a href="#danh-gia">{{ total_reviews }} đánh giá</a>
+      <a v-if="total_reviews>0" href="#danh-gia">{{ total_reviews }} đánh giá</a>
     </div>
     <div class="row my-2">
       <div class="col-6">
@@ -28,8 +28,11 @@
         <span class="text-bold">Diện tích:</span> {{ room.acreage }} m2
       </div>
     </div>
-    <h2>Liên hệ của chủ nhà</h2>
-    <div class="sticky-top bg-white row mx-0 mb-2" v-if="room.house.contact">
+
+    <div class="sticky-top bg-white row mx-0 mb-2" v-if="room.house.contact!=null">
+      <div class="col-12 pt-2">
+        <h2 class="mb-0">Liên hệ của chủ nhà</h2>
+      </div>
       <div class="col-6 py-2" v-if="room.house.contact.phone!=null">
         <span class="text-bold">Số điện thoại:</span> <a :href="`tel:${room.house.contact.phone}`">{{ room.house.contact.phone }}</a>
       </div>
@@ -37,7 +40,8 @@
         <span class="text-bold">Liên hệ khác:</span> {{ room.house.contact.other }}
       </div>
     </div>
-    <div class="border border-danger" page-section>
+
+    <div class="border border-danger" v-if="room.roommate_wanted" page-section>
       <div><span class="text-bold">Cần thêm: </span>{{ room.roommate_wanted.number }}</div>
       <div v-if="room.roommate_wanted.contact"><span class="text-bold">Thông tin liên hệ: </span>{{ room.roommate_wanted.contact }}</div>
       <div v-if="room.roommate_wanted.content"><span class="text-bold">Thông tin thêm: </span>{{ room.roommate_wanted.content }}</div>
@@ -60,7 +64,7 @@
     </button>
     <modal name="image-carousel" :classes="['mb-auto']">
       <carousel :per-page="1" :mouse-drag="true" v-model="carousel_index">
-        <slide v-for="(image, index) in images" :key="index" :value="index">
+        <slide v-for="(image, index) in room.images" :key="index" :value="index">
           <img :src="image" alt="" class="mw-100 mh-100">
         </slide>
       </carousel>
@@ -96,7 +100,6 @@ export default {
   data () {
     return {
       id: '',
-      images: [],
       carousel_index: 0
     }
   },
@@ -131,8 +134,7 @@ export default {
       .then(res => {
         res.data.description = utf8.decode(res.data.description)
         res.data.house.contact = JSON.parse(res.data.house.contact)
-        console.log(res.data.house.contact)
-        this.images = JSON.parse(res.data.images)
+        res.data.images = JSON.parse(res.data.images)
         this.$store.commit('rooms/rooms', [res.data])
         $eventHub.$emit('off-loading')
       })
