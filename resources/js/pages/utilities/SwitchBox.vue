@@ -9,6 +9,7 @@
     @change="change(value)"
     :value="value"
     switch-box
+    :disabled="locked"
   >
 </template>
 <script>
@@ -33,7 +34,7 @@ export default {
   },
   methods: {
     input () {
-      if (this.locked) return true
+      if (this.locked) {}
       this.val = parseInt(this.$refs.val.value)
       this.$emit('input', this.val)
       this.$refs.val.value = this.val

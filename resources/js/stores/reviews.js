@@ -1,11 +1,15 @@
 const reviews = {
     namespaced: true,
     state: {
-      reviews: []
+      reviews: [],
+      total: 0
     },
     getters: {
       reviews (state) {
         return state.reviews
+      },
+      total(state) {
+        return state.total
       }
     },
     mutations: {
@@ -17,6 +21,9 @@ const reviews = {
       },
       remove (state, id) {
         state.reviews = state.reviews.filter(review => review.id!=id)
+      },
+      total(state, total) {
+        state.total = total
       }
     }
   }

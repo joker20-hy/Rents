@@ -2,7 +2,7 @@
   <div id="search-form">
     <div bg-cover></div>
     <div class="row mx-0" style="max-width: 640px;width: 100%;z-index: 1">
-      <h1 class="w-100 text-center py-3 text-light">Tìm kiếm nhà trọ, phòng trọ trên toàn quốc</h1>
+      <h1 class="w-100 text-center text-light">Tìm kiếm nhà trọ, phòng trọ trên toàn quốc</h1>
       <div class="col-12 text-center py-3">
         <button class="btn" :class="type==searchTypes.FREE?'btn-primary':'text-light'" @click="type=searchTypes.FREE">Tìm phòng</button>
         &nbsp;
@@ -62,8 +62,8 @@ export default {
     },
     hide() { this.suggest = false },
     search () {
+      let query = {}
       if (this.address.name!=undefined) {
-        let query = {}
         switch (this.address.type) {
           case 1:
             query = {province: this.address.slug}
@@ -77,12 +77,11 @@ export default {
           default:
             break;
         }
-        this.$router.push({name: 'search-room', query: query})
       } else if (this.keywords!='') {
-        this.$router.push({name: 'search-room', query: {address: this.keywords}})
-      } else {
-        this.$router.push({name: 'search-room'})
+        query = {address: this.keywords}
       }
+      query.type=this.type
+      this.$router.push({name: 'search-room', query: query})
     }
   },
   directives: {

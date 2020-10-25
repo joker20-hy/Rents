@@ -1,5 +1,5 @@
 <template>
-  <div class="d-flex bg-white rounded p-2">
+  <div class="row mx-0 bg-white rounded p-2">
     <button class="btn" @click="$modal.show('room-filter')">
       <svg viewBox="0 0 480 480" width="16" height="16" xmlns="http://www.w3.org/2000/svg">
       <path d="m480 223.996094v32h-223.601562c1.8125-10.589844 1.8125-21.410156 0-32zm0 0"/>

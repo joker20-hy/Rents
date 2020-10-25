@@ -1,6 +1,6 @@
 <template>
   <div style="min-height: 100vh">
-    <header-bar></header-bar>
+    <header-bar class="position-relative"></header-bar>
     <router-view></router-view>
     <div owner-bottom-nav>
       <div bar>

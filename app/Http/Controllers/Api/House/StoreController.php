@@ -36,7 +36,10 @@ class StoreController extends Controller
             'direction' => 'nullable|integer',
             'price' => 'nullable|integer',
             'description' => 'nullable|string',
-            'services' => 'nullable|array'
+            'services' => 'nullable|array',
+            'contact' => 'nullable|array',
+            'contact.phone' => 'nullable|numeric',
+            'contact.others' => 'nullable|string'
         ]);
     }
 }

@@ -2,6 +2,10 @@
   <div class="row mx-auto mt-2 mb-3" search-item>
     <image-preview :images="images"/>
     <div intro room>
+      <div class="border border-danger rounded p-2" v-if="room.roommate_wanted!=null">
+        <div><span class="text-bold">Cần thêm:</span> {{ room.roommate_wanted.number }} người</div>
+        <div><span class="text-bold">Thông tin thêm:</span> {{ room.roommate_wanted.content }}</div>
+      </div>
       <h2>
         <router-link :to="{name: 'room-for-rent', params: {id: room.id}}">{{ room.name }}</router-link>
       </h2>

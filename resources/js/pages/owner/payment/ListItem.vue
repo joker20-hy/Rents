@@ -23,6 +23,9 @@
           <i class="fas fa-trash"></i> Xóa
         </button>
       </div>
+      <div v-if="payment.status" class="text-danger">
+        <span class="text-bold">Lưu ý: </span> Bạn không thể thay đổi trạng thái sau khi xác nhận 'Đã thanh toán'
+      </div>
     </div>
   </transition>
 </template>

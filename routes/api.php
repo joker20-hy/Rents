@@ -124,6 +124,9 @@ Route::group(['namespace' => 'Api'], function() {
 		], function () {
 			Route::post('rent-room', 'RentRoomController@main');
 			Route::put('leave-room/{userId?}', 'LeaveRoomController@main');
+			Route::post('wanted-roommate', 'WantedRoommateController@main');
+			Route::put('wanted-roommate', 'UpdateWantedRoommateController@main');
+			Route::delete('wanted-roommate', 'DestroyWantedRoommateController@main');
 		});
 		Route::group([
 			'namespace' => 'Direction',

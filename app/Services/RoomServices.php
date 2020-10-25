@@ -52,7 +52,17 @@ class RoomServices
         if (array_key_exists('acreage', $conditions)) {
             $conditions['acreage'] = config('const.ROOM_FILTER.ACREAGE')[$conditions['acreage']];
         }
-        return $this->roomRepository->index($conditions, $paginate);
+        if (array_key_exists('type', $conditions)) {
+            switch ($conditions['type']) {
+                case config('const.SEARCH.TYPE.ROOMMATE'):
+                    $conditions['status'] = config('const.ROOM_STATUS.half');
+                    break;
+                default:
+                    $conditions['status'] = config('const.ROOM_STATUS.waiting');
+                    break;
+            }
+        }
+        return $this->roomRepository->index($conditions, ['criterias', 'roommateWanted'], $paginate);
     }
 
     /**
@@ -68,6 +78,16 @@ class RoomServices
         $authUser = Auth::user();
         if ($authUser->role==config('USER.ROLE.OWNER')) {
             return $this->roomRepository->list($conditions, $authUser->id, $paginate);
+        }
+        if (array_key_exists('type', $conditions)) {
+            switch ($conditions['type']) {
+                case config('const.SEARCH.TYPE.ROOMMATE'):
+                    $conditions['status'] = config('const.ROOM_STATUS.half');
+                    break;
+                default:
+                    $conditions['status'] = config('const.ROOM_STATUS.waiting');
+                    break;
+            }
         }
         return $this->roomRepository->list($conditions, null, $paginate);
     }
@@ -92,7 +112,7 @@ class RoomServices
      */
     public function show($id)
     {
-        return $this->roomRepository->first(['id' => $id], ['criterias', 'house']);
+        return $this->roomRepository->first(['id' => $id], ['criterias', 'house', 'roommateWanted']);
     }
 
     /**

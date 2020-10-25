@@ -11,7 +11,7 @@
 	  </td>
 	  <td>
 	  	<button class="btn text-primary" @click="enterEdit()" v-show="!edit">
-		  <i class="fas fa-pencil"></i>
+		  <i class="fas fa-pen"></i>
 		</button>
 	  	<button class="btn text-primary" @click="update()" v-show="edit">
 		  <i class="fas fa-save text-primary" v-show="!updating"></i>

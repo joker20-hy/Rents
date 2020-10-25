@@ -23,6 +23,8 @@ import RentedRoom from './pages/frontend/user/Room'
 import RoomPayMethod from './pages/frontend/user/RoomPayMethods'
 import PaymentRoomList from './pages/frontend/user/room_payment/List'
 import PaymentRoomDetail from './pages/frontend/user/room_payment/Detail'
+import RoommateWanted from './pages/frontend/user/WantedRoommate'
+import RoommateWantedDetail from './pages/frontend/user/RoommateWantedDetail'
 /** Owner components */
 import Owner from './pages/owner/Index'
 import OwnerHouse from './pages/owner/house/Index'
@@ -151,6 +153,16 @@ const router = new Router({
               path: 'hoa-don/:id',
               name: 'payment-room-detail',
               component: PaymentRoomDetail
+            },
+            {
+              path: 'them-nguoi-o-ghep',
+              name: 'wanted-roommate',
+              component: RoommateWanted
+            },
+            {
+              path: 'tim-nguoi-o-ghep',
+              name: 'roommate-wanted-detail',
+              component: RoommateWantedDetail
             }
           ]
         },

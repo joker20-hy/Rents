@@ -23,17 +23,17 @@
         <span v-if="room.status==statuses.waiting" class="text-danger">
           <i class="fas fa-caret-right"></i> Chưa được thuê
         </span>
-        <span v-else-if="room.status==statuses.rented" class="text-success">
+        <span v-else-if="room.status!=statuses.waitingd" class="text-success">
           <i class="fas fa-check"></i> Đã được thuê
         </span>
       </div>
       <div class="py-2 text-right text-md-center row mx-0">
-        <div class="col-md-3 pt-2" v-if="room.status==statuses.rented">
+        <div class="col-md-3 pt-2" v-if="room.status!=statuses.waitingd">
           <router-link :to="{name: 'owner-list-payment', params: {id: room.id}}">
             <i class="fas fa-money-check-alt"></i> Danh sách hóa đơn
           </router-link>
         </div>
-        <div class="col-md-3 pt-2" v-if="room.status==statuses.rented">
+        <div class="col-md-3 pt-2" v-if="room.status!=statuses.waitingd">
           <router-link :to="{name: 'owner-create-payment', params: {id: room.id}}">
             <i class="fas fa-plus"></i> Tạo hóa đơn
           </router-link>

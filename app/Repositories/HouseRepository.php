@@ -91,7 +91,8 @@ class HouseRepository
      */
     public function store(array $params, $ownerId)
     {
-        $house = DB::transaction(function () use ($params, $ownerId) {
+        $house = DB::transaction(function () use ($params) {
+            $params['contact'] = json_encode($params['contact']);
         	$house = $this->house->create($params);
 	        return $house;
         });
@@ -129,6 +130,7 @@ class HouseRepository
     {
         $house = $this->house->findOrFail($id);
     	$house = DB::transaction(function () use ($house, $params) {
+            $params['contact'] = json_encode($params['contact']);
             $house->update($params);
         	return $house;
         });

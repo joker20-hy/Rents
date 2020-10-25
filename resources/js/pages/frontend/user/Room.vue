@@ -1,27 +1,41 @@
 <template>
   <div contain-box v-if="room">
-    <div class="bg-white p-2 mb-2">
+    <div class="bg-white p-2 mb-2" style="border-radius: 8px;box-shadow: 0px 0px 10px #80808040">
       <h1 style="font-size: large">{{ room.name }}</h1>
-      <p>Địa chỉ: {{ room.house.address_detail }}</p>
-      <p>Giá thuê: {{ range(room.price) }} vnđ</p>
+      <p><span style="font-weight: 600">Địa chỉ:</span> {{ room.house.address_detail }}</p>
+      <p><span style="font-weight: 600">Giá thuê:</span> {{ range(room.price) }} vnđ</p>
+      <p><span style="font-weight: 600">Số người tối đa:</span> {{ room.limit_renter }}</p>
     </div>
 
-    <router-link :to="{name: 'payment-room-list', params: {id: room.id}}" class="bg-white p-2 mb-2 d-flex align-items-center">
+    <router-link :to="{name: 'payment-room-list', params: {id: room.id}}" class="bg-white p-2 mb-2 d-flex align-items-center" style="box-shadow: 0px 0px 2px #80808040;border-radius: 6px">
       <i class="fas fa-money-check-alt"></i>&nbsp;Hóa đơn phòng ({{ room.payments.length }})
       <button class="btn ml-auto text-primary">
         <i class="fas fa-chevron-right"></i>
       </button>
     </router-link>
 
-    <router-link :to="{name: 'room-pay-method', params: {id: room.id}}" class="bg-white p-2 mb-2 d-flex align-items-center">
+    <router-link :to="{name: 'room-pay-method', params: {id: room.id}}" class="bg-white p-2 mb-2 d-flex align-items-center" style="box-shadow: 0px 0px 2px #80808040;border-radius: 6px">
       <i class="fas fa-dollar-sign"></i>&nbsp;Phương thức thanh toán
       <button class="btn ml-auto text-primary">
         <i class="fas fa-chevron-right"></i>
       </button>
     </router-link>
 
-    <router-link :to="{name: 'review-room', params: {id: room.id}}" class="bg-white p-2 mb-2 d-flex align-items-center">
+    <router-link :to="{name: 'review-room', params: {id: room.id}}" class="bg-white p-2 mb-2 d-flex align-items-center" style="box-shadow: 0px 0px 2px #80808040;border-radius: 6px">
       <i class="fas fa-pen"></i>&nbsp;Viết đánh giá
+      <button class="btn ml-auto text-primary">
+        <i class="fas fa-chevron-right"></i>
+      </button>
+    </router-link>
+
+    <router-link :to="{name: 'wanted-roommate'}" v-if="wantedRoommate" class="bg-white p-2 mb-2 d-flex align-items-center" style="box-shadow: 0px 0px 2px #80808040;border-radius: 6px">
+      <i class="fas fa-user-plus"></i>&nbsp;Tìm người ở ghép
+      <button class="btn ml-auto text-primary">
+        <i class="fas fa-chevron-right"></i>
+      </button>
+    </router-link>
+    <router-link :to="{name: 'roommate-wanted-detail'}" v-else-if="room.status==halfStatus" class="bg-white p-2 mb-2 d-flex align-items-center" style="box-shadow: 0px 0px 2px #80808040;border-radius: 6px">
+      <i class="fas fa-user-plus"></i>&nbsp;Tìm người ở ghép
       <button class="btn ml-auto text-primary">
         <i class="fas fa-chevron-right"></i>
       </button>
@@ -46,6 +60,12 @@ export default {
   computed: {
     room () {
       return this.$store.getters['rooms/first']
+    },
+    wantedRoommate() {
+      return (this.room.status!=$config.ROOM.STATUS.half)&&(this.room.renter_count<this.room.limit_renter)
+    },
+    halfStatus() {
+      return $config.ROOM.STATUS.half
     }
   },
   created () {
@@ -67,7 +87,8 @@ export default {
           payment.year = time.getFullYear()
         });
         this.$store.commit('payments/payments', res.data.payments)
-        this.$store.commit('rooms/rooms', [res.data])        
+        this.$store.commit('users/roommate_wanted', res.data.roommate_wanted)
+        this.$store.commit('rooms/rooms', [res.data])  
       })
       .catch(err => {
         $eventHub.$emit('off-loading')
