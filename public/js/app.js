@@ -6830,6 +6830,10 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
 
 
 
@@ -6857,7 +6861,6 @@ __webpack_require__.r(__webpack_exports__);
   data: function data() {
     return {
       id: '',
-      images: [],
       carousel_index: 0
     };
   },
@@ -6893,8 +6896,7 @@ __webpack_require__.r(__webpack_exports__);
       ajax().get("/api/room/".concat(this.id)).then(function (res) {
         res.data.description = utf8.decode(res.data.description);
         res.data.house.contact = JSON.parse(res.data.house.contact);
-        console.log(res.data.house.contact);
-        _this.images = JSON.parse(res.data.images);
+        res.data.images = JSON.parse(res.data.images);
 
         _this.$store.commit('rooms/rooms', [res.data]);
 
@@ -25369,7 +25371,7 @@ var render = function() {
         { staticClass: "container" },
         [
           _c("image-gallary", {
-            attrs: { images: _vm.images },
+            attrs: { images: _vm.room.images },
             on: { detail: _vm.slideshow }
           }),
           _vm._v(" "),
@@ -25418,9 +25420,11 @@ var render = function() {
               _vm._v("/10\n    ")
             ]),
             _vm._v(" "),
-            _c("a", { attrs: { href: "#danh-gia" } }, [
-              _vm._v(_vm._s(_vm.total_reviews) + " đánh giá")
-            ])
+            _vm.total_reviews > 0
+              ? _c("a", { attrs: { href: "#danh-gia" } }, [
+                  _vm._v(_vm._s(_vm.total_reviews) + " đánh giá")
+                ])
+              : _vm._e()
           ]),
           _vm._v(" "),
           _c("div", { staticClass: "row my-2" }, [
@@ -25442,10 +25446,10 @@ var render = function() {
             ])
           ]),
           _vm._v(" "),
-          _c("h2", [_vm._v("Liên hệ của chủ nhà")]),
-          _vm._v(" "),
-          _vm.room.house.contact
+          _vm.room.house.contact != null
             ? _c("div", { staticClass: "sticky-top bg-white row mx-0 mb-2" }, [
+                _vm._m(0),
+                _vm._v(" "),
                 _vm.room.house.contact.phone != null
                   ? _c("div", { staticClass: "col-6 py-2" }, [
                       _c("span", { staticClass: "text-bold" }, [
@@ -25475,39 +25479,41 @@ var render = function() {
               ])
             : _vm._e(),
           _vm._v(" "),
-          _c(
-            "div",
-            {
-              staticClass: "border border-danger",
-              attrs: { "page-section": "" }
-            },
-            [
-              _c("div", [
-                _c("span", { staticClass: "text-bold" }, [
-                  _vm._v("Cần thêm: ")
-                ]),
-                _vm._v(_vm._s(_vm.room.roommate_wanted.number))
-              ]),
-              _vm._v(" "),
-              _vm.room.roommate_wanted.contact
-                ? _c("div", [
+          _vm.room.roommate_wanted
+            ? _c(
+                "div",
+                {
+                  staticClass: "border border-danger",
+                  attrs: { "page-section": "" }
+                },
+                [
+                  _c("div", [
                     _c("span", { staticClass: "text-bold" }, [
-                      _vm._v("Thông tin liên hệ: ")
+                      _vm._v("Cần thêm: ")
                     ]),
-                    _vm._v(_vm._s(_vm.room.roommate_wanted.contact))
-                  ])
-                : _vm._e(),
-              _vm._v(" "),
-              _vm.room.roommate_wanted.content
-                ? _c("div", [
-                    _c("span", { staticClass: "text-bold" }, [
-                      _vm._v("Thông tin thêm: ")
-                    ]),
-                    _vm._v(_vm._s(_vm.room.roommate_wanted.content))
-                  ])
-                : _vm._e()
-            ]
-          ),
+                    _vm._v(_vm._s(_vm.room.roommate_wanted.number))
+                  ]),
+                  _vm._v(" "),
+                  _vm.room.roommate_wanted.contact
+                    ? _c("div", [
+                        _c("span", { staticClass: "text-bold" }, [
+                          _vm._v("Thông tin liên hệ: ")
+                        ]),
+                        _vm._v(_vm._s(_vm.room.roommate_wanted.contact))
+                      ])
+                    : _vm._e(),
+                  _vm._v(" "),
+                  _vm.room.roommate_wanted.content
+                    ? _c("div", [
+                        _c("span", { staticClass: "text-bold" }, [
+                          _vm._v("Thông tin thêm: ")
+                        ]),
+                        _vm._v(_vm._s(_vm.room.roommate_wanted.content))
+                      ])
+                    : _vm._e()
+                ]
+              )
+            : _vm._e(),
           _vm._v(" "),
           _c(
             "div",
@@ -25571,7 +25577,7 @@ var render = function() {
                     expression: "carousel_index"
                   }
                 },
-                _vm._l(_vm.images, function(image, index) {
+                _vm._l(_vm.room.images, function(image, index) {
                   return _c("slide", { key: index, attrs: { value: index } }, [
                     _c("img", {
                       staticClass: "mw-100 mh-100",
@@ -25589,7 +25595,16 @@ var render = function() {
       )
     : _vm._e()
 }
-var staticRenderFns = []
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "col-12 pt-2" }, [
+      _c("h2", { staticClass: "mb-0" }, [_vm._v("Liên hệ của chủ nhà")])
+    ])
+  }
+]
 render._withStripped = true
 
 
