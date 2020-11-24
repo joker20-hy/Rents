@@ -1,7 +1,9 @@
 <template>
   <div style="min-height: 100vh">
     <nav-header/>
-    <router-view></router-view>
+    <transition name="slide-left">
+      <router-view/>
+    </transition>
   </div>
 </template>
 <script>

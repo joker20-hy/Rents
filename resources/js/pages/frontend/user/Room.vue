@@ -7,24 +7,22 @@
       <p><span style="font-weight: 600">Số người tối đa:</span> {{ room.limit_renter }}</p>
     </div>
 
-    <router-link :to="{name: 'payment-room-list', params: {id: room.id}}" class="bg-white p-2 mb-2 d-flex align-items-center" style="box-shadow: 0px 0px 2px #80808040;border-radius: 6px">
-      <i class="fas fa-money-check-alt"></i>&nbsp;Hóa đơn phòng ({{ room.payments.length }})
+    <router-link :to="{name: 'payment-room-list', params: {id: room.id}}" class="bg-white p-2 mb-2 c-flex-middle">
+      <credit-card-icon :width="'16px'" :height="'16px'" class="fill-blue" style="transform: translateY(-1px)"/> &nbsp;Hóa đơn phòng ({{ room.payments.length }})
       <button class="btn ml-auto text-primary">
-        <i class="fas fa-chevron-right"></i>
+        <chevron-right-icon :width="'15px'" :height="'15px'" class="fill-blue"/>
       </button>
     </router-link>
-
-    <router-link :to="{name: 'room-pay-method', params: {id: room.id}}" class="bg-white p-2 mb-2 d-flex align-items-center" style="box-shadow: 0px 0px 2px #80808040;border-radius: 6px">
-      <i class="fas fa-dollar-sign"></i>&nbsp;Phương thức thanh toán
+    <router-link :to="{name: 'room-pay-method', params: {id: room.id}}" class="bg-white p-2 mb-2 c-flex-middle">
+      <coin-icon :width="'16px'" :height="'16px'" class="fill-blue" style="transform: translateY(-1px)"/>&nbsp;Phương thức thanh toán
       <button class="btn ml-auto text-primary">
-        <i class="fas fa-chevron-right"></i>
+        <chevron-right-icon :width="'15px'" :height="'15px'" class="fill-blue"/>
       </button>
     </router-link>
-
-    <router-link :to="{name: 'review-room', params: {id: room.id}}" class="bg-white p-2 mb-2 d-flex align-items-center" style="box-shadow: 0px 0px 2px #80808040;border-radius: 6px">
-      <i class="fas fa-pen"></i>&nbsp;Viết đánh giá
+    <router-link :to="{name: 'review-room', params: {id: room.id}}" class="bg-white p-2 mb-2 c-flex-middle">
+      <edit-icon :width="'16px'" :height="'16px'" class="fill-blue"/>&nbsp;Viết đánh giá
       <button class="btn ml-auto text-primary">
-        <i class="fas fa-chevron-right"></i>
+        <chevron-right-icon :width="'15px'" :height="'15px'" class="fill-blue"/>
       </button>
     </router-link>
 
@@ -49,10 +47,17 @@
 </template>
 <script>
 import ConfirmBox from '../../utilities/ConfirmBox'
-
+import CreditCardIcon from '../../../icons/CreditCard'
+import CoinIcon from '../../../icons/Coin'
+import EditIcon from '../../../icons/Edit'
+import ChevronRightIcon from '../../../icons/ChevronRight'
 export default {
   components: {
-    ConfirmBox
+    ConfirmBox,
+    CreditCardIcon,
+    CoinIcon,
+    EditIcon,
+    ChevronRightIcon
   },
   data () {
     return {}

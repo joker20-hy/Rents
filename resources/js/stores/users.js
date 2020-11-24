@@ -23,6 +23,9 @@ const users = {
     },
     roommate_wanted(state) {
       return state.roommate_wanted
+    },
+    find: state => id => {
+      return state.users.find(item => item.id==id)
     }
   },
   mutations: {

@@ -3,7 +3,9 @@
     <side-menu/>
     <section class="float-left w-100 dashboard-container">
       <header-bar/>
-      <router-view/>
+      <transition name="slide-left">
+        <router-view/>
+      </transition>
     </section>
   </div>
 </template>

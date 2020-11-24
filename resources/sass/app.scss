@@ -14,3 +14,19 @@
 @import './frontend/home';
 @import './frontend/search';
 @import './frontend/detail';
+
+.fill-light {
+  fill: $light;
+}
+.fill-green {
+  fill: $green;
+}
+.fill-blue {
+  fill: $blue;
+}
+.fill-orange {
+  fill: $orange;
+}
+.fill-gray {
+  fill: $gray;
+}

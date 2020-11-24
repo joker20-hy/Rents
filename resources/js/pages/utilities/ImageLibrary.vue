@@ -3,14 +3,14 @@
     <label for="" style="font-weight: 600" v-show="label!=''">{{ label }}</label>
     <div class="d-flex align-items-center pt-1" v-if="editable">
       {{ photos_label }}
-      <button type="button" class="btn text-primary px-1" onclick="clickTarget('#images')">
-        <i class="fas fa-cloud-upload-alt"></i> Thêm ảnh
+      <button type="button" class="btn text-primary px-1 c-flex-middle" onclick="clickTarget('#images')">
+        <upload-icon :width="'16px'" :height="'16px'" class="fill-blue" style="transform: translateY(-2px);"/>&nbsp;Thêm ảnh
       </button>
       <input type="file" id="images" class="d-none" ref="images" @change="getImages" accept="image/*" multiple>
       <div class="ml-auto" v-show="editable">
         <button type="button" class="btn text-primary" v-show="!edit&&bucket.length>=0" @click="enterEdit">Chọn</button>
         <button type="button" class="btn text-danger" v-show="edit" @click="showDelete()">
-          <i class="far fa-trash-alt"></i>
+          Xóa
         </button>
         <button type="button" class="btn text-primary" v-show="edit" @click="leaveEdit">Hủy</button>
       </div>
@@ -19,7 +19,7 @@
       <small class="text-muted">** Kích thước ảnh không thể lớn hơn {{ maxSize }} **</small>
     </div>
     <div v-show="bucket.length==0" class="text-center text-muted">Hiện chưa có ảnh</div>
-    <transition-group name="slide-fade" tag="div" class="row photos-bucket">
+    <transition-group name="slide-fade" tag="div" class="row mx-0 photos-bucket">
       <div class="img-item" v-for="img in bucket" :key="img.id" :style="`background-image: url(${img.url})`">
         <div class="choose-cover" @click="choose(img)" :class="img.choose?'show':''">
           <i class="fas fa-check fa-2x text-light"></i>
@@ -32,11 +32,12 @@
 </template>
 <script>
 import ConfirmBox from './ConfirmBox'
-
+import UploadIcon from '../../icons/Upload'
 export default {
   name: 'image-library',
   components: {
-    ConfirmBox
+    ConfirmBox,
+    UploadIcon
   },
   props: {
     label: {

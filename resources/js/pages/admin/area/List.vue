@@ -2,8 +2,8 @@
   <div class="container">
     <h1 class="d-flex align-items-end mt-5 py-3">
       Danh sách khu vực
-      <button class="btn ml-auto text-primary" @click="create=true" style="font-weight: 600">
-        <i class="fas fa-plus"></i> Create
+      <button class="btn ml-auto text-primary c-flex-middle" @click="create=true" style="font-weight: 600">
+        <add-icon :width="'13px'" :height="'13px'" class="fill-blue" style="transform: translateY(-1px)"/>&nbsp;Create
       </button>
     </h1>
     <area-create v-show="create" @created="created" @success="success" @error="error" @cancel="create=false"/>
@@ -42,11 +42,13 @@
 import ListItem from './ListItem'
 import AreaCreate from './Create'
 import ConfirmBox from '../../utilities/ConfirmBox'
+import AddIcon from '../../../icons/Add'
 export default {
   components: {
     ListItem,
     AreaCreate,
-    ConfirmBox
+    ConfirmBox,
+    AddIcon
   },
   data () {
     return {

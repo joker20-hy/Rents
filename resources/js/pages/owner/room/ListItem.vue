@@ -23,34 +23,34 @@
         <span v-if="room.status==statuses.waiting" class="text-danger">
           <i class="fas fa-caret-right"></i> Chưa được thuê
         </span>
-        <span v-else-if="room.status!=statuses.waitingd" class="text-success">
+        <span v-else-if="room.status!=statuses.waiting" class="text-success">
           <i class="fas fa-check"></i> Đã được thuê
         </span>
       </div>
       <div class="py-2 text-right text-md-center row mx-0">
-        <div class="col-md-3 pt-2" v-if="room.status!=statuses.waitingd">
+        <div class="col-md-3 pt-2" v-if="room.status!=statuses.waiting">
           <router-link :to="{name: 'owner-list-payment', params: {id: room.id}}">
             <i class="fas fa-money-check-alt"></i> Danh sách hóa đơn
           </router-link>
         </div>
-        <div class="col-md-3 pt-2" v-if="room.status!=statuses.waitingd">
+        <div class="col-md-3 pt-2" v-if="room.status!=statuses.waiting">
           <router-link :to="{name: 'owner-create-payment', params: {id: room.id}}">
             <i class="fas fa-plus"></i> Tạo hóa đơn
           </router-link>
         </div>
         <div class="col-md-3 pt-2">
-          <router-link :to="{name: 'owner-add-renter', params: {room: room.id}}">
+          <router-link :to="{name: 'owner-add-renter', params: {room: room.id}}" class="c-flex-middle">
             <i class="fas fa-user-plus"></i> Thêm người thuê
           </router-link>
         </div>
         <div class="col-md-3 pt-2">
-          <router-link :to="{name: 'owner-list-renter', params: {room: room.id}}">
+          <router-link :to="{name: 'owner-list-renter', params: {room: room.id}}" class="c-flex-middle">
             <i class="fas fa-user"></i> Người thuê
           </router-link>
         </div>
         <div class="col-md-3 pt-2">
-          <button class="btn text-primary" @click="$emit('add-pay-method', item)">
-            <i class="fas fa-dollar-sign"></i> Thanh toán
+          <button class="btn text-primary c-flex-middle" @click="$emit('add-pay-method', item)">
+            <coin-icon :width="'15px'" :height="'15px'" class="fill-blue"/>&nbsp;Thanh toán
           </button>
         </div>
       </div>
@@ -59,9 +59,13 @@
 </template>
 <script>
 import SwitchBox from '../../utilities/SwitchBox'
+import AddIcon from '../../../icons/Add'
+import CoinIcon from '../../../icons/Coin'
 export default {
   components: {
-    SwitchBox
+    SwitchBox,
+    AddIcon,
+    CoinIcon
   },
   props: {
     item: {
@@ -69,15 +73,11 @@ export default {
       type: Object
     }
   },
-  computed: {
-    statuses() {
-      return $config.ROOM.STATUS
-    }
-  },
   data () {
     return {
       room: this.item,
-      status: this.item.status
+      status: this.item.status,
+      statuses: $config.ROOM.STATUS
     }
   },
   methods: {}

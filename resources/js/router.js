@@ -48,6 +48,7 @@ import OwnerListRenter from './pages/owner/renters/List'
 import Admin from './pages/admin/Index'
 import Users from './pages/admin/user/Index'
 import UserList from './pages/admin/user/List'
+import UserDetail from './pages/admin/user/Detail'
 import Provinces from './pages/admin/province/Index'
 import ProvinceList from './pages/admin/province/List'
 import Districts from './pages/admin/district/Index'
@@ -58,6 +59,7 @@ import Directions from './pages/admin/directions/List'
 import Houses from './pages/admin/house/Index'
 import HouseList from './pages/admin/house/List'
 import HouseCreate from './pages/admin/house/Create'
+import HouseDetail from './pages/admin/house/Detail'
 import Rooms from './pages/admin/room/Index'
 import RoomList from './pages/admin/room/List'
 import RoomCreate from './pages/admin/room/Create'
@@ -338,6 +340,11 @@ const router = new Router({
               path: '',
               name: 'user-list',
               component: UserList
+            },
+            {
+              path: ':id',
+              name: 'user-detail',
+              component: UserDetail
             }
           ]
         },
@@ -392,6 +399,11 @@ const router = new Router({
               path: 'create',
               name: 'house-create',
               component: HouseCreate
+            },
+            {
+              path: ':id',
+              name: 'house-detail',
+              component: HouseDetail
             }
           ]
         },

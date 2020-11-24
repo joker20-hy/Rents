@@ -7,32 +7,42 @@
 	  {{ auth.name }}
 	</header>
 	<main class="px-2">
-    <div v-if="auth.id!=undefined" item @click="routeTo({name: 'account'})">
-      <i class="fas fa-user"></i> Tài khoản
+    <div v-if="auth.id!=undefined" class="c-flex-middle" item @click="routeTo({name: 'account'})">
+      <user-icon :width="'16px'" :height="'16px'" style="transform: translateY(-2px)"/>&nbsp;Tài khoản
     </div>
     <div v-if="renter" @click="routeTo({name: 'rented-room'})" item>
-      <i class="fas fa-door-open"></i> Phòng trọ
+      <door-open-icon :width="'16px'" :height="'16px'"/> Phòng trọ
     </div>
-	  <div v-if="admin" @click="routeTo({name: 'user-list'})" item>
-      <i class="fas fa-users-cog"></i> Quản lý
+    <div v-if="admin" class="c-flex-middle" @click="routeTo({name: 'user-list'})" item>
+      <pie-chart-icon :width="'16px'" :height="'16px'" style="transform: translateY(-1px)"/>&nbsp;Quản lý
     </div>
-     <div v-else-if="owner" @click="routeTo({name: 'owner-list-house'})" item>
-      <i class="fas fa-users-cog"></i> Quản lý
+     <div v-else-if="owner" class="c-flex-middle" @click="routeTo({name: 'owner-list-house'})" item>
+      <pie-chart-icon :width="'16px'" :height="'16px'" style="transform: translateY(-1px)"/>&nbsp;Quản lý
     </div>
-    <div item v-if="auth.id!=undefined" @click="logout()">
-      <i class="fas fa-sign-out-alt"></i> Đăng xuất
+    <div class="c-flex-middle" item v-if="auth.id!=undefined" @click="logout()">
+      <signout-icon :width="'16px'" :height="'16px'" style="transform: translateY(-1px)"/>&nbsp;Đăng xuất
     </div>
     <hr>
     <div item class="text-danger" @click="hide">
-      <i class="far fa-times-circle"></i> Đóng
+      Đóng
     </div>
 	</main>
   </div>
 </template>
 <script>
+import UserIcon from '../../../icons/User'
+import PieChartIcon from '../../../icons/PieChart'
+import DoorOpenIcon from '../../../icons/DoorOpen'
 import ClickOutside from 'vue-click-outside'
+import SignoutIcon from '../../../icons/Signout'
 export default {
   name: 'side-menu',
+  components: {
+    PieChartIcon,
+    UserIcon,
+    DoorOpenIcon,
+    SignoutIcon
+  },
   data () {
   	return {
       isShow: false

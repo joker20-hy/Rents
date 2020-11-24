@@ -18,10 +18,10 @@
           <input type="text" class="form-control" v-model="area.name" placeholder="Area name" required>
         </div>
         <div class="col-md-1 pl-0">
-          <button class="w-100 btn text-primary">Create</button>
+          <button class="w-100 btn text-primary">Thêm</button>
         </div>
         <div class="col-md-1 pl-0">
-          <button type="button" class="btn text-danger" @click="cancel()">Cancel</button>
+          <button type="button" class="btn text-danger" @click="cancel()">Hủy</button>
         </div>
       </div>
     </form>
