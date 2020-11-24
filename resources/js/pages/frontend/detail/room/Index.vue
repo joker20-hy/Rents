@@ -3,14 +3,14 @@
     <image-gallary :images="room.images" @detail="slideshow"/>
     <div class="d-flex">
       <h3>{{ room.name }}</h3>
-      <router-link v-if="hasRight" class="ml-auto btn" :to="{name: 'owner-detail-room', params: {id: room.id}}">
-        <i class="fas fa-pen text-primary"></i> Chỉnh sửa
+      <router-link v-if="hasRight" class="ml-auto btn c-flex-middle" :to="{name: 'owner-detail-room', params: {id: room.id}}">
+        <edit-icon :width="'15px'" :height="'15px'"/>&nbsp;Chỉnh sửa
       </router-link>
     </div>
-    <div class="text-dark" v-if="room.house">
-      <i class="fas fa-map-marker-alt"></i> {{ room.house.address_detail }}
-    </div>
-    <div class="text-center py-3">
+    <div class="text-dark c-flex-middle" v-if="room.house">
+      <location-pin-icon :width="'15px'" :height="'15px'"/>&nbsp;{{ room.house.address_detail }}
+    </div>    
+    <div class="d-flex my-3">
       <div>
         <span style="font-size: 60px;line-height: 1">{{ room.avg_rate }}</span>/10
       </div>
@@ -60,7 +60,7 @@
     </div>
     <review-list :id="'danh-gia'" :room="id"></review-list>
     <button class="search-btn" @click="toggleSideSearch">
-      <i class="fas fa-search"></i>
+      <search-icon class="fill-light" :width="'16px'" :height="'16px'"/>
     </button>
     <modal name="image-carousel" :classes="['mb-auto']">
       <carousel :per-page="1" :mouse-drag="true" v-model="carousel_index">
@@ -77,7 +77,9 @@ import ImageGallary from './Images'
 import RoomCriterias from './Criterias'
 import RoomServices from './Services'
 import ReviewList from './Reviews'
-
+import SearchIcon from '../../../../icons/search'
+import EditIcon from '../../../../icons/Edit'
+import LocationPinIcon from '../../../../icons/LocationPin'
 export default {
   components: {
     ImageGallary,
@@ -85,7 +87,10 @@ export default {
     RoomServices,
     ReviewList,
     Carousel,
-    Slide
+    Slide,
+    SearchIcon,
+    EditIcon,
+    LocationPinIcon
   },
   watch: {
     '$route.params.id': {

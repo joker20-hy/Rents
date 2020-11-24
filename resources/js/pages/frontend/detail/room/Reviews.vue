@@ -2,8 +2,9 @@
   <div :id="id" page-section>
     <div class="d-flex">
       <h2>Đánh giá</h2>
-      <router-link class="btn text-primary ml-auto" :to="{name:'review-room', params: {id: this.id}}">
-        <i class="fas fa-pencil"></i> đánh giá</router-link>
+      <router-link class="btn text-primary c-flex-middle ml-auto" :to="{name:'review-room', params: {id: this.id}}">
+        <edit-icon :width="'13px'" :height="'13px'" class="fill-blue"/>&nbsp;đánh giá
+      </router-link>
     </div>
     <div v-if="reviews.length==0" class="text-muted text-center">
       Hiện chưa có đánh giá nào
@@ -18,16 +19,16 @@
             <div class="text-bold">
               {{ review.anonymous?'Anonymous':review.user_name }}
             </div>
-            <div>
-              <i class="fas fa-chevron-right"></i> {{ review.title }}
+            <div class="c-flex-middle">
+              <chevron-right-icon :width="'12px'" :height="'12px'" style="transform: translateY(-1px)"/> &nbsp;{{ review.title }}
             </div>
           </div>
         </div>
-        <div class="pt-1" v-if="review.review_rooms">
-          <b>Cơ sở vật chất:</b> {{ review.review_rooms.infra_rate }} <i class="fas fa-star"></i>
+        <div class="pt-1 c-flex-middle" v-if="review.review_rooms">
+          <b>Cơ sở vật chất:</b>&nbsp;{{ review.review_rooms.infra_rate }}&nbsp;<star-icon :width="'13px'" :height="'13px'" class="fill-orange" style="transform: translateY(-1px)"/>
         </div>
-        <div class="pt-1" v-if="review.review_rooms">
-          <b>An ninh:</b> {{ review.review_rooms.secure_rate }} <i class="fas fa-star"></i>
+        <div class="pt-1 c-flex-middle" v-if="review.review_rooms">
+          <b>An ninh:</b>&nbsp;{{ review.review_rooms.secure_rate }}&nbsp;<star-icon :width="'13px'" :height="'13px'" class="fill-orange" style="transform: translateY(-1px)"/>
         </div>
         <div class="pt-1" v-if="review.description">
           <b>Nhận xét: </b>
@@ -43,8 +44,16 @@
   </div>
 </template>
 <script>
+import ChevronRightIcon from '../../../../icons/ChevronRight'
+import EditIcon from '../../../../icons/Edit'
+import StarIcon from '../../../../icons/Star'
 export default {
   name: 'review-list',
+  components: {
+    ChevronRightIcon,
+    EditIcon,
+    StarIcon
+  },
   props: {
     id: {
       required: false

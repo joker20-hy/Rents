@@ -16,8 +16,8 @@
       </div>
       <form class="col-md-4 px-0 mt-2 mt-md-0" @submit.prevent="search">
         <input type="hidden" name="type" value="">
-        <button class="search-input bg-danger text-light">
-          <i class="fas fa-search"></i>
+        <button class="search-input bg-danger fill-light">
+          <search-icon :width="'14px'" :height="'14px'"/>
         </button>
       </form>
     </div>
@@ -26,10 +26,12 @@
 <script>
 import ClickOutside from 'vue-click-outside'
 import SuggestBox from './Suggest'
+import SearchIcon from '../../../icons/search'
 export default {
   name: 'search-form',
   components: {
-    SuggestBox
+    SuggestBox,
+    SearchIcon
   },
   data () {
     return {
@@ -37,12 +39,8 @@ export default {
       results: [],
       address: {},
       type: $config.SEARCH.TYPE.FREE,
-      suggest: false
-    }
-  },
-  computed: {
-    searchTypes() {
-      return $config.SEARCH.TYPE
+      suggest: false,
+      searchTypes: $config.SEARCH.TYPE
     }
   },
   methods: {

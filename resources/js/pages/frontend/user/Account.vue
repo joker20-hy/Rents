@@ -1,25 +1,28 @@
 <template>
   <div class="mt-1">
     <form contain-box class="bg-white mb-2" @submit.prevent="update">
-      <div class="d-flex">
-        <button type="button" v-show="!edit" class="btn text-primary ml-auto" @click="enterEdit()">
-          <i class="fas fa-pencil"></i> <span style="font-weight: 600">Chỉnh sửa</span>
+      <div class="c-toolbar c-flex-middle">
+        <button v-if="edit" class="btn btn-primary c-flex-middle">
+          Lưu thay đổi
         </button>
-        <button type="button" v-show="edit" class="btn text-danger ml-auto" @click="leaveEdit()">
-          <i class="fas fa-times"></i> <span style="font-weight: 600">Hủy</span>
+        <button type="button" v-show="edit" class="btn btn-danger ml-auto" @click="leaveEdit()">
+          Hủy
+        </button>
+        <button type="button" v-show="!edit" class="btn btn-primary ml-auto" @click="enterEdit()">
+          Chỉnh sửa
         </button>
       </div>
       <div>
       <div class="form-group" v-if="user.profile">
         <div class="text-center">
-          <img style="width: 100px;height: 100px;border-radius: 50%;margin-bottom: 10px" :src="user.profile.image==null?'/images/default.svg':user.profile.image" :alt="user.name">
+          <img avatar :src="user.profile.image==null?'/images/default.svg':user.profile.image" :alt="user.name">
           <br>
           <div>
             <button type="button" v-show="edit" class="btn text-primary" onclick="clickTarget('#profile-image')">
               Thay đổi
             </button>
             <button type="button" class="btn text-primary" v-show="edit&&edit_avatar" @click="uploadImage()">
-              <i class="far fa-save"></i> Lưu
+              <upload-icon :width="14" :height="14" class="fill-blue" style="transform: translateY(-2px)"/> Lưu
             </button>
           </div>
         </div>
@@ -61,17 +64,12 @@
         <div class="holder" v-show="!edit">{{ user.profile.address?user.profile.address:'Chưa rõ' }}</div>
         <input type="text" v-show="edit" class="input" v-model="user.profile.address" placeholder="Địa chỉ">
       </div>
-      <div class="form-group text-right" v-show="edit">
-        <button class="btn btn-outline-primary">
-          <i class="far fa-save"></i> Lưu
-        </button>
-      </div>
     </form>
     <input type="file" id="profile-image" @change="previewImage" class="d-none">
     <form contain-box class="bg-white">
       <div class="holder">
-        <router-link :to="{name: 'forgot-password'}">
-          <i class="fas fa-lock"></i> Thay đổi mật khẩu
+        <router-link class="c-flex-middle" :to="{name: 'forgot-password'}">
+          <broken-icon :width="'16px'" :height="'16px'" style="transform: translateY(-2px)" class="fill-blue"/> Thay đổi mật khẩu
         </router-link>
       </div>
     </form>
@@ -80,10 +78,13 @@
 </template>
 <script>
 import ChangePassword from './ChangePassword'
-
+import UploadIcon from '../../../icons/Upload'
+import BrokenIcon from '../../../icons/Broken'
 export default {
   components: {
-    ChangePassword
+    ChangePassword,
+    UploadIcon,
+    BrokenIcon
   },
   data () {
     return {
@@ -198,5 +199,13 @@ label {
 }
 .container {
   margin-bottom: 60px;
+}
+[avatar] {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  margin-bottom: 10px;
+  padding: 4px;
+  box-shadow: 0px 0px 10px #00000040;
 }
 </style>

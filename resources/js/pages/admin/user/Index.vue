@@ -1,9 +1,10 @@
 <template>
-  <router-view/>
+  <transition name="slide-left">
+  	<router-view/>
+  </transition>
 </template>
 <script>
 export default {
-  name: 'user-index',
   data () {
     return {}
   }

@@ -1,10 +1,12 @@
 <template>
   <div id="app">
-    <router-view/>
+    <transition name="slide-left">
+      <router-view/>
+    </transition>
     <alert-box/>
     <logout-form/>
     <modal name="loading" :classes="'loading-box'">
-      <i class="fas fa-spinner fa-pulse"></i>
+      <div class="loader lg m-auto"></div>
     </modal>
     <div id="footer" class="row mx-0">
       <div class="col-md-4 py-2">

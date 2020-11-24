@@ -3,8 +3,8 @@
     <div class="col-md-10 mx-auto">
       <h4>Danh sách nhà</h4>
       <div class="p-2 bg-white mb-3 d-flex">
-        <router-link :to="{name: 'owner-create-house'}" class="btn ml-auto">
-          <i class="fas fa-plus"></i> Thêm nhà
+        <router-link :to="{name: 'owner-create-house'}" class="btn ml-auto c-flex-middle">
+          <add-icon :height="'12px'" :width="'12px'"></add-icon>&nbsp;Thêm nhà
         </router-link>
       </div>
       <list-item v-for="house in houses" :key="house.id" :house="house" @destroy="confirmDestroy"/>
@@ -18,10 +18,12 @@
 <script>
 import ConfirmBox from '../../utilities/ConfirmBox'
 import ListItem from './ListItem'
+import AddIcon from '../../../icons/Add'
 export default {
   components: {
     ConfirmBox,
     ListItem,
+    AddIcon
   },
   data () {
     return {

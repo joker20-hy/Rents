@@ -1,17 +1,17 @@
 <template>
   <div class="container">
-    <h1 class="d-flex align-items-end mt-3 py-3">
+    <h3 class="c-flex-middle mt-3">
       Danh sách tỉnh thành
-      <button class="btn ml-auto text-primary" @click="create=true" style="font-weight: 600">
-        <i class="fas fa-plus"></i> Create
+      <button class="btn ml-auto text-primary c-flex-middle" @click="create=true" style="font-weight: 600">
+        <add-icon :width="'13px'" :height="'13px'" class="fill-blue" style="transform: translateY(-1px)"/>&nbsp;Thêm mới
       </button>
-    </h1>
+    </h3>
     <province-create v-show="create" @created="created" @cancel="create=false"/>
     <table class="records-list">
       <thead>
-        <th>Name</th>
+        <th>Tên</th>
         <th>Slug</th>
-        <th>Actions</th>
+        <th>Hành động</th>
       </thead>
       <tbody>
         <list-item v-for="province in provinces" :key="province.id" :province="province" @destroy="showDestroy"/>
@@ -40,12 +40,14 @@
 import ConfirmBox from '../../utilities/ConfirmBox'
 import ProvinceCreate from './Create'
 import ListItem from './ListItem'
+import AddIcon from '../../../icons/Add'
 export default {
   name: 'province-list',
   components: {
     ListItem,
     ConfirmBox,
-    ProvinceCreate
+    ProvinceCreate,
+    AddIcon
   },
   data () {
     return {

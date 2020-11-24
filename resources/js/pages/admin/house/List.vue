@@ -1,28 +1,23 @@
 <template>
   <div class="container">
     <h3 class="d-flex align-items-end mt-5 py-3 text-primary">
-      House list
-      <router-link class="btn ml-auto text-primary" :to="{name: 'house-create'}" style="font-weight: 600">
-        <i class="fas fa-plus"></i> Create
+      Danh sách nhà
+      <router-link class="btn ml-auto text-primary c-flex-middle" :to="{name: 'house-create'}" style="font-weight: 600">
+        <add-icon :width="'13px'" :height="'13px'" class="fill-blue" style="transform: translateY(-1px)"/>&nbsp;Thêm mới
       </router-link>
     </h3>
     <table class="records-list">
       <thead>
-        <th>Address</th>
-        <th>Avg rate</th>
-        <th>Rate count</th>
-        <th>Rent</th>
-        <th>Actions</th>
+        <th>Địa chỉ</th>
+        <th>Điểm trung bình</th>
+        <th>Số đánh giá</th>
+        <!-- <th>Rent</th> -->
+        <th>Hành động</th>
       </thead>
       <tbody>
         <list-item v-for="house in houses" :key="house.id" :house="house" @destroy="destroyConfirm"/>
       </tbody>
     </table>
-    <div class="py-4 text-center mx-auto" v-if="loading">
-      <span class="p-2 bg-light rounded-circle">
-        <i class="fas fa-spinner fa-pulse fa-lg text-primary"></i>
-      </span>
-    </div>
     <paginate
       v-model="query.page"
       :page-count="page_count"
@@ -43,12 +38,13 @@ import serialize from '../../../utilities/serialize'
 import ListItem from './ListItem'
 import HouseDetail from './Detail'
 import ConfirmBox from '../../utilities/ConfirmBox'
-
+import AddIcon from '../../../icons/Add'
 export default {
   components: {
     ListItem,
     HouseDetail,
-    ConfirmBox
+    ConfirmBox,
+    AddIcon
   },
   computed: {
     houses () {
@@ -63,7 +59,6 @@ export default {
   },
   data () {
     return {
-      loading: false,
       page_count: 1,
       query: {
         page: 1,
@@ -86,10 +81,10 @@ export default {
       return `/api/house/list?${serialize.fromObj(this.query)}`
     },
     list () {
-      this.loading = true
+      $eventHub.$emit('on-loading')
       ajax().get(this.listApi())
       .then(res => {
-        this.loading = false
+        $eventHub.$emit('off-loading')
         res.data.data.forEach(dat => {
           dat.images = dat.images==null?[]:JSON.parse(dat.images)
           dat.description = dat.description==null?'':utf8.decode(dat.description)
@@ -97,7 +92,7 @@ export default {
         this.$store.commit('houses/houses', res.data.data)
       })
       .catch(err => {
-        this.loading = false
+        $eventHub.$emit('off-loading')
         $eventHub.$emit('error-alert', {
           title: 'Error',
           message: 'Unable to get house list'

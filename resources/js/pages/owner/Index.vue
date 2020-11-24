@@ -1,7 +1,9 @@
 <template>
   <div style="min-height: 100vh">
-    <header-bar class="position-relative"></header-bar>
-    <router-view></router-view>
+    <header-bar/>
+    <transition name="slide-left">
+      <router-view/>
+    </transition>
     <div owner-bottom-nav>
       <div bar>
         <router-link :to="{name: 'account'}">Tài khoản</router-link>

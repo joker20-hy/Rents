@@ -59,6 +59,20 @@
           <img :src="temp" alt="" class="w-100">
         </div>
       </div>
+      <div class="form-group d-flex align-items-center py-2">
+        <label for="" class="m-0">Ảnh nhà</label>
+        <div class="position-relative pl-3">
+          <button type="button" class="btn text-primary" onclick="clickTarget('#images')">
+            <images-icon :width="'18px'" :height="'18px'" class="fill-blue"/>
+          </button>
+          <input type="file" id="images" class="d-none" ref="images" @change="getImages" accept="image/*" multiple>
+        </div>
+      </div>
+      <div class="row" v-if="bucket.length>0">
+        <div class="col-4" v-for="(temp, index) in bucket" :key="index">
+          <img :src="temp" alt="" class="w-100">
+        </div>
+      </div>
       <div class="form-group d-flex">
         <button class="btn btn-outline-primary ml-auto">Thêm</button>
       </div>
@@ -72,11 +86,13 @@ import SuggestBox from '../../utilities/SuggestBox'
 import SwitchBox from '../../utilities/SwitchBox'
 import ChooseService from '../../admin/house/Services'
 import $number from '../../../utilities/number'
+import ImagesIcon from '../../../icons/Images'
 export default {
   components: {
     SuggestBox,
     SwitchBox,
-    ChooseService
+    ChooseService,
+    ImagesIcon
   },
   data () {
     return {
