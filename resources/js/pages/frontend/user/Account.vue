@@ -1,6 +1,6 @@
 <template>
-  <div class="mt-1">
-    <form contain-box class="bg-white mb-2" @submit.prevent="update">
+  <div class="mt-1 px-2">
+    <form page-section contain-box class="bg-white mb-2" @submit.prevent="update">
       <div class="c-toolbar c-flex-middle">
         <button v-if="edit" class="btn btn-primary c-flex-middle">
           Lưu thay đổi
@@ -27,6 +27,10 @@
           </div>
         </div>
       </div>
+      </div>
+      <label>Email</label>
+      <div class="form-group">
+        <div class="holder">{{ user.email }}</div>
       </div>
       <label>Tên người dùng</label>
       <div class="form-group">
@@ -66,13 +70,31 @@
       </div>
     </form>
     <input type="file" id="profile-image" @change="previewImage" class="d-none">
-    <form contain-box class="bg-white">
-      <div class="holder">
-        <router-link class="c-flex-middle" :to="{name: 'forgot-password'}">
-          <broken-icon :width="'16px'" :height="'16px'" style="transform: translateY(-2px)" class="fill-blue"/> Thay đổi mật khẩu
+    <div class="bg-white" contain-box page-section>
+      <div class="py-2 mb-2">
+        <router-link class="c-flex-middle" :to="{name: 'verify-email', query: {next: 'reset-password'}}">
+          <broken-icon :width="'16px'" :height="'16px'" style="transform: translateY(-3px)" class="fill-blue"/>
+          &nbsp;&nbsp;Thay đổi mật khẩu
         </router-link>
       </div>
-    </form>
+
+      <div v-if="user.role==normal_role" class="py-2">
+        <router-link v-if="user.application==null" class="c-flex-middle" :to="{name: 'verify-email', query: {next: 'create-application'}}">
+          <register-icon :width="'16px'" :height="'16px'" style="transform: translateY(-2px)" class="fill-blue"/>
+          &nbsp;&nbsp;Đăng ký chủ trọ
+        </router-link>
+        <div v-else-if="user.application.status==application_statuses.WAITING" class="c-flex-middle text-primary">
+          <register-icon :width="'16px'" :height="'16px'" style="transform: translateY(-1px)" class="fill-blue"/>
+          &nbsp;&nbsp;Đang chờ xử lý
+          <router-link :to="{name: 'detail-application', params: {id: user.application.id}}" class="ml-auto">Chi tiết</router-link>
+        </div>
+        <div v-else-if="user.application.status==application_statuses.DECLINED" class="c-flex-middle text-danger">
+          Đăng ký chủ trọ đã bị từ chối
+          <router-link :to="{name: 'detail-application', params: {id: user.application.id}}" class="ml-auto">Sửa</router-link>
+        </div>
+      </div>
+
+    </div>
     <change-password :show="change_password" @close="change_password=false"></change-password>
   </div>
 </template>
@@ -80,11 +102,13 @@
 import ChangePassword from './ChangePassword'
 import UploadIcon from '../../../icons/Upload'
 import BrokenIcon from '../../../icons/Broken'
+import RegisterIcon from '../../../icons/Register'
 export default {
   components: {
     ChangePassword,
     UploadIcon,
-    BrokenIcon
+    BrokenIcon,
+    RegisterIcon
   },
   data () {
     return {
@@ -92,7 +116,9 @@ export default {
       backup_data: {},
       image: '',
       edit_avatar: false,
-      change_password: false
+      change_password: false,
+      normal_role: $config.USER.ROLE.NORMAL,
+      application_statuses: $config.OWNER_APPLICATION_STATUS
     }
   },
   computed: {

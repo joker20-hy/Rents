@@ -77,6 +77,11 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(Review::class);
     }
 
+    public function reviewRenter()
+    {
+        return $this->belongsToMany(Review::class, 'review_renters', 'renter_id');
+    }
+
     public function room()
     {
         return $this->belongsTo(Room::class);
@@ -95,5 +100,10 @@ class User extends Authenticatable implements MustVerifyEmail
     public function verification()
     {
         return $this->hasOne(Verification::class);
+    }
+
+    public function application()
+    {
+        return $this->hasOne(Application::class);
     }
 }

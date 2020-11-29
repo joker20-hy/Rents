@@ -125,13 +125,18 @@ class ReviewRepository
      */
     public function listRoom($roomId = null, $paginate = 10)
     {
-        $select = "reviews.*,
-        if(reviews.anonymous,null,(select name from users where id=reviews.user_id)) as user_name,
-        if(reviews.anonymous,null,(select image from profiles where profiles.user_id=reviews.user_id)) as user_avatar";
-        $reviews = $this->review->selectRaw($select)
-            ->join('review_rooms', 'reviews.id', '=', 'review_rooms.review_id');
-        $reviews = $reviews->where('review_rooms.room_id', $roomId);
-        return $reviews->with('reviewRooms')->paginate($paginate);
+        return $this->reviewRoom->where('room_id', $roomId)
+            ->with(['review' => function ($query) {
+                $query->select("*")->selectRaw("IF(
+                    reviews.anonymous,
+                    null,
+                    (SELECT name FROM users WHERE id=reviews.user_id)
+                ) AS user_name, IF(
+                    reviews.anonymous,
+                    null,
+                    (SELECT image FROM profiles WHERE profiles.user_id=reviews.user_id)
+                ) AS user_avatar");
+            }])->paginate($paginate);
     }
 
     /**
@@ -142,7 +147,7 @@ class ReviewRepository
      *
      * @return \App\Models\Review
      */
-    public function store($params)
+    public function store(array $params)
     {
         return $this->review->create($params);
     }
@@ -154,9 +159,14 @@ class ReviewRepository
      *
      * @return \App\Models\ReviewRoom
      */
-    public function storeReviewRoom($params)
+    public function storeReviewRoom(array $params)
     {
         return $this->reviewRoom->create($params);
+    }
+
+    public function storeReviewRenter(array $params)
+    {
+        return $this->reviewRenter->create($params);
     }
 
     /**
@@ -190,20 +200,20 @@ class ReviewRepository
     }
 
     /**
-     * Update owner
+     * Update user
      *
-     * @param \App\Models\User $owner
+     * @param \App\Models\User $user
      * @param integer $rate
      *
      * @return \App\Models\User
      */
-    public function updateOwnerRate($owner, $rate)
+    public function updateUserRate($user, $rate)
     {
-        $rate_count = $owner->rate_count + 1;
-        $avg_rate = ($owner->rate_count * $owner->avg_rate + $rate) / ($rate_count);
-        return DB::transaction(function () use ($owner, $avg_rate, $rate_count) {
-            $owner->update(['avg_rate' => $avg_rate, 'rate_count' => $rate_count]);
-            return $owner;
+        $rate_count = $user->rate_count + 1;
+        $avg_rate = ($user->rate_count * $user->avg_rate + $rate) / $rate_count;
+        return DB::transaction(function () use ($user, $avg_rate, $rate_count) {
+            $user->update(['avg_rate' => $avg_rate, 'rate_count' => $rate_count]);
+            return $user;
         });
     }
 

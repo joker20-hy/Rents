@@ -2,6 +2,17 @@
 <div contain-box>
   <div class="bill-contain" v-if="payment">
     <h4>Hóa đơn tháng {{ payment.month }}/{{ payment.year }}</h4>
+    <div class="form-group c-flex-middle">
+      <label>Trạng thái</label>
+      <div class="ml-auto">
+        <span v-if="payment.status" class="text-light bg-secondary" style="padding:2px 5px;border-radius: 6px">
+          Đã thanh toán
+        </span>
+        <span v-else class="text-light bg-danger" style="padding:2px 5px;border-radius: 6px">
+          Chưa thanh toán
+        </span>
+      </div>
+    </div>
     <div class="form-group d-flex" v-for="row in payment.bill.services" :key="row.servince_id">
       <label>{{ row.servince_name }}</label>
       <div class="ml-auto">{{ range(row.price) }} vnđ {{ row.amount?` (${row.amount})`:'' }}</div>

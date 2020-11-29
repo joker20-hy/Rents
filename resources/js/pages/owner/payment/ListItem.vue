@@ -9,8 +9,7 @@
           v-model="payment.status"
           :class="payment.status?'bg-primary':''"
           :locked="payment.status!=0"
-          @change="changeStatus"
-          @click="alertPayment()"
+          @input="changeStatus"
         ></switch-box>&nbsp;
         <span v-if="payment.status">Đã thanh toán</span>
         <span v-else>Chưa thanh toán</span>
@@ -54,6 +53,9 @@ export default {
       })
     },
     changeStatus () {
+      if (!this.payment.status) {
+        return this.alertPayment()
+      }
       $eventHub.$emit('on-loading')
       ajax().put(`/api/payment/room/${this.payment.id}/status`, {status: this.payment.status})
       .then(res => {

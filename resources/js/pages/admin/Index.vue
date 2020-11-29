@@ -27,6 +27,7 @@ export default {
 <style scoped>
   .dashboard-container {
     background-color: #f0f0f0;
-    min-height: 100vh;
+    max-height: 100vh;
+    overflow-y: auto;
   }
 </style>

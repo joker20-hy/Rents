@@ -1,7 +1,8 @@
 <template>
-  <div class="mt-4 border border-primary p-2">
+  <div page-section class="text-light bg-primary">
     <div class="d-flex">
-      <h5>Thông tin liên hệ</h5> <router-link class="ml-auto" :to="{name: 'owner-detail-house', params: {id: house_id}}">Sửa</router-link>
+      <h5>Liên hệ khi thuê phòng</h5>
+      <router-link class="ml-auto text-light" :to="{name: 'owner-detail-house', params: {id: house_id}}">Sửa</router-link>
     </div>
     <div v-if="house.contact">
       <span class="text-bold">Số điện thoại:</span> {{ house.contact.phone }}

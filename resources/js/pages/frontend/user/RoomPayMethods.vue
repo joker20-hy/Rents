@@ -26,9 +26,9 @@ export default {
     }
   },
   watch: {
-    "$route.param.id": {
+    "$route.params.id": {
       handler (id) {
-        if (this.paymethods.length==0) this.get(id)
+        this.get(id)
       },
       deep: true,
       immediate: true
@@ -37,7 +37,7 @@ export default {
   methods: {
     get (id) {
       $eventHub.$emit('on-loading')
-      ajax().get(`/api/pay-method?room=${id}`)
+      ajax().get(`/api/room/${id}/pay-methods`)
       .then(res => {
         $eventHub.$emit('off-loading')
         this.$store.commit('paymethods/paymethods', res.data)

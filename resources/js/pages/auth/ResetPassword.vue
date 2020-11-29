@@ -1,7 +1,11 @@
 <template>
-  <div class="auth-container p-2">
+  <div class="m-auto">
     <form class="login-form px-2 py-3" @submit.prevent="update" v-if="token!=undefined">
-      <h2 class="text-center text-primary">Rent</h2>
+      <div class="text-center">
+        <router-link :to="{name: 'home'}">
+          <rent-logo-icon :height="'50px'" :width="'auto'" class="fill-blue"/>
+        </router-link>
+      </div>
       <h5 class="text-center mb-2">Khôi phục mật khẩu</h5>
       <div class="form-group">
         <label for="">Mật khẩu mới</label>
@@ -28,7 +32,11 @@
   </div>
 </template>
 <script>
+import RentLogoIcon from '../../icons/RentLogo'
 export default {
+  components: {
+    RentLogoIcon
+  },
   data () {
     return {
       id: this.$route.params.id,
@@ -81,18 +89,10 @@ export default {
 }
 </script>
 <style scoped>
-  .auth-container {
-    min-height: 100vh;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    background-color: var(--blue);
-  }
   form {
     background-color: var(--white);
     border-radius: 10px;
-    box-shadow: 0px 1px 3px;
-    padding: 10px;
+    box-shadow: 0px 0px 30px #0003;
   }
   .login-form {
     width: 400px;

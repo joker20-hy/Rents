@@ -10,7 +10,7 @@
     <div class="text-dark c-flex-middle" v-if="room.house">
       <location-pin-icon :width="'15px'" :height="'15px'"/>&nbsp;{{ room.house.address_detail }}
     </div>    
-    <div class="d-flex my-3">
+    <div class="text-center my-3">
       <div>
         <span style="font-size: 60px;line-height: 1">{{ room.avg_rate }}</span>/10
       </div>
@@ -29,23 +29,22 @@
       </div>
     </div>
 
-    <div class="sticky-top bg-white row mx-0 mb-2" v-if="room.house.contact!=null">
-      <div class="col-12 pt-2">
-        <h2 class="mb-0">Liên hệ của chủ nhà</h2>
-      </div>
-      <div class="col-6 py-2" v-if="room.house.contact.phone!=null">
-        <span class="text-bold">Số điện thoại:</span> <a :href="`tel:${room.house.contact.phone}`">{{ room.house.contact.phone }}</a>
-      </div>
-      <div class="col-6 py-2" v-if="room.house.contact.other!=null">
-        <span class="text-bold">Liên hệ khác:</span> {{ room.house.contact.other }}
-      </div>
-    </div>
-
-    <div class="border border-danger" v-if="room.roommate_wanted" page-section>
+    <div class="alert alert-success" v-if="room.roommate_wanted" page-section>
       <div><span class="text-bold">Cần thêm: </span>{{ room.roommate_wanted.number }}</div>
       <div v-if="room.roommate_wanted.contact"><span class="text-bold">Thông tin liên hệ: </span>{{ room.roommate_wanted.contact }}</div>
       <div v-if="room.roommate_wanted.content"><span class="text-bold">Thông tin thêm: </span>{{ room.roommate_wanted.content }}</div>
     </div>
+
+    <div class="c-toolbar" page-section>
+      <h2 class="mb-0">Liên hệ của chủ nhà</h2>
+      <div class="col-6 py-2 pl-0" v-if="room.house.contact.phone!=null">
+        <span class="text-bold">Số điện thoại:</span> <a :href="`tel:${room.house.contact.phone}`">{{ room.house.contact.phone }}</a>
+      </div>
+      <div class="col-6 py-2 pr-0" v-if="room.house.contact.other!=null">
+        <span class="text-bold">Liên hệ khác:</span> {{ room.house.contact.other }}
+      </div>
+    </div>
+
     <div page-section>
       <h2>Cơ Sở vật chất</h2>
       <room-criterias v-if="room.criterias" :list="room.criterias" class="mb-3"/>
@@ -98,8 +97,8 @@ export default {
         this.id = id
         this.get()
       },
-      deep: true,
-      immediate: true
+      immediate: true,
+      deep: true
     }
   },
   data () {

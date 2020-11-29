@@ -4,7 +4,7 @@
   display: none;
 }
 .modal-backdrop {
-  background-color: #00000030!important;
+  background-color: #00000050!important;
 }
 .pagination {
   justify-content: center;
@@ -52,7 +52,7 @@
   top: 0px!important;
 }
 [contain-box] {
-  width: 480px;
+  width: 500px;
   max-width: 100%;
   margin-left: auto;
   margin-right: auto;
@@ -472,4 +472,11 @@ $side-search-header: 240px;
     border: 3px solid $light;
     border-top: 3px solid $blue;
   }
+}
+.auth-container {
+  min-height: 100vh;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  background-color: $blue;
 }

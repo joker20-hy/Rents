@@ -13,20 +13,24 @@
         </button>
       </div>
       <div>
-      <div class="form-group" v-if="user.profile">
-        <div class="text-center">
-          <img avatar :src="user.profile.image==null?'/images/default.svg':user.profile.image" :alt="user.name">
-          <br>
-          <div>
-            <button type="button" v-show="edit" class="btn text-primary" onclick="clickTarget('#profile-image')">
-              Thay đổi
-            </button>
-            <button type="button" class="btn text-primary" v-show="edit&&edit_avatar" @click="uploadImage()">
-              <upload-icon :width="14" :height="14" class="fill-blue" style="transform: translateY(-2px)"/> Lưu
-            </button>
+        <div class="form-group" v-if="user.profile">
+          <div class="text-center">
+            <img avatar :src="user.profile.image==null?'/images/default.svg':user.profile.image" :alt="user.name">
+            <br>
+            <div>
+              <button type="button" v-show="edit" class="btn text-primary" onclick="clickTarget('#profile-image')">
+                Thay đổi
+              </button>
+              <button type="button" class="btn text-primary" v-show="edit&&edit_avatar" @click="uploadImage()">
+                <upload-icon :width="14" :height="14" class="fill-blue" style="transform: translateY(-2px)"/> Lưu
+              </button>
+            </div>
           </div>
         </div>
       </div>
+      <label>Email</label>
+      <div class="form-group">
+        <div class="holder">{{ user.email }}</div>
       </div>
       <label>Tên người dùng</label>
       <div class="form-group">

@@ -2,21 +2,26 @@
 
 namespace App\Repositories;
 
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use App\Models\Province;
 
 class ProvinceRepository
 {
     protected $province;
+    protected $cacheTimeout;
 
     public function __construct(Province $province)
     {
         $this->province = $province;
+        $this->cacheTimeout = 604800;
     }
 
     public function all()
     {
-        return $this->province->select(['id', 'name', 'slug'])->get();
+        return Cache::remember('provinces', $this->cacheTimeout, function () {
+            return $this->province->select(['id', 'name', 'slug'])->get();
+        });
     }
 
     /**

@@ -2,9 +2,11 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Repositories\ReviewRepository;
 use App\Repositories\RoomRepository;
+use App\Repositories\UserRepository;
 
 class ReviewServices
 {
@@ -13,10 +15,12 @@ class ReviewServices
 
     public function __construct(
         ReviewRepository $reviewRepository,
-        RoomRepository $roomRepository
+        RoomRepository $roomRepository,
+        UserRepository $userRepository
     ) {
         $this->reviewRepository = $reviewRepository;
         $this->roomRepository = $roomRepository;
+        $this->userRepository = $userRepository;
     }
 
     public function list($type, $id = null, $paginate = 10)
@@ -48,26 +52,31 @@ class ReviewServices
      */
     public function store(array $params, $type)
     {
-        $params['user_id'] = Auth::user()->id;
-        $review = $this->reviewRepository->store($type, $params);
-        switch ($type) {
-            case config('const.REVIEW.TYPE.ROOM'):
-                $room = $this->roomRepository->findById($params['criteria_id']);
-                $this->storeForRoom($review, $room, $params);
-                break;
-            case config('const.REVIEW.TYPE.RENTER'):
-                # code...
-                break;
-            case config('const.REVIEW.TYPE.HOUSE'):
-                # code...
-                break;
-            case config('const.REVIEW.TYPE.OWNER'):
-                # code...
-                break;
-            default:
-                throw "";
-                break;
-        }
+        return DB::transaction(function () use ($params, $type) {
+            $params['user_id'] = Auth::user()->id;
+            $review = $this->reviewRepository->store($params);
+            switch ($type) {
+                case config('const.REVIEW.TYPE.ROOM'):
+                    $room = $this->roomRepository->findById($params['criteria_id']);
+                    $this->storeForRoom($review, $room, $params);
+                    break;
+                case config('const.REVIEW.TYPE.RENTER'):
+                    $renter = $this->userRepository->first(['id' => $params['criteria_id']]);
+                    $this->storeForRenter($review, $renter, $params['rate']);
+                    break;
+                case config('const.REVIEW.TYPE.HOUSE'):
+                    # code...
+                    break;
+                case config('const.REVIEW.TYPE.OWNER'):
+                    # code...
+                    break;
+                default:
+                    throw "";
+                    break;
+            }
+            return $review;
+        });
+        
     }
 
     /**
@@ -91,9 +100,19 @@ class ReviewServices
             'owner_id' => $owner->id,
             'rate' => $rates['owner_rate']
         ]);
-        $this->reviewRepository->updateOwnerRate($owner, $rates['owner_rate']);
+        $this->reviewRepository->updateUserRate($owner, $rates['owner_rate']);
         $roomRate = ($reviewRoom->secure_rate + $reviewRoom->infra_rate) / 2;
         $this->reviewRepository->updateRoomRate($room, $roomRate);
+    }
+
+    public function storeForRenter($review, $renter, $rate)
+    {
+        $reviewRenter = $this->reviewRepository->storeReviewRenter([
+            'review_id' => $review->id,
+            'renter_id' => $renter->id,
+            'rate' => $rate
+        ]);
+        $this->reviewRepository->updateUserRate($renter, $rate);
     }
 
     /**

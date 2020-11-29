@@ -2,16 +2,19 @@
 
 namespace App\Repositories;
 
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use App\Models\District;
 
 class DistrictRepository
 {
     protected $district;
+    protected $cacheTimeout;
 
     public function __construct(District $district)
     {
         $this->district = $district;
+        $this->cacheTimeout = 604800;
     }
 
     /**
@@ -23,11 +26,12 @@ class DistrictRepository
      */
     public function all($provinceId = null)
     {
-        $district = $this->district;
-        if (!is_null($provinceId)) {
-            $district = $district->where('province_id', $provinceId);
-        }
-        return $district->get();
+        $key = is_null($provinceId)?"districts":"districts#$provinceId";
+        return Cache::remember($key, $this->cacheTimeout, function () use ($provinceId) {
+            $district = $this->district;
+            $district = !is_null($provinceId)?$district->where('province_id', $provinceId):$district;
+            return $district->get();
+        });
     }
 
     /**

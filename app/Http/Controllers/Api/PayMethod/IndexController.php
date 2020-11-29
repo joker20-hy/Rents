@@ -17,6 +17,7 @@ class IndexController extends Controller
 
     public function main(Request $request)
     {
-        return $this->payMethodServices->index($request->owner_id);
+        $paymethods = $this->payMethodServices->index($request->owner_id);
+        return response()->json($paymethods, 200);
     }
 }

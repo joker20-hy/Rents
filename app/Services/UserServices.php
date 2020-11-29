@@ -4,6 +4,7 @@ namespace App\Services;
 
 use Carbon\Carbon;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Repositories\UserRepository;
@@ -71,17 +72,17 @@ class UserServices
     public function show($id = null)
     {
         $authUser = Auth::user();
-        if (is_null($id)) {
-            $user = $authUser;
-        } elseif (!$this->permissible($id)) {
-            return abort(403, 'Bạn khồng có quyền thực hiện hành động này');
+        $id = is_null($id) ? $authUser->id : $id;
+        if (!$this->permissible($id)) {
+            $with = ['profile' => function ($query) {
+                $query->select(['user_id', 'firstname', 'lastname', 'phone', 'date_of_birth']);
+            }];
+            $select = ['id', 'email', 'name', 'room_id'];
         } else {
-            $user = $this->userRepository->findById($id);
+            $with = ['profile', 'setting', 'room', 'application'];
+            $select = "*";
         }
-        $user->profile;
-        $user->setting;
-        $user->room;
-        return $user;
+        return $this->userRepository->first(['id' => $id], $with, $select);
     }
 
     /**
@@ -174,12 +175,16 @@ class UserServices
         if (!$this->permissible($id)) {
             return abort(403, 'Bạn khồng có quyền thực hiện hành động này');
         }
-        $profile = $params['profile'];
-        $this->userRepository->updateProfile($id, $profile);
-        unset($params['profile']);
-        $setting = $params['setting'];
-        $this->userRepository->updateSetting($id, $setting);
-        unset($params['setting']);
+        if (array_key_exists('profile', $params)) {
+            $profile = $params['profile'];
+            $this->userRepository->updateProfile($id, $profile);
+            unset($params['profile']);
+        }
+        if (array_key_exists('setting', $params)) {
+            $setting = $params['setting'];
+            $this->userRepository->updateSetting($id, $setting);
+            unset($params['setting']);
+        }
         return $this->userRepository->update(['id' => $id], $params);
     }
 
@@ -211,23 +216,19 @@ class UserServices
         return $room;
     }
 
-    /**
-     * Use email to send verify code
-     *
-     * @param email $email
-     */
-    public function forgotPassword($email)
+    public function sendVerify($email)
     {
-        $user = $this->userRepository->findByEmail($email);
-        $profile = $user->profile;
+        $user = $this->userRepository->first(['email' => $email], ['profile']);
         $code = Str::random(config('const.VERIFICATION.CODE_LENGTH'));
         $this->userRepository->updateVerification($user->id, [
             'user_id' => $user->id,
             'code' => $code,
             'expire_at' => Carbon::now()->addMinutes(config('const.VERIFICATION.EXPIRE'))
         ]);
-        $user->full_name = "$profile->lastname $profile->firstname";
-        $this->mailServices->forgotPassword($user, $code);
+        $user->full_name = is_null($user->profile->firstname)&&is_null($user->profile->lastname)
+                            ?"$user->profile->lastname $user->profile->firstname"
+                            :$user->name;
+        $this->mailServices->verifyEmail($user, $code);
         return $user;
     }
 
