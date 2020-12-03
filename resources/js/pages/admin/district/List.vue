@@ -2,17 +2,17 @@
   <div class="container">
     <h1 class="d-flex align-items-end mt-5 py-3">
       Danh sách quận/huyện
-      <button class="btn ml-auto text-primary" @click="create=true" style="font-weight: 600">
-        <i class="fas fa-plus"></i> Create
+      <button class="btn ml-auto text-primary c-flex-middle" @click="create=true" style="font-weight: 600">
+        <add-icon :width="'13px'" :height="'13px'" class="fill-blue" style="transform: translateY(-1px)"/>&nbsp;Thêm mới
       </button>
     </h1>
     <district-create v-show="create" @created="created" @cancel="create=false" @success="success" @error="error"/>
     <table class="records-list">
       <thead>
-        <th>Name</th>
+        <th>Tên</th>
         <th>Slug</th>
-        <th>Province</th>
-        <th>Actions</th>
+        <th>Tình thành</th>
+        <th>Hành động</th>
       </thead>
       <tbody>
         <list-item v-for="district in districts" :key="district.id" :district="district" @destroy="showDestroy" @success="success" @error="error"/>
@@ -41,12 +41,14 @@
 import DistrictCreate from './Create'
 import ListItem from './ListItem'
 import ConfirmBox from '../../utilities/ConfirmBox'
+import AddIcon from '../../../icons/Add'
 export default {
   name: 'district-list',
   components: {
     ListItem,
     DistrictCreate,
-    ConfirmBox
+    ConfirmBox,
+    AddIcon
   },
   data () {
     return {

@@ -1,17 +1,17 @@
 <template>
   <div class="col-lg-8 mx-auto ">
   	<h3 class="mt-5 text-primary d-flex">
-  	  Criteria list
-  	  <button class="ml-auto btn text-primary" v-show="!create" @click="create=true">
-  	  	<i class="fas fa-plus"></i> Create
-  	  </button>
+  	  Tiêu chí phòng trọ
+	  <button class="btn ml-auto text-primary c-flex-middle" v-show="!create" @click="create=true" style="font-weight: 600">
+        <add-icon :width="'13px'" :height="'13px'" class="fill-blue" style="transform: translateY(-1px)"/>&nbsp;Thêm mới
+      </button>
   	</h3>
   	<create-criteria v-show="create" @created="created" @cancel="create=false"/>
   	<table class="records-list">
   	  <thead>
-  	  	<th>Name</th>
+  	  	<th>Tên</th>
 		<th>Icon</th>
-  	  	<th>Actions</th>
+  	  	<th>Hành động</th>
   	  </thead>
   	  <tbody>
   	  	<list-item v-for="criteria in criterias" :key="criteria.id" :criteria="criteria" @destroy="destroyConfirm"/>
@@ -35,12 +35,14 @@
 import ConfirmBox from '../../utilities/ConfirmBox'
 import CreateCriteria from './Create'
 import ListItem from './ListItem'
+import AddIcon from '../../../icons/Add'
 export default {
   name: 'criteria-list',
   components: {
   	ConfirmBox,
   	CreateCriteria,
-  	ListItem
+	ListItem,
+	AddIcon
   },
   data () {
   	return {

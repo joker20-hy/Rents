@@ -1,8 +1,7 @@
 <template>
-  <div class="container" style="margin-top: 15px;padding-bottom: 60px" v-if="house!=undefined">
-    <image-library class="form-group" :images="house.images" :updateApi="`/api/house/${house.id}/images`" :deleteApi="`/api/house/${house.id}/images`" @updated="updateImages"/>
-    <form class="col-lg-10 col-xl-8" detail-form @submit.prevent="update()">
-      <div class="d-flex">
+  <div contain-box class="mt-2" v-if="house!=undefined">
+    <form page-section @submit.prevent="update()">
+      <div class="bg-white d-flex c-toolbar py-2">
         <button class="btn text-primary" v-show="edit">
           <i class="far fa-save"></i> Lưu
         </button>
@@ -11,62 +10,59 @@
         </button>
       </div>
       <div class="form-group">
-        <label for="">Tên</label>
+        <label for="">Tên  <span class="text-danger" title="Required feild">*</span></label>
         <div class="holder" v-show="!edit">{{ house.name }}</div>
         <input type="text" class="input" v-model="house.name" v-show="edit">
       </div>
       <div class="form-group" v-show="!edit">
-        <label for="">Địa chỉ</label>
+        <label for="">Địa chỉ  <span class="text-danger" title="Required feild">*</span></label>
         <div class="holder">{{ house.address_detail }}</div>
       </div>
       <div class="form-group row" :class="edit?'d-flex':'d-none'">
         <div class="col-md-4">
-          <label for="">Tỉnh thành</label>
+          <label for="">Tỉnh thành  <span class="text-danger" title="Required feild">*</span></label>
           <suggest-box :api="'/api/sg/provinces'" :placeholder="'Tỉnh thành'" :value="house.province" @change="getProvince" :required="true"/>
         </div>
         <div class="col-md-4">
-          <label for="">Quận huyện</label>
+          <label for="">Quận huyện  <span class="text-danger" title="Required feild">*</span></label>
           <suggest-box :api="'/api/sg/districts'" :params="{province: house.province_id}" :value="house.district" :placeholder="'Quận huyện'" @change="getDistrict" :required="true"/>
         </div>
         <div class="col-md-4">
-          <label for="">Khu vực</label>
+          <label for="">Khu vực  <span class="text-danger" title="Required feild">*</span></label>
           <suggest-box :api="'/api/sg/areas'" :params="{province: house.province_id,district: house.district_id}" :value="house.area" :placeholder="'Khu vực'" @change="getArea"/>
         </div>
       </div>
       <div class="form-group" v-show="edit">
-        <label for="">Chi tiết địa chỉ</label>
+        <label for="">Chi tiết địa chỉ  <span class="text-danger" title="Required feild">*</span></label>
         <input type="text" class="input" v-model="house.address" placeholder="Địa chỉ chi tiết">
       </div>
       <!--  -->
       <label>Dịch vụ của nhà trọ <span class="text-danger" title="Required feild">*</span></label>
       <small>(Những dịch vụ mà người thuê trọ cần trả trong quá trình thuê nhà)</small>
       <choose-service :list="services" :chosens="serviceIds" @delete="deleteService" @add="addService" :editable="edit"/>
-      <!--  -->
-      <div class="form-group d-flex">
-        <label for="">Cho thuê nguyên căn?</label>
-        <switch-box v-model="house.rent" class="ml-auto" :class="house.rent==1?'on':''" :locked="!edit"/>
+      <div class="form-group" v-if="house.contact">
+        <label>Số điện thoại <span class="text-danger" title="Required feild">*</span></label>
+        <div v-if="!edit" class="holder">{{ house.contact.phone==''?'Chưa rõ':house.contact.phone }}</div>
+        <input v-else type="number" class="input" v-model="house.contact.phone" placeholder="vd: 0123456789" required>
       </div>
-      <div class="form-group" v-show="house.rent==1">
-        <label for="">Hướng nhà</label>
-        <div class="holder" v-show="!edit">{{ direction?direction.name:'Chưa rõ' }}</div>
-        <select class="input" v-model="house.direction" v-show="edit">
-          <option value="">Hướng nhà</option>
-          <option v-for="dir in directions" :value="dir.id" :key="dir.id">{{ dir.name }}</option>
-        </select>
-      </div>
-      <div class="form-group" v-show="house.rent==1">
-        <label for="">Price</label>
-        <div class="holder" v-show="!edit">{{ house.price?`${house.price} vnđ`:`Chưa rõ` }}</div>
-        <input type="number" class="input" v-model="house.price" v-show="edit" placeholder="Price of the house">
-      </div>
-      <div class="form-group" v-show="house.rent==1">
-        <label for="">Description</label>
-        <div class="holder content-html" v-show="!edit" v-html="house.description"></div>
-        <div v-show="edit">
-          <ckeditor :editor="editor" v-model="house.description" :config="editorConfig"></ckeditor>
+      <div class="form-group">
+        <label>Liên hệ khác</label>
+        <div v-if="!edit" class="holder">
+          {{ house.contact.others==''?`Hiện chưa rõ`:house.contact.others }}
         </div>
+        <textarea v-else class="input" v-model="house.contact.others" placeholder="Liên hệ khác"></textarea>
       </div>
     </form>
+    <div page-section>
+      <label class="w-100 m-0">Ảnh</label>
+      <small>Lưu ý: phần   này sẽ cần khi nhà của bạn là cho thuê nguyên căn</small>
+      <image-library
+        :images="house.images"
+        :updateApi="`/api/house/${house.id}/images`"
+        :deleteApi="`/api/house/${house.id}/images`"
+        @updated="updateImages"
+      />
+    </div>
   </div>
 </template>
 <script>
@@ -139,7 +135,8 @@ export default {
         direction: this.house.direction,
         description: this.house.description,
         add_services: this.add_services,
-        remove_services: this.remove_services
+        remove_services: this.remove_services,
+        contact: this.house.contact
       }
     }
   },
@@ -178,6 +175,7 @@ export default {
       .then(res => {
         res.data.images = res.data.images==null?[]:JSON.parse(res.data.images)
         res.data.description = res.data.description==null?'':utf8.decode(res.data.description)
+        res.data.contact=res.data.contact==null?{phone:'',others:''}:JSON.parse(res.data.contact)
         this.$store.commit('houses/houses', [res.data])
       })
       .catch(err => console.log(err.response.data.message) )
@@ -193,7 +191,7 @@ export default {
           message: 'Đã chỉnh sửa thông tin thành công',
           timeout: 3000
         })
-        this.$router.push({name: 'owner-list-house'})
+        this.edit = false
       })
       .catch(err => console.log(err))
     },

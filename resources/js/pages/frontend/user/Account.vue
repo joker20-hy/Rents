@@ -1,29 +1,36 @@
 <template>
-  <div class="mt-1">
-    <form contain-box class="bg-white mb-2" @submit.prevent="update">
-      <div class="d-flex">
-        <button type="button" v-show="!edit" class="btn text-primary ml-auto" @click="enterEdit()">
-          <i class="fas fa-pencil"></i> <span style="font-weight: 600">Chỉnh sửa</span>
+  <div class="mt-1 px-2">
+    <form page-section contain-box class="bg-white mb-2" @submit.prevent="update">
+      <div class="c-toolbar c-flex-middle">
+        <button v-if="edit" class="btn btn-primary c-flex-middle">
+          Lưu thay đổi
         </button>
-        <button type="button" v-show="edit" class="btn text-danger ml-auto" @click="leaveEdit()">
-          <i class="fas fa-times"></i> <span style="font-weight: 600">Hủy</span>
+        <button type="button" v-show="edit" class="btn btn-danger ml-auto" @click="leaveEdit()">
+          Hủy
+        </button>
+        <button type="button" v-show="!edit" class="btn btn-primary ml-auto" @click="enterEdit()">
+          Chỉnh sửa
         </button>
       </div>
       <div>
       <div class="form-group" v-if="user.profile">
         <div class="text-center">
-          <img style="width: 100px;height: 100px;border-radius: 50%;margin-bottom: 10px" :src="user.profile.image==null?'/images/default.svg':user.profile.image" :alt="user.name">
+          <img avatar :src="user.profile.image==null?'/images/default.svg':user.profile.image" :alt="user.name">
           <br>
           <div>
             <button type="button" v-show="edit" class="btn text-primary" onclick="clickTarget('#profile-image')">
               Thay đổi
             </button>
             <button type="button" class="btn text-primary" v-show="edit&&edit_avatar" @click="uploadImage()">
-              <i class="far fa-save"></i> Lưu
+              <upload-icon :width="14" :height="14" class="fill-blue" style="transform: translateY(-2px)"/> Lưu
             </button>
           </div>
         </div>
       </div>
+      </div>
+      <label>Email</label>
+      <div class="form-group">
+        <div class="holder">{{ user.email }}</div>
       </div>
       <label>Tên người dùng</label>
       <div class="form-group">
@@ -61,29 +68,47 @@
         <div class="holder" v-show="!edit">{{ user.profile.address?user.profile.address:'Chưa rõ' }}</div>
         <input type="text" v-show="edit" class="input" v-model="user.profile.address" placeholder="Địa chỉ">
       </div>
-      <div class="form-group text-right" v-show="edit">
-        <button class="btn btn-outline-primary">
-          <i class="far fa-save"></i> Lưu
-        </button>
-      </div>
     </form>
     <input type="file" id="profile-image" @change="previewImage" class="d-none">
-    <form contain-box class="bg-white">
-      <div class="holder">
-        <router-link :to="{name: 'forgot-password'}">
-          <i class="fas fa-lock"></i> Thay đổi mật khẩu
+    <div class="bg-white" contain-box page-section>
+      <div class="py-2 mb-2">
+        <router-link class="c-flex-middle" :to="{name: 'verify-email', query: {next: 'reset-password'}}">
+          <broken-icon :width="'16px'" :height="'16px'" style="transform: translateY(-3px)" class="fill-blue"/>
+          &nbsp;&nbsp;Thay đổi mật khẩu
         </router-link>
       </div>
-    </form>
+
+      <div v-if="user.role==normal_role" class="py-2">
+        <router-link v-if="user.application==null" class="c-flex-middle" :to="{name: 'verify-email', query: {next: 'create-application'}}">
+          <register-icon :width="'16px'" :height="'16px'" style="transform: translateY(-2px)" class="fill-blue"/>
+          &nbsp;&nbsp;Đăng ký chủ trọ
+        </router-link>
+        <div v-else-if="user.application.status==application_statuses.WAITING" class="c-flex-middle text-primary">
+          <register-icon :width="'16px'" :height="'16px'" style="transform: translateY(-1px)" class="fill-blue"/>
+          &nbsp;&nbsp;Đang chờ xử lý
+          <router-link :to="{name: 'detail-application', params: {id: user.application.id}}" class="ml-auto">Chi tiết</router-link>
+        </div>
+        <div v-else-if="user.application.status==application_statuses.DECLINED" class="c-flex-middle text-danger">
+          Đăng ký chủ trọ đã bị từ chối
+          <router-link :to="{name: 'detail-application', params: {id: user.application.id}}" class="ml-auto">Sửa</router-link>
+        </div>
+      </div>
+
+    </div>
     <change-password :show="change_password" @close="change_password=false"></change-password>
   </div>
 </template>
 <script>
 import ChangePassword from './ChangePassword'
-
+import UploadIcon from '../../../icons/Upload'
+import BrokenIcon from '../../../icons/Broken'
+import RegisterIcon from '../../../icons/Register'
 export default {
   components: {
-    ChangePassword
+    ChangePassword,
+    UploadIcon,
+    BrokenIcon,
+    RegisterIcon
   },
   data () {
     return {
@@ -91,7 +116,9 @@ export default {
       backup_data: {},
       image: '',
       edit_avatar: false,
-      change_password: false
+      change_password: false,
+      normal_role: $config.USER.ROLE.NORMAL,
+      application_statuses: $config.OWNER_APPLICATION_STATUS
     }
   },
   computed: {
@@ -198,5 +225,13 @@ label {
 }
 .container {
   margin-bottom: 60px;
+}
+[avatar] {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  margin-bottom: 10px;
+  padding: 4px;
+  box-shadow: 0px 0px 10px #00000040;
 }
 </style>

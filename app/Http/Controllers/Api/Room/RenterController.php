@@ -17,7 +17,7 @@ class RenterController extends Controller
 
     public function main(Request $request)
     {
-        $renters = $this->roomServices->renters($request->id);
+        $renters = $this->roomServices->renters($request->id, $request->renter);
         return response()->json($renters, 200);
     }
 }

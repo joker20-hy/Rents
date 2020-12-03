@@ -3,10 +3,18 @@
 namespace App\Http\Controllers\Api\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Services\UserServices;
 use Illuminate\Http\Request;
 
 class LoginController extends Controller
 {
+    protected $userServices;
+
+    public function __construct(UserServices $userServices)
+    {
+        $this->userServices = $userServices;
+    }
+
     /**
      * @param Illuminate\Http\Request $request
      */

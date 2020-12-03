@@ -9,8 +9,7 @@
           v-model="payment.status"
           :class="payment.status?'bg-primary':''"
           :locked="payment.status!=0"
-          @change="changeStatus"
-          @click="alertPayment()"
+          @input="changeStatus"
         ></switch-box>&nbsp;
         <span v-if="payment.status">Đã thanh toán</span>
         <span v-else>Chưa thanh toán</span>
@@ -22,6 +21,9 @@
         <button class="btn text-danger" @click="$emit('delete', payment.id)">
           <i class="fas fa-trash"></i> Xóa
         </button>
+      </div>
+      <div v-if="payment.status" class="text-danger">
+        <span class="text-bold">Lưu ý: </span> Bạn không thể thay đổi trạng thái sau khi xác nhận 'Đã thanh toán'
       </div>
     </div>
   </transition>
@@ -51,6 +53,9 @@ export default {
       })
     },
     changeStatus () {
+      if (!this.payment.status) {
+        return this.alertPayment()
+      }
       $eventHub.$emit('on-loading')
       ajax().put(`/api/payment/room/${this.payment.id}/status`, {status: this.payment.status})
       .then(res => {

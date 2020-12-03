@@ -46,16 +46,18 @@ class RenterServices
     {
         $userId = is_null($userId) ? Auth::user()->id : $userId;
         $user = $this->userRepository->findById($userId);
+        $room = $this->roomRepository->findById($roomId);
         if (!is_null($user->room_id)) {
             return abort(400, "Bạn đã đang là người thuê phòng");
+        } elseif ($room->renter_count + 1 > $room->limit_renter) {
+            return abort(400, 'Phòng không thể có thêm người thuê');
         }
-        return DB::transaction(function () use ($user, $roomId) {
+        return DB::transaction(function () use ($user, $room) {
             $renter = $this->userRepository->update(
                 ['id' => $user->id],
-                ['role' => $this->roles->RENTER, 'room_id' => $roomId]
+                ['role' => $this->roles->RENTER, 'room_id' => $room->id]
             );
-            $this->renterRepository->createRentRoomContract($renter->id, $roomId);
-            $room = $this->roomRepository->findById($roomId);
+            $this->renterRepository->createRentRoomContract($renter->id, $room->id);
             $roomUpdateParams = ['renter_count' => $room->renter_count + 1];
             if ($room->status!=$this->roomStatus->rented) {
                 $roomUpdateParams['status'] = $this->roomStatus->rented;
@@ -102,6 +104,7 @@ class RenterServices
                 $roomUpdateParams['status'] = $this->roomStatus->waiting;
             }
             $this->roomRepository->update($room->id, $roomUpdateParams);
+            $this->renterRepository->deleteRoommateWanted($room->id);
             return $renter;
         });
     }
@@ -127,5 +130,65 @@ class RenterServices
         } catch (Exception $e) {
             return abort(403, 'Bạn không có quyền thực hiện hành động này');
         }
+    }
+
+    /**
+     * Get all roomate info
+     */
+    public function getRoommates()
+    {
+        $authUser = Auth::user();
+        if (is_null($authUser->room_id)) {
+            return abort(403, 'Bạn chưa thuê phòng trọ');
+        }
+        return $this->userRepository->find(['room_id' => $authUser->room_id], ['profile']);
+    }
+
+    /**
+     * Create wanted roommate post
+     *
+     * @param array $params
+     */
+    public function createRoommateWanted(array $params)
+    {
+        $authUser = Auth::user();
+        if (is_null($authUser->room_id)) {
+            return abort(403, 'Bạn chưa thuê phòng trọ');
+        }
+        $room = $authUser->room;
+        if ($room->renter_cout + $params['number'] > $room->limit_renter) {
+            return abort(400, "Phòng không thể có thêm ".$params['number']." người");
+        }
+        DB::transaction(function () use ($authUser, $room, $params) {
+            $this->renterRepository->createRoommateWanted([
+                'creator_id' => $authUser->id,
+                'room_id' => $room->id,
+                'number' => $params['number'],
+                'content' => $params['content']
+            ]);
+            $this->roomRepository->update($room->id, ['status' => $this->roomStatus->half]);
+        });
+    }
+
+    public function updateRoommateWanted(array $params)
+    {
+        $authUser = Auth::user();
+        if (is_null($authUser->room_id)) {
+            return abort(403, 'Bạn chưa thuê phòng trọ');
+        }
+        $this->renterRepository->updateRoommateWanted($authUser->room_id, $params);
+    }
+
+    public function deleteRoommateWanted()
+    {
+        $authUser = Auth::user();
+        if (is_null($authUser->room_id)) {
+            return abort(403, 'Bạn chưa thuê phòng trọ');
+        }
+        $room = $authUser->room;
+        DB::transaction(function () use ($room) {
+            $this->renterRepository->deleteRoommateWanted($room->id);
+            $this->roomRepository->update($room->id, ['status' => $this->roomStatus->rented]);
+        });
     }
 }

@@ -35,11 +35,14 @@ export default {
   },
   methods: {
     list () {
+      $eventHub.$emit('on-loading')
       ajax().get(`/api/room/${this.id}/renters`)
       .then(res => {
+        $eventHub.$emit('off-loading')
         this.$store.commit('users/users', res.data)
       })
       .catch(err => {
+        $eventHub.$emit('off-loading')
         console.log(err)
       })
     },

@@ -1,7 +1,7 @@
 <template>
-  <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm pl-0">
+  <nav admin-nav-header class="navbar navbar-expand-md navbar-light shadow-sm pl-0">
     <button class="btn text-primary mx-2" @click="toggleSidebar()">
-      <i class="fas fa-ellipsis-v"></i>
+      <menu-dots-icon :width="'15px'" :height="'15px'" class="fill-blue"/>
     </button>
 
     <router-link class="navbar-brand" :to="{name: 'home'}">
@@ -19,16 +19,22 @@
 
       <!-- Right Side Of Navbar -->
       <ul class="navbar-nav ml-auto">
-        <button class="btn font-weight-bold text-primary" @click="logout()">
-          <i class="fas fa-sign-out-alt"></i> Logout
+        <button class="btn font-weight-bold text-primary c-flex-middle" @click="logout()">
+          <signout-icon :width="'15px'" :height="'15px'" class="fill-blue"/>&nbsp; Đăng xuất
         </button>
       </ul>
     </div>
   </nav>
 </template>
 <script>
+import SignoutIcon from '../../../icons/Signout'
+import MenuDotsIcon from '../../../icons/MenuDots'
 export default {
   name: 'header-bar',
+  components: {
+    SignoutIcon,
+    MenuDotsIcon
+  },
   data () {
     return {}
   },

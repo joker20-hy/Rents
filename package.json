@@ -31,6 +31,7 @@
         "vue-carousel": "^0.18.0",
         "vue-click-outside": "^1.1.0",
         "vue-debounce": "^2.5.7",
+        "vue-easy-lightbox": "^1.0.0-rc.1",
         "vue-js-modal": "^2.0.0-rc.3",
         "vue-router": "^3.1.6",
         "vuejs-paginate": "^2.1.0",

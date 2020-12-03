@@ -1,10 +1,11 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 /** */
+import Auth from './pages/auth/Index'
 import Login from './pages/auth/Login'
 import Register from './pages/auth/Register'
 import ResetPassword from './pages/auth/ResetPassword'
-import ForgotPassword from './pages/auth/ForgotPassword'
+import VerifyEmail from './pages/auth/VerifyEmail'
 /** */
 import Frontend from './pages/frontend/Index'
 import Home from './pages/frontend/home/Index'
@@ -23,6 +24,12 @@ import RentedRoom from './pages/frontend/user/Room'
 import RoomPayMethod from './pages/frontend/user/RoomPayMethods'
 import PaymentRoomList from './pages/frontend/user/room_payment/List'
 import PaymentRoomDetail from './pages/frontend/user/room_payment/Detail'
+import RoommateWanted from './pages/frontend/user/WantedRoommate'
+import RoommateWantedDetail from './pages/frontend/user/RoommateWantedDetail'
+import Guide from './pages/frontend/guide/Index'
+import CreateRoomGuide from './pages/frontend/guide/CreateRoom'
+import CreateApplication from './pages/frontend/user/application/Create'
+import DetailApplication from './pages/frontend/user/application/Detail'
 /** Owner components */
 import Owner from './pages/owner/Index'
 import OwnerHouse from './pages/owner/house/Index'
@@ -46,6 +53,7 @@ import OwnerListRenter from './pages/owner/renters/List'
 import Admin from './pages/admin/Index'
 import Users from './pages/admin/user/Index'
 import UserList from './pages/admin/user/List'
+import UserDetail from './pages/admin/user/Detail'
 import Provinces from './pages/admin/province/Index'
 import ProvinceList from './pages/admin/province/List'
 import Districts from './pages/admin/district/Index'
@@ -56,6 +64,7 @@ import Directions from './pages/admin/directions/List'
 import Houses from './pages/admin/house/Index'
 import HouseList from './pages/admin/house/List'
 import HouseCreate from './pages/admin/house/Create'
+import HouseDetail from './pages/admin/house/Detail'
 import Rooms from './pages/admin/room/Index'
 import RoomList from './pages/admin/room/List'
 import RoomCreate from './pages/admin/room/Create'
@@ -65,6 +74,9 @@ import Criteria from './pages/admin/criteria/Index'
 import CriteriaList from './pages/admin/criteria/List'
 import Reviews from './pages/admin/review/Index'
 import ReviewList from './pages/admin/review/List'
+import Applications from './pages/admin/applications/Index'
+import ApplicationList from './pages/admin/applications/List'
+import ApplicationDetail from './pages/admin/applications/Detail'
 
 Vue.use(Router)
 
@@ -84,6 +96,17 @@ const router = new Router({
           path: 'tim-phong',
           name: 'search-room',
           component: SearchRoom
+        },
+        {
+          path: 'huong-dan',
+          component: Guide,
+          children: [
+            {
+              path: 'dang-phong',
+              name: 'guide-create-room',
+              component: CreateRoomGuide
+            }
+          ]
         },
         {
           path: 'chi-tiet',
@@ -151,6 +174,16 @@ const router = new Router({
               path: 'hoa-don/:id',
               name: 'payment-room-detail',
               component: PaymentRoomDetail
+            },
+            {
+              path: 'them-nguoi-o-ghep',
+              name: 'wanted-roommate',
+              component: RoommateWanted
+            },
+            {
+              path: 'tim-nguoi-o-ghep',
+              name: 'roommate-wanted-detail',
+              component: RoommateWantedDetail
             }
           ]
         },
@@ -181,36 +214,52 @@ const router = new Router({
               router.push({name: 'login'})
             }
           }
+        },
+        {
+          path: 'dang-ky-chu-tro/:id',
+          name: 'detail-application',
+          component: DetailApplication
+        },
+        {
+          path: 'dang-ky-chu-tro/:id/:token',
+          name: 'create-application',
+          component: CreateApplication
         }
       ]
     },
     {
-      path: '/dang-nhap',
-      name: 'login',
-      component: Login,
-      beforeEnter(to, from, next) {
-        if ($auth.check) router.push({name: 'home'})
-        else next()
-      }
-    },
-    {
-      path: '/dang-ky-tai-khoan',
-      name: 'register',
-      component: Register,
-      beforeEnter(to, from, next) {
-        if ($auth.check) router.push({name: 'home'})
-        else next()
-      }
-    },
-    {
-      path: '/quen-mat-khau',
-      name: 'forgot-password',
-      component: ForgotPassword
-    },
-    {
-      path: '/khoi-phuc-mat-khau/:id/:token',
-      name: 'reset-password',
-      component: ResetPassword
+      path: '',
+      component: Auth,
+      children: [
+        {
+          path: '/dang-nhap',
+          name: 'login',
+          component: Login,
+          beforeEnter(to, from, next) {
+            if ($auth.check) router.push({name: 'home'})
+            else next()
+          }
+        },
+        {
+          path: '/dang-ky-tai-khoan',
+          name: 'register',
+          component: Register,
+          beforeEnter(to, from, next) {
+            if ($auth.check) router.push({name: 'home'})
+            else next()
+          }
+        },
+        {
+          path: '/xac-thuc',
+          name: 'verify-email',
+          component: VerifyEmail
+        },
+        {
+          path: '/khoi-phuc-mat-khau/:id/:token',
+          name: 'reset-password',
+          component: ResetPassword
+        }
+      ]
     },
     {
       path: '/cn',
@@ -326,6 +375,11 @@ const router = new Router({
               path: '',
               name: 'user-list',
               component: UserList
+            },
+            {
+              path: ':id',
+              name: 'user-detail',
+              component: UserDetail
             }
           ]
         },
@@ -380,6 +434,11 @@ const router = new Router({
               path: 'create',
               name: 'house-create',
               component: HouseCreate
+            },
+            {
+              path: ':id',
+              name: 'house-detail',
+              component: HouseDetail
             }
           ]
         },
@@ -429,6 +488,22 @@ const router = new Router({
               path: '',
               name: 'review-list',
               component: ReviewList
+            }
+          ]
+        },
+        {
+          path: 'applications',
+          component: Applications,
+          children: [
+            {
+              path: '',
+              name: 'application-list',
+              component: ApplicationList
+            },
+            {
+              path: ':id',
+              name: 'application-detail',
+              component: ApplicationDetail
             }
           ]
         }

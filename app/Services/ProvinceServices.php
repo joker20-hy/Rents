@@ -19,6 +19,11 @@ class ProvinceServices
         $this->province = $province;
     }
 
+    public function all()
+    {
+        return $this->provinceRepository->all();
+    }
+
     /**
      * Get all province
      */

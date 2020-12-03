@@ -1,5 +1,9 @@
 <template>
-  <router-view></router-view>
+  <transition name="slide-left">
+    <transition name="slide-left">
+      <router-view/>
+    </transition>
+  </transition>
 </template>
 <script>
 export default {

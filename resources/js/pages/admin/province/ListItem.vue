@@ -10,10 +10,10 @@
         <input type="text" class="input" v-model="province.slug" v-show="edit">
       </td>
       <td>
-        <button class="btn text-primary" @click="enterEdit()" v-show="!edit">Edit</button>
-        <button class="btn text-primary" v-show="edit" @click="update()">Update</button>
-        <button class="btn text-danger" v-show="edit" @click="cancel()">Cancel</button>
-        <button class="btn text-danger" @click="$emit('destroy', province)" v-show="!edit">Delete</button>
+        <button class="btn text-primary" @click="enterEdit()" v-show="!edit">Sửa</button>
+        <button class="btn text-primary" v-show="edit" @click="update()">Lưu</button>
+        <button class="btn text-danger" v-show="edit" @click="cancel()">Hủy</button>
+        <button class="btn text-danger" @click="$emit('destroy', province)" v-show="!edit">Xóa</button>
       </td>
     </tr>
   </transition>

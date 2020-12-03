@@ -20,7 +20,8 @@ class Room extends Model
 		'price',
 		'cycle',
 		'status',
-		'renter_count'
+		'renter_count',
+		'limit_renter'
     ];
 
     public function house()
@@ -46,5 +47,10 @@ class Room extends Model
 	public function paymethods()
     {
         return $this->belongsToMany(PayMethod::class, 'room_pay_methods');
-    }
+	}
+	
+	public function roommateWanted()
+	{
+		return $this->hasOne(RoommateWanted::class);
+	}
 }

@@ -16,11 +16,13 @@ class PayMethodServices
 
     public function index($owner_id = null)
     {
+        $owner_id = is_null($owner_id) ? Auth::user()->id : $owner_id;
         return $this->payMethodRepository->index($owner_id);
     }
 
     public function list($owner_id = null, $paginate = 10)
     {
+        $owner_id = is_null($owner_id) ? Auth::user()->id : $owner_id;
         return $this->payMethodRepository->list($owner_id, $paginate);
     }
 

@@ -9,7 +9,7 @@ class SuggestServices
 {
     public function provinces($keywords, $limit = null)
     {
-        $query = "select id, name, slug from provinces where match(name) against('$keywords') and deleted_at is null";
+        $query = "select id, name, slug from provinces where name like '%$keywords%' and deleted_at is null";
         if (!is_null($limit)) {
             $query = "$query limit $limit";
         }
@@ -23,7 +23,7 @@ class SuggestServices
         if (!is_null($province)) {
             array_push($where, "province_id=$province");
         }
-        array_push($where, "match(name) against('$keywords')");
+        array_push($where, "name like '%$keywords%'");
         $where = implode(" and ", $where);
         $query = "select id, name, slug from districts where $where and deleted_at is null";
         if (!is_null($limit)) {
@@ -41,7 +41,7 @@ class SuggestServices
         } elseif (!is_null($province)) {
             array_push($where, "province_id=$province");
         }
-        array_push($where, "match(name) against('$keywords')");
+        array_push($where, "name like '%$keywords%'");
         $where = implode(" and ", $where);
         $query = "select id, name, slug from areas where $where and deleted_at is null limit $limit";
         $areas = DB::select($query);
