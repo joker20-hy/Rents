@@ -23,7 +23,7 @@
       Không tìm thấy kết quả phù hợp
     </div>
     <button class="search-btn" @click="toggleSideSearch">
-      <i class="fas fa-search"></i>
+      <search-icon :width="'16px'" :height="'16px'" class="fill-light"/>
     </button>
     <!-- side search -->
     <side-search></side-search>
@@ -37,14 +37,15 @@ import SideSearch from '../../layouts/SideSearch'
 import ListItem from './ListItem'
 import RoomFilter from './Filter'
 import ToolBar from './ToolBar'
-
+import SearchIcon from '../../../../icons/search'
 export default {
   components: {
     ListItem,
     SelectBox,
     SideSearch,
     RoomFilter,
-    ToolBar
+    ToolBar,
+    SearchIcon
   },
   data () {
     return {

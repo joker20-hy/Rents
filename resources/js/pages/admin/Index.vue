@@ -3,7 +3,9 @@
     <side-menu/>
     <section class="float-left w-100 dashboard-container">
       <header-bar/>
-      <router-view/>
+      <transition name="slide-left">
+        <router-view/>
+      </transition>
     </section>
   </div>
 </template>
@@ -25,6 +27,7 @@ export default {
 <style scoped>
   .dashboard-container {
     background-color: #f0f0f0;
-    min-height: 100vh;
+    max-height: 100vh;
+    overflow-y: auto;
   }
 </style>

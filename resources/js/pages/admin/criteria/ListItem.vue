@@ -11,17 +11,16 @@
 	  </td>
 	  <td>
 	  	<button class="btn text-primary" @click="enterEdit()" v-show="!edit">
-		  <i class="fas fa-pencil"></i>
+		  Sửa
 		</button>
 	  	<button class="btn text-primary" @click="update()" v-show="edit">
-		  <i class="fas fa-save text-primary" v-show="!updating"></i>
-	  	  <i class="fas fa-spinner fa-pulse text-primary" v-show="updating"></i>
+		  Lưu
 	  	</button>
 	  	<button class="btn text-danger" @click="leaveEdit()" v-show="edit">
-		  <i class="fas fa-times"></i>
+		  Hủy
 		</button>
 	  	<button class="btn text-danger" @click="$emit('destroy', criteria)" v-show="!edit">
-		  <i class="fas fa-trash"></i>
+		  Xóa
 		</button>
 	  </td>
 	</tr>

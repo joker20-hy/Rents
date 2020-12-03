@@ -3,25 +3,27 @@
     <div class="col-md-10 mx-auto">
       <h4>Danh sách nhà</h4>
       <div class="p-2 bg-white mb-3 d-flex">
-        <router-link :to="{name: 'owner-create-house'}" class="btn ml-auto">
-          <i class="fas fa-plus"></i> Thêm nhà
+        <router-link :to="{name: 'owner-create-house'}" class="btn ml-auto c-flex-middle">
+          <add-icon :height="'12px'" :width="'12px'"></add-icon>&nbsp;Thêm nhà
         </router-link>
       </div>
       <list-item v-for="house in houses" :key="house.id" :house="house" @destroy="confirmDestroy"/>
       <div class="py-3 text-center mx-auto" v-if="loading">
         <i class="fas fa-spinner fa-pulse fa-lg text-primary"></i>
       </div>
-      <confirm-box :name="'delete-house'" :title="'Xóa nhà'" :message="'Bản ghi nhà này sẽ bị xóa'" @confirm="destroy()"/>
+      <confirm-box :name="'delete-house'" :title="'Xóa nhà'" :message="'Nhà này sẽ bị xóa'" @confirm="destroy()"/>
     </div>
   </div>
 </template>
 <script>
 import ConfirmBox from '../../utilities/ConfirmBox'
 import ListItem from './ListItem'
+import AddIcon from '../../../icons/Add'
 export default {
   components: {
     ConfirmBox,
     ListItem,
+    AddIcon
   },
   data () {
     return {
@@ -46,6 +48,7 @@ export default {
         res.data.data.forEach(house => {
           house.images=house.images==null?[]:JSON.parse(house.images)
           house.description = house.description==null?'':utf8.decode(house.description)
+          house.contact=house.contact==null?{phone:'',others:''}:JSON.parse(house.contact)
         });
         this.$store.commit('houses/houses', res.data.data)
       })

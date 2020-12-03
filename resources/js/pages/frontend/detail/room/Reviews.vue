@@ -2,39 +2,41 @@
   <div page-section>
     <div class="d-flex">
       <h2>Đánh giá</h2>
-      <router-link class="btn text-primary ml-auto" :to="{name:'review-room', params: {id: this.id}}">
-        <i class="fas fa-pencil"></i> đánh giá</router-link>
+      <router-link class="btn text-primary c-flex-middle ml-auto" :to="{name:'review-room', params: {id: this.room}}">
+        <edit-icon :width="'13px'" :height="'13px'" class="fill-blue"/>&nbsp;đánh giá
+      </router-link>
     </div>
     <div v-if="reviews.length==0" class="text-muted text-center">
       Hiện chưa có đánh giá nào
     </div>
-    <transition-group name="slide-fade">
-      <div v-for="review in reviews" :key="review.id" item-review>
-        <div class="intro">
-          <div class="avt-contain">
-            <img :src="review.anonymous?anonymous_img:review.user_avatar">
+    <div v-for="review in reviews" :key="review.id" item-review>
+      <div class="intro">
+        <div class="avt-contain">
+          <img :src="review.review.anonymous?anonymous_img:review.review.user_avatar">
+        </div>
+        <div class="summary">
+          <div class="text-bold">
+            {{ review.review.anonymous?'Anonymous':review.review.user_name }}
           </div>
-          <div class="summary">
-            <div class="text-bold">
-              {{ review.anonymous?'Anonymous':review.user_name }}
-            </div>
-            <div>
-              <i class="fas fa-chevron-right"></i> {{ review.title }}
-            </div>
+          <div class="c-flex-middle">
+            <chevron-right-icon :width="'12px'" :height="'12px'" style="transform: translateY(-1px)"/>
+            &nbsp;{{ review.review.title }}
           </div>
-        </div>
-        <div class="pt-1" v-if="review.review_rooms">
-          <b>Cơ sở vật chất:</b> {{ review.review_rooms.infra_rate }} <i class="fas fa-star"></i>
-        </div>
-        <div class="pt-1" v-if="review.review_rooms">
-          <b>An ninh:</b> {{ review.review_rooms.secure_rate }} <i class="fas fa-star"></i>
-        </div>
-        <div class="pt-1" v-if="review.description">
-          <b>Nhận xét: </b>
-          {{ review.description }}
         </div>
       </div>
-    </transition-group>
+      <div class="pt-1 c-flex-middle">
+        <b>Cơ sở vật chất:</b>&nbsp;{{ review.infra_rate }}&nbsp;
+        <star-icon :width="'13px'" :height="'13px'" class="fill-orange" style="transform: translateY(-1px)"/>
+      </div>
+      <div class="pt-1 c-flex-middle">
+        <b>An ninh:</b>&nbsp;{{ review.secure_rate }}&nbsp;
+        <star-icon :width="'13px'" :height="'13px'" class="fill-orange" style="transform: translateY(-1px)"/>
+      </div>
+      <div class="pt-1" v-if="review.review.description">
+        <b>Nhận xét: </b>
+        {{ review.review.description }}
+      </div>
+    </div>
     <div class="text-center" v-if="next_page_url">
       <button class="btn text-primary" @click="get(next_page_url)">
         xem thêm
@@ -43,10 +45,18 @@
   </div>
 </template>
 <script>
+import ChevronRightIcon from '../../../../icons/ChevronRight'
+import EditIcon from '../../../../icons/Edit'
+import StarIcon from '../../../../icons/Star'
 export default {
   name: 'review-list',
+  components: {
+    ChevronRightIcon,
+    EditIcon,
+    StarIcon
+  },
   props: {
-    id: {
+    room: {
       required: true
     },
     perpage: {
@@ -57,21 +67,13 @@ export default {
   },
   data () {
     return {
-      query: {
-        id: this.id,
-        perpage: this.perpage
-      },
-      reviews: [],
       next_page_url: null
     }
   },
-  watch: {
-    id (value) {
-      this.query.id = value
-      this.get()
-    }
-  },
   computed: {
+    reviews() {
+      return this.$store.getters['reviews/reviews']
+    },
     anonymous_img() {
       return $config.ANONYMOUS
     },
@@ -84,10 +86,11 @@ export default {
   },
   methods: {
     get (url=null) {
-      url = url==null?`/api/review/${this.type}?${serialize.fromObj(this.query)}`:this.next_page_url
+      url = url==null?`/api/room/${this.room}/review`:this.next_page_url
       ajax().get(url)
       .then(res => {
-        res.data.data.forEach(review => this.reviews.push(review))
+        this.$store.commit('reviews/total', res.data.total)
+        this.$store.commit('reviews/reviews', res.data.data)
         this.next_page_url = res.data.next_page_url
       })
       .catch(err => console.log(err))

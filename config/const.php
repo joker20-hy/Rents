@@ -9,9 +9,10 @@ return [
             'RENTER' => 3
         ],
         'ROLE_NAME' => [
-            0 => 'Normal user',
-            1 => 'Admin',
-            2 => 'House owner'
+            0 => 'Người dùng',
+            1 => 'Quản trị viên',
+            2 => 'Chủ trọ',
+            3 => 'Người thuê trọ'
         ],
         'UNVERIFIED' => 0,
         'VERIFIED' => 1
@@ -136,5 +137,10 @@ return [
             'FREE' => 1,
             'ROOMMATE' => 2
         ]
+    ],
+    'OWNER_APPLICATION_STATUS' => [
+        'WAITING' => 0,
+        'APPROVED' => 1,
+        'DECLINED' => -1
     ]
 ];

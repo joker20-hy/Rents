@@ -7,10 +7,9 @@
     width: 100%;
     z-index: 12;
     background-color: $blue;
-    @media(min-width: 992px) {
-        position: sticky;
-        top: 0px;
-    }
+    position: sticky;
+    top: 0px;
+    height: #{$header-height};
     .logo {
         width: 25%;
         padding: 8px;

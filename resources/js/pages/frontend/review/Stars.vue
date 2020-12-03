@@ -5,7 +5,7 @@
   	:key="index"
   	class="fa-star"
   	:class="item.active?'fas active':'far'"
-  	@mouseover="hoverStar(item)"
+  	@mouseover="hoverStar(index)"
   	@mouseleave="leaveStar(item)"
   	@click="choose(item)"
   	></i>
@@ -42,11 +42,15 @@ export default {
   	  	})
   	  }
   	},
-  	hoverStar (star) {
-	  star.active = true
+  	hoverStar (position) {
+	  this.stars.forEach((star, index) => {
+		star.active = index<=position
+	  })
   	},
-  	leaveStar (star) {
-  	  star.id>this.value?star.active = false:''
+  	leaveStar (position) {
+  	  this.stars.forEach((star, index) => {
+		star.active = index<=position||index<=this.value
+	  })
   	},
   	choose (star) {
   	  this.value = star.id
@@ -60,6 +64,9 @@ export default {
 }
 </script>
 <style scoped>
+[review-stars] i {
+  padding: 0px 5px;
+}
 [review-stars] i.active {
   color: #f6993f;
 }

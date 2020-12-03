@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Repositories\RoomRepository;
 use App\Repositories\UserRepository;
 use App\Repositories\RenterRepository;
+use Illuminate\Database\Eloquent\Builder;
 
 class RoomServices
 {
@@ -52,7 +53,17 @@ class RoomServices
         if (array_key_exists('acreage', $conditions)) {
             $conditions['acreage'] = config('const.ROOM_FILTER.ACREAGE')[$conditions['acreage']];
         }
-        return $this->roomRepository->index($conditions, $paginate);
+        if (array_key_exists('type', $conditions)) {
+            switch ($conditions['type']) {
+                case config('const.SEARCH.TYPE.ROOMMATE'):
+                    $conditions['status'] = config('const.ROOM_STATUS.half');
+                    break;
+                default:
+                    $conditions['status'] = config('const.ROOM_STATUS.waiting');
+                    break;
+            }
+        }
+        return $this->roomRepository->index($conditions, ['criterias', 'roommateWanted'], $paginate);
     }
 
     /**
@@ -68,6 +79,16 @@ class RoomServices
         $authUser = Auth::user();
         if ($authUser->role==config('USER.ROLE.OWNER')) {
             return $this->roomRepository->list($conditions, $authUser->id, $paginate);
+        }
+        if (array_key_exists('type', $conditions)) {
+            switch ($conditions['type']) {
+                case config('const.SEARCH.TYPE.ROOMMATE'):
+                    $conditions['status'] = config('const.ROOM_STATUS.half');
+                    break;
+                default:
+                    $conditions['status'] = config('const.ROOM_STATUS.waiting');
+                    break;
+            }
         }
         return $this->roomRepository->list($conditions, null, $paginate);
     }
@@ -92,7 +113,7 @@ class RoomServices
      */
     public function show($id)
     {
-        return $this->roomRepository->first(['id' => $id], ['criterias', 'house']);
+        return $this->roomRepository->first(['id' => $id], ['criterias', 'house', 'roommateWanted']);
     }
 
     /**
@@ -237,20 +258,43 @@ class RoomServices
         $this->roomRepository->updatePayMethods($id, $payMethodIds);
     }
 
+    public function findPayMethods($id)
+    {
+        $room = $this->roomRepository->findById($id);
+        return $room->paymethods;
+    }
+
     /**
      * Find all renters of a room by id
      *
-     * @param integer $id
+     * @param integer $roomId
      *
      * @return array
      */
-    public function renters($id)
+    public function renters($roomId, $renterId = null)
     {
-        if (!$this->permission($id)) {
+        if (!$this->permission($roomId)) {
             return abort(403, "Bạn không có quyền thực hiện hành động này");
         }
-        $room = $this->roomRepository->findById($id);
-        return $this->userRepository->find(['room_id' => $room->id], ['profile']);
+        if (!is_null($renterId)) {
+            $renter = $this->userRepository->find(['id' => $renterId], ['profile'], ['id', 'email']);
+            if ($renter->room_id!=$roomId||$renter->role!=config('const.USER.ROLE.RENTER')) {
+                return abort(403, "Bạn không có quyền thực hiện hành động này");
+            }
+            return $renter;
+        }
+        return $this->userRepository->find(
+            ['room_id' => $roomId],
+            [
+                'profile' => function ($query) {
+                    $query->select(['user_id', 'firstname', 'lastname', 'phone', 'date_of_birth']);
+                },
+                'reviewRenter' => function ($query1) {
+                    $query1->select('id', 'user_id');
+                }
+            ],
+            ['id', 'name', 'email', 'room_id']
+        );
     }
 
     /**

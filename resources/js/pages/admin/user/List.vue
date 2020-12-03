@@ -1,16 +1,15 @@
 <template>
   <div class="container">
-    <h1 class="d-flex align-items-end mt-5 py-3">
-      User list
-    </h1>
+    <h3 class="c-flex-middle mt-3">
+      Danh sách người dùng
+    </h3>
     <table class="records-list">
       <thead>
-        <th>Username</th>
-        <th>Role</th>
-        <th>Rate</th>
-        <th>Rate count</th>
-        <th>Verify</th>
-        <th>Actions</th>
+        <th>Tên người dùng</th>
+        <th>Vai trò</th>
+        <th>Điểm</th>
+        <th>Số đánh giá</th>
+        <th>Hành động</th>
       </thead>
       <tbody>
         <list-item v-for="user in users" :key="user.id" :user="user"/>

@@ -2,7 +2,7 @@
   <div id="search-form">
     <div bg-cover></div>
     <div class="row mx-0" style="max-width: 640px;width: 100%;z-index: 1">
-      <h1 class="w-100 text-center py-3 text-light">Tìm kiếm nhà trọ, phòng trọ trên toàn quốc</h1>
+      <h1 class="w-100 text-center text-light">Tìm kiếm nhà trọ, phòng trọ trên toàn quốc</h1>
       <div class="col-12 text-center py-3">
         <button class="btn" :class="type==searchTypes.FREE?'btn-primary':'text-light'" @click="type=searchTypes.FREE">Tìm phòng</button>
         &nbsp;
@@ -16,8 +16,8 @@
       </div>
       <form class="col-md-4 px-0 mt-2 mt-md-0" @submit.prevent="search">
         <input type="hidden" name="type" value="">
-        <button class="search-input bg-danger text-light">
-          <i class="fas fa-search"></i>
+        <button class="search-input bg-danger fill-light">
+          <search-icon :width="'14px'" :height="'14px'"/>
         </button>
       </form>
     </div>
@@ -26,10 +26,12 @@
 <script>
 import ClickOutside from 'vue-click-outside'
 import SuggestBox from './Suggest'
+import SearchIcon from '../../../icons/search'
 export default {
   name: 'search-form',
   components: {
-    SuggestBox
+    SuggestBox,
+    SearchIcon
   },
   data () {
     return {
@@ -37,12 +39,8 @@ export default {
       results: [],
       address: {},
       type: $config.SEARCH.TYPE.FREE,
-      suggest: false
-    }
-  },
-  computed: {
-    searchTypes() {
-      return $config.SEARCH.TYPE
+      suggest: false,
+      searchTypes: $config.SEARCH.TYPE
     }
   },
   methods: {
@@ -62,8 +60,8 @@ export default {
     },
     hide() { this.suggest = false },
     search () {
+      let query = {}
       if (this.address.name!=undefined) {
-        let query = {}
         switch (this.address.type) {
           case 1:
             query = {province: this.address.slug}
@@ -77,12 +75,11 @@ export default {
           default:
             break;
         }
-        this.$router.push({name: 'search-room', query: query})
       } else if (this.keywords!='') {
-        this.$router.push({name: 'search-room', query: {address: this.keywords}})
-      } else {
-        this.$router.push({name: 'search-room'})
+        query = {address: this.keywords}
       }
+      query.type=this.type
+      this.$router.push({name: 'search-room', query: query})
     }
   },
   directives: {

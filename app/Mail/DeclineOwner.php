@@ -7,19 +7,22 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class ForgotPassword extends Mailable
+class DeclineOwner extends Mailable
 {
     use Queueable, SerializesModels;
+
+    protected $receiver;
+    protected $decline_reasons;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($receiver, $code)
+    public function __construct($receiver, $decline_reasons)
     {
         $this->receiver = $receiver;
-        $this->code = $code;
+        $this->decline_reasons = $decline_reasons;
     }
 
     /**
@@ -29,10 +32,10 @@ class ForgotPassword extends Mailable
      */
     public function build()
     {
-        $subject = "Mã xác minh tài khoản";
-        return $this->view('mail.forgot-password')
+        $subject = "Từ chối đăng ký chủ trọ";
+        return $this->view('mail.decline-owner')
                 ->with('subject', $subject)
                 ->with('receiver', $this->receiver)
-                ->with('code', $this->code);
+                ->with('decline_reasons', $this->decline_reasons);
     }
 }

@@ -25,7 +25,8 @@ class House extends Model
         'acreage',
         'images',
         'direction',
-        'description'
+        'description',
+        'contact'
     ];
 
     public function province()

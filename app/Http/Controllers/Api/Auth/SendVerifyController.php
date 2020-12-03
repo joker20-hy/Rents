@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Services\UserServices;
 use Illuminate\Http\Request;
 
-class ForgotPasswordController extends Controller
+class SendVerifyController extends Controller
 {
     protected $userServices;
 
@@ -17,17 +17,15 @@ class ForgotPasswordController extends Controller
 
     public function main(Request $request)
     {
-        $params = $this->validation($request);
-        $user = $this->userServices->forgotPassword($params['email']);
-        return response()->json([
-            'id' => $user->id
-        ], 200);
+    	$params = $this->validation($request);
+        $user = $this->userServices->sendVerify($params['email']);
+        return response()->json(['id' => $user->id], 200);
     }
 
     private function validation(Request $request)
     {
-        return $request->validate([
-            'email' => 'required|email'
-        ]);
+    	return $request->validate([
+    		'email' => 'required|email'
+    	]);
     }
 }

@@ -4,20 +4,28 @@
       <button type="button" close @click="hide()">Đóng</button>
       <div search-box>
         <input type="search" placeholder="Nhập địa chỉ, quận huyện" v-model="keywords" @keyup="suggest()" @focus="focus=true" @blur="focus=false">
-        <button><i class="fas fa-search"></i></button>
+        <button class="c-flex-middle" style="justify-content: center">
+          <search-icon :height="'15px'" :width="'15px'" class="fill-gray" style="transform: translateY(-1px);"/>
+        </button>
       </div>
     </form>
     <div v-show="showSuggest">
-      <div v-for="(option, index) in addresses" :key="`${option.id}@${index}`" class="suggest" @click="choose(option)">
-        <i class="fas fa-map-marker-alt"></i> {{ option.name }}
+      <div v-for="(option, index) in addresses" :key="`${option.id}@${index}`" class="suggest c-flex-middle" @click="choose(option)">
+        <location-pin-icon :width="'15px'" :height="'15px'" class="fill-gray"/><div style="width:calc(100% - 20px);padding-left:5px">{{ option.name }}</div>
       </div>
     </div>
   </div>
 </template>
 <script>
 import ClickOutside from 'vue-click-outside'
+import SearchIcon from '../../../icons/search'
+import LocationPinIcon from '../../../icons/LocationPin'
 export default {
   name: 'side-search',
+  components: {
+    SearchIcon,
+    LocationPinIcon
+  },
   data () {
     return {
       isShow: false,

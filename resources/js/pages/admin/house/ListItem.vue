@@ -4,11 +4,11 @@
       <td>{{ house.address }}</td>
       <td>{{ house.avg_rate }}</td>
       <td>{{ house.rate_count }}</td>
-      <td>{{ house.rent?'Yes':'No' }}</td>
+<!--       <td>{{ house.rent?'Yes':'No' }}</td> -->
       <td>
         <div>
-          <button class="btn text-primary" @click="detail()">detail</button>
-          <button class="btn text-danger" @click="destroy()">delete</button>
+          <router-link class="btn text-primary" :to="{name: 'house-detail', params: {id: house.id}}">Chi tiết</router-link>
+          <button class="btn text-danger" @click="destroy()">Xóa</button>
         </div>
       </td>
     </tr>

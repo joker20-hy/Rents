@@ -1,14 +1,18 @@
 <template>
   <span class="check-box" @click="check()" :checked="isChecked">
     <span class="check">
-      <i class="fas fa-check" v-show="isChecked"></i>
+      <check-icon v-show="isChecked" :width="'12px'" :height="'12px'" class="fill-blue"/>
     </span>&nbsp;
     <span>{{ label }}</span>
   </span>
 </template>
 <script>
+import CheckIcon from '../../icons/Check'
 export default {
   name: 'check-box',
+  components: {
+    CheckIcon
+  },
   props: {
     checked: {
       required: false,
