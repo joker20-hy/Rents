@@ -2,7 +2,9 @@
   <div review-contain v-if="room!=null" class="mb-5">
   	<form review-form @submit.prevent="create">
 	  <div class="pb-4">
-		<span style="font-weight: 600">{{ room.name }}</span><br>
+		<router-link :to="{name: 'room-for-rent', params: {id: room.id}}">
+		  <h2>{{ room.name }}</h2>
+		</router-link>
 		<small>{{ room.house.address_detail }}</small>
 	  </div>
 	  <label>Tiêu đề</label>
@@ -15,7 +17,7 @@
   	  <review-stars class="form-group" :count="10" @change="secureRate" :rate="secure_rate"/>
 	  <label>Cơ sở vật chất</label>
   	  <review-stars class="form-group" :count="10" @change="getRate" :rate="infra_rate"/>
-  	  <!-- <label>Nhận xét</label> -->
+  	  <label>Nhận xét</label>
   	  <div class="form-group">
   		<textarea class="form-control" placeholder="Nhận xét bổ xung" v-model="description"></textarea>
   	  </div>
@@ -63,6 +65,7 @@ export default {
 	"$route.params.id": {
 	  handler (id) {
 		this.id = id
+		this.getRoom()
 	  },
 	  deep: true,
       immediate: true
@@ -70,12 +73,7 @@ export default {
   },
   computed: {
 	room () {
-	  let room = this.$store.getters['rooms/first']
-	  if (room==null) {
-		this.getRoom()
-	  } else {
-		return this.$store.getters['rooms/first']
-	  }
+	  return this.$store.getters['rooms/first']
 	}
   },
   created () {
@@ -101,14 +99,13 @@ export default {
 	  this.infra_rate = rate
 	},
 	create () {
-	  ajax().post(`/api/review/${this.type}`, {
-		criteria_id: this.id,
+	  ajax().post(`/api/room/${this.id}/review`, {
 		title: this.title,
 		owner_rate: this.owner_rate,
 		secure_rate: this.secure_rate,
 		infra_rate: this.infra_rate,
 		anonymous: this.anonymous,
-		description: this.description,
+		description: this.description
 	  })
 	  .then(res => {
 		//

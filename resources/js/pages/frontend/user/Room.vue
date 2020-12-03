@@ -20,19 +20,19 @@
       </button>
     </router-link>
     <router-link :to="{name: 'review-room', params: {id: room.id}}" class="bg-white p-2 mb-2 c-flex-middle">
-      <edit-icon :width="'16px'" :height="'16px'" class="fill-blue"/>&nbsp;Viết đánh giá
+      <edit-icon :width="'16px'" :height="'16px'" class="fill-blue"/>&nbsp;Đánh giá phòng
       <button class="btn ml-auto text-primary">
         <chevron-right-icon :width="'15px'" :height="'15px'" class="fill-blue"/>
       </button>
     </router-link>
 
-    <router-link :to="{name: 'wanted-roommate'}" v-if="wantedRoommate" class="bg-white p-2 mb-2 d-flex align-items-center" style="box-shadow: 0px 0px 2px #80808040;border-radius: 6px">
+    <router-link :to="{name: 'wanted-roommate'}" v-if="wantedRoommate" class="bg-white p-2 mb-2 c-flex-middle" style="box-shadow: 0px 0px 2px #80808040;border-radius: 6px">
       <i class="fas fa-user-plus"></i>&nbsp;Tìm người ở ghép
       <button class="btn ml-auto text-primary">
         <i class="fas fa-chevron-right"></i>
       </button>
     </router-link>
-    <router-link :to="{name: 'roommate-wanted-detail'}" v-else-if="room.status==halfStatus" class="bg-white p-2 mb-2 d-flex align-items-center" style="box-shadow: 0px 0px 2px #80808040;border-radius: 6px">
+    <router-link :to="{name: 'roommate-wanted-detail'}" v-else-if="room.status==halfStatus" class="bg-white p-2 mb-2 c-flex-middle" style="box-shadow: 0px 0px 2px #80808040;border-radius: 6px">
       <i class="fas fa-user-plus"></i>&nbsp;Tìm người ở ghép
       <button class="btn ml-auto text-primary">
         <i class="fas fa-chevron-right"></i>

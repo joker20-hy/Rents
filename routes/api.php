@@ -17,8 +17,8 @@ Route::group(['namespace' => 'Api'], function() {
 	Route::group(['namespace' => 'Auth'], function() {
 		Route::post('login', 'LoginController@login');
 		Route::post('register', 'RegisterController@main');
+		Route::get('verify', 'SendVerifyController@main');
 		Route::post('verify/{id}', 'VerifyController@main');
-		Route::get('forgot-password', 'ForgotPasswordController@main');
 		Route::put('change-password/{id}', 'UpdatePasswordController@main');
 	});
 	Route::group([
@@ -35,7 +35,7 @@ Route::group(['namespace' => 'Api'], function() {
 		'namespace' => 'District',
 		'prefix' => 'district'
 	], function () {
-		Route::get('list/{provinceId?}', 'ListController@main')->middleware('auth:api');
+		Route::get('list/{provinceId?}', 'ListController@main')->middleware(['auth:api']);
 		Route::get('{provinceId?}', 'IndexController@main');
 	});
 	Route::group([
@@ -51,6 +51,12 @@ Route::group(['namespace' => 'Api'], function() {
 		'namespace' => 'Room',
 		'prefix' => 'room'
 	], function () {
+		Route::group([
+			'namespace' => 'Review',
+		], function () {
+			Route::get('{id}/review', 'IndexController@main');
+			Route::post('{id}/review', 'StoreController@main')->middleware(['auth:api']);
+		});
 		Route::get('', 'IndexController@main');
 		Route::get('list', 'ListController@main')->middleware(['auth:api', 'admin-owner-role']);
 		Route::get('{id}', 'ShowController@main');
@@ -66,11 +72,11 @@ Route::group(['namespace' => 'Api'], function() {
 		'prefix' => 'review'
 	], function () {
 		Route::get('{type}', 'IndexController@main');
-		Route::post('{type}', 'StoreController@main')->middleware('auth:api');
+		Route::post('{type}', 'StoreController@main')->middleware(['auth:api']);
 	});
 
 	Route::group([
-	    'middleware' => 'auth:api'
+	    'middleware' => ['auth:api']
 	], function() {
 		Route::post('refresh', 'Auth\RefreshController@main');
 		Route::post('logout', 'Auth\LoginController@logout');
@@ -117,11 +123,32 @@ Route::group(['namespace' => 'Api'], function() {
 			Route::put('leave-room', 'LeaveRoomController@main')->middleware('owner-renter-role');
 			Route::put('{id}', 'UpdateController@main');
 			Route::post('rent-room/{room_id}', 'RentRoomController@main');
+			Route::post('{id}/apply-for-owner', 'ApplyForOwnerController@main');
+		});
+		Route::group([
+			'namespace' => 'Owner',
+			'prefix' => 'owner'
+		], function () {
+			Route::group([
+				'prefix' => 'application',
+				'middleware' => 'admin-role'
+			], function () {
+				Route::get('list', 'ListApplicationController@main');
+				Route::put('{id}/approve', 'ApproveApplicationController@main');
+				Route::put('{id}/decline', 'DeclineApplicationController@main');
+			});
+			Route::group([
+				'prefix' => 'application',
+			], function () {
+				Route::get('{id}', 'ShowApplicationController@main');
+				Route::put('{id}', 'UpdateApplicationController@main');
+			});
 		});
 		Route::group([
 			'namespace' => 'Renter',
 			'prefix' => 'renter'
 		], function () {
+			Route::post('{id}/review', 'ReviewController@main');
 			Route::post('rent-room', 'RentRoomController@main');
 			Route::put('leave-room/{userId?}', 'LeaveRoomController@main');
 			Route::post('wanted-roommate', 'WantedRoommateController@main');
@@ -155,6 +182,7 @@ Route::group(['namespace' => 'Api'], function() {
 		], function () {
 			Route::get('{id}/renters', 'RenterController@main');
 			Route::get('{id}/services', 'GetServicesController@main');
+			Route::get('{id}/pay-methods', 'PayMethodController@main');
 			Route::post('', 'StoreController@main');
 			Route::post('{id}/images', 'UploadImagesController@main');
 			Route::post('{id}/pay-methods', 'AddPayMethodController@main');
@@ -162,6 +190,12 @@ Route::group(['namespace' => 'Api'], function() {
 			Route::put('{id}/images', 'UpdateImagesController@main');
 			Route::put('{id}/status', 'UpdateStatusController@main');
 			Route::delete('{id}', 'DestroyController@main');
+		});
+		Route::group([
+			'namespace' => 'Room',
+			'prefix' => 'room'
+		], function () {
+			Route::get('{id}/pay-methods', 'PayMethodController@main');
 		});
 		Route::group([
 			'namespace' => 'Service',

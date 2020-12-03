@@ -35,8 +35,15 @@ export default {
       id: this.$route.params.id
     }
   },
-  mounted () {
-    if (this.payments.length==0) this.get()
+  watch: {
+    "$route.params.id": {
+      handler(id) {
+        this.id = id
+        this.get()
+      },
+      immediate: true,
+      deep: true
+    }
   },
   computed: {
     user () {

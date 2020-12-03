@@ -1,10 +1,10 @@
 <template>
-  <div contain-box class="bg-white mt-2">
-    <form @submit.prevent="store()" id="create-room">
-      <h3 class="py-3 px-2 bg-primary text-light" style="margin-left: -25px;margin-right: -25px;">
+  <div contain-box class="mt-2">
+    <form @submit.prevent="store()" page-section id="create-room">
+      <h3 class="row py-3 px-2 bg-primary text-light">
         Thêm phòng
       </h3>
-      <div class="form-group row" v-show="images.length>0">
+      <div class="form-group" v-show="images.length>0">
         <div v-for="(image, index) in images" :key="index" class="col-4">
           <img :src="image" alt="" class="mw-100">
         </div>

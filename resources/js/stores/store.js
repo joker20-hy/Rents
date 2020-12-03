@@ -14,6 +14,7 @@ import districts from './districts'
 import reviews from './reviews'
 import payments from './payments'
 import paymethods from './paymethods'
+import applications from './applications'
 
 Vue.use(Vuex)
 
@@ -31,6 +32,7 @@ export const store = new Vuex.Store({
     districts,
     reviews,
     payments,
-    paymethods
+    paymethods,
+    applications
   }
 })

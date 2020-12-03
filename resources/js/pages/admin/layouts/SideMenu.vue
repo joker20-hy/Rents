@@ -38,13 +38,20 @@
         <router-link :to="{name: 'review-list'}" item>
           <i class="fas fa-user-edit"></i> Reviews
         </router-link>
+        <router-link :to="{name: 'application-list'}" class="c-flex-middle" item>
+          <register-icon :width="'14px'" :height="'14px'" style="transform: translateY(-2px)" class="fill-blue"/> Applications
+        </router-link>
       </ul>
     </div>
   </section>
 </template>
 <script>
+import RegisterIcon from '../../../icons/Register'
 export default {
   name: 'side-menu',
+  components: {
+    RegisterIcon
+  },
   data () {
     return {
       is_show: true

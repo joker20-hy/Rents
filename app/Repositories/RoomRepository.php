@@ -242,9 +242,9 @@ class RoomRepository
      */
     public function store(array $params)
     {
-        $room = $this->room->create($params);
-        $criterias = $params['criterias'];
-        $room = DB::transaction(function () use ($room, $criterias) {
+        return DB::transaction(function () use ($params) {
+            $room = $this->room->create($params);
+            $criterias = $params['criterias'];
             $roomCriterias = [];
             foreach ($criterias as $criteria) {
                 array_push($roomCriterias, [
@@ -255,9 +255,9 @@ class RoomRepository
                 ]);
             }
             $this->roomCriteria->insert($roomCriterias);
+            $room->criterias;
+            return $room;
         });
-        $room->criterias;
-        return $room;
     }
 
     /**

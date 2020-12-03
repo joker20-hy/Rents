@@ -1,7 +1,7 @@
 <template>
   <div contain-box class="bg-white mt-2" v-if="room">
     <form @submit.prevent="update()">
-      <h3 class="d-flex sticky-top bg-white text-primary p-2 mb-0 align-items-center" style="font-size: large;z-index: 10" v-if="room">
+      <h3 class="c-toolbar text-primary c-flex-middle" style="font-size: large;z-index: 10" v-if="room">
         {{ `${room.name}` }}
         <div class="ml-auto">
           <button type="button" class="btn text-primary" @click="enterEdit()" v-show="!edit">Chỉnh sửa</button>

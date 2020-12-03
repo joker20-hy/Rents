@@ -1,11 +1,11 @@
 <template>
-  <div class="container mb-5">
-    <form @submit.prevent="store()" class="col-lg-10 col-xl-8" detail-form id="create-house">
-      <h3 class="py-3 px-2 bg-primary text-light" style="margin-left: -25px;margin-right: -25px;">
-        Thêm nhà
+  <div contain-box class="mt-2">
+    <form @submit.prevent="store()" page-section detail-form id="create-house">
+      <h3 class="row py-3 px-2 bg-primary text-light">
+        Thêm nhà - dãy trọ 
       </h3>
       <label for="">
-        Tên nhà
+        Tên
         <span class="text-danger" title="Required feild">*</span>
       </label>
       <div class="form-group">
@@ -50,20 +50,6 @@
         <div class="position-relative pl-3">
           <button type="button" class="btn text-primary" onclick="clickTarget('#images')">
             <i class="far fa-images fa-lg"></i>
-          </button>
-          <input type="file" id="images" class="d-none" ref="images" @change="getImages" accept="image/*" multiple>
-        </div>
-      </div>
-      <div class="row" v-if="bucket.length>0">
-        <div class="col-4" v-for="(temp, index) in bucket" :key="index">
-          <img :src="temp" alt="" class="w-100">
-        </div>
-      </div>
-      <div class="form-group d-flex align-items-center py-2">
-        <label for="" class="m-0">Ảnh nhà</label>
-        <div class="position-relative pl-3">
-          <button type="button" class="btn text-primary" onclick="clickTarget('#images')">
-            <images-icon :width="'18px'" :height="'18px'" class="fill-blue"/>
           </button>
           <input type="file" id="images" class="d-none" ref="images" @change="getImages" accept="image/*" multiple>
         </div>

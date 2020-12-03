@@ -48,7 +48,11 @@
           PERIODIC: {value: {!! config('const.SERVICE_TYPE.PERIODIC') !!}, name: 'Định kỳ'},
           PER_UNIT: {value: {!! config('const.SERVICE_TYPE.PER_UNIT') !!}, name: 'Theo đơn vị'},
           BY_RENTERS: {value: {!! config('const.SERVICE_TYPE.BY_RENTERS') !!}, name: 'Theo người thuê trọ'}
-        }
+        },
+        OWNER_APPLICATION_STATUS: {!! json_encode(config('const.OWNER_APPLICATION_STATUS')) !!}
+      }
+      const $repo = {
+        provinces: {!! json_encode($provinces) !!}
       }
     </script>
 </body>

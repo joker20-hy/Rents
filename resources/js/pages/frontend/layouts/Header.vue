@@ -1,5 +1,5 @@
 <template>
-  <div id="header" nav-bar :class="isAuth?'':'py-2'">
+  <div id="header" nav-bar>
   	<div class="logo">
   	  <router-link :to="{name: 'home'}" class="text-primary text-bold">
         <rent-logo-icon/>
@@ -14,13 +14,13 @@
 	  	</div>
   	</div>
   	<div class="user" :class="isAuth?'':'ml-auto'">
-	    <button class="btn text-light">
+      <router-link class="btn text-light" :to="{name: 'guide-create-room'}">
         Đăng phòng
-      </button>
-  	  <router-link :to="{name: 'login'}" v-if="!isAuth" class="btn btn-auth">
+      </router-link>
+  	  <router-link :to="{name: 'login'}" v-if="!isAuth" class="btn text-light">
         Đăng nhập
       </router-link>
-      <button class="btn btn-auth" v-if="isAuth" @click="logout()">
+      <button class="btn text-light" v-if="isAuth" @click="logout()">
         Đăng xuất
       </button>
   	</div>

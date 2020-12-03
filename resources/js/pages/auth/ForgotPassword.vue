@@ -1,11 +1,16 @@
 <template>
-  <div class="auth-container p-2">
-<!--  -->
-    <form class="auth-form px-2 py-4" @submit.prevent="sendCode()" v-if="user_email==null">
-      <h2 class="text-center text-primary">Rent</h2>
-      <h5 class="text-center mb-2">Khôi phục tài khoản</h5>
+  <div class="auth-form bg-white m-auto px-2 py-4">
+    <div class="text-center">
+      <router-link :to="{name: 'home'}">
+        <rent-logo-icon :height="'50px'" :width="'auto'" class="fill-blue"/>
+      </router-link>
+    </div>
+    <form @submit.prevent="sendCode()" v-if="user_email==null">
+      <div class="text-center my-2">
+        <h5 class="mb-0">Khôi phục tài khoản</h5>
+      </div>
       <div class="form-group pt-3">
-        <label for="">Nhập email để khôi phục tài khoản</label>
+        <label for="">Nhập email để khôi phục tài khoản <span class="text-danger">*</span></label>
         <input type="email" class="form-control" :class="email_error?'border-danger text-danger':''" placeholder="Email" v-model="email" required>
         <transition name="slide-fade">
           <span class="text-danger" v-show="email_error">Tài khoản không tồn tại</span>
@@ -18,10 +23,8 @@
         <router-link :to="{name: 'login'}">Quay lại trang đăng nhập</router-link>
       </div>
     </form>
-<!--  -->
-    <form class="auth-form px-2 py-4" @submit.prevent="verifyCode()" v-if="user_email!=null">
-      <h2 class="text-center text-primary">Rent</h2>
-      <div class="form-group text-center pt-1">
+    <form @submit.prevent="verifyCode()" v-if="user_email!=null">
+      <div class="form-group text-center py-2">
         <span style="padding: 2px 6px;border-radius: 12px;border: 1px solid var(--gray)">
           <i class="fas fa-user-circle"></i> {{ user_email }}
         </span>
@@ -44,7 +47,11 @@
   </div>
 </template>
 <script>
+import RentLogoIcon from '../../icons/RentLogo'
 export default {
+  components: {
+    RentLogoIcon
+  },
   data () {
     return {
       code_sent: false,
@@ -70,7 +77,7 @@ export default {
     sendCode(email=null) {
       email = email==null?this.email:email
       $eventHub.$emit('on-loading')
-      ajax().get(`/api/forgot-password?email=${email==null?this.email:email}`)
+      ajax().get(`/api/verify?email=${email==null?this.email:email}`)
       .then(res => {
         $eventHub.$emit('off-loading')
         this.email_error = false
@@ -111,23 +118,12 @@ export default {
 }
 </script>
 <style scoped>
-  .auth-container {
-    min-height: 100vh;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    background-color: var(--blue);
-  }
-  form {
-    background-color: var(--white);
-    border-radius: 10px;
-    box-shadow: 0px 1px 3px;
-    padding: 10px;
-  }
   .auth-form {
     width: 400px;
     max-width: 100%;
     margin-left: auto;
     margin-right: auto;
+    border-radius: 10px;
+    box-shadow: 0px 0px 30px #0003;
   }
 </style>

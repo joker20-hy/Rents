@@ -46,16 +46,18 @@ class RenterServices
     {
         $userId = is_null($userId) ? Auth::user()->id : $userId;
         $user = $this->userRepository->findById($userId);
+        $room = $this->roomRepository->findById($roomId);
         if (!is_null($user->room_id)) {
             return abort(400, "Bạn đã đang là người thuê phòng");
+        } elseif ($room->renter_count + 1 > $room->limit_renter) {
+            return abort(400, 'Phòng không thể có thêm người thuê');
         }
-        return DB::transaction(function () use ($user, $roomId) {
+        return DB::transaction(function () use ($user, $room) {
             $renter = $this->userRepository->update(
                 ['id' => $user->id],
-                ['role' => $this->roles->RENTER, 'room_id' => $roomId]
+                ['role' => $this->roles->RENTER, 'room_id' => $room->id]
             );
-            $this->renterRepository->createRentRoomContract($renter->id, $roomId);
-            $room = $this->roomRepository->findById($roomId);
+            $this->renterRepository->createRentRoomContract($renter->id, $room->id);
             $roomUpdateParams = ['renter_count' => $room->renter_count + 1];
             if ($room->status!=$this->roomStatus->rented) {
                 $roomUpdateParams['status'] = $this->roomStatus->rented;

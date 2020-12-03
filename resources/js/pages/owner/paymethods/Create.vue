@@ -1,10 +1,10 @@
 <template>
-  <div class="form-contain">
-      <form @submit.prevent="store()">
-        <h1 class="py-3 px-2 bg-primary text-light">$$ Thêm phương thức thanh toán</h1>
+  <div contain-box>
+      <form page-section @submit.prevent="store()">
+        <h1 class="row py-3 px-2 bg-primary text-light">$$ Thêm phương thức thanh toán</h1>
         <div class="form-group">
           <label>Tên phương thức thanh toán<span class="text-danger">*</span></label>
-          <input type="text" class="input" placeholder="Vd: Vietcombank" v-model="name" required>
+          <input type="text" class="input" placeholder="Vd: Vietcombank hoặc ViettelPay" v-model="name" required>
         </div>
         <div class="form-group">
           <label>Số tài khoản <span class="text-danger">*</span></label>

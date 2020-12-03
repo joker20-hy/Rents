@@ -1,48 +1,55 @@
 <template>
-  <div class="auth-container">
-    <div class="register-form">
-      <div class="intro-frame">
-        <img src="/images/register.jpg" alt="">
-      </div>
-      <form @submit.prevent="register()">
-        <h3 class="text-primary mb-3">Đăng ký tài khoản</h3>
-        <div class="form-group">
-          <label>Tên người dùng <span class="text-danger">*</span></label>
-          <input type="text" class="input" :class="errors.name?'error':''" placeholder="Tên người dùng" v-model="user.name" @keyup="errors.name=''" required>
-          <transition name="slide-fade">
-            <span v-show="show_error&&errors.name" class="text-danger">Tên người dùng không hợp lệ</span>
-          </transition>
-        </div>
-        <div class="form-group">
-          <label>Email <span class="text-danger">*</span></label>
-          <input type="email" class="input" :class="errors.email?'error':''" placeholder="Email" v-model="user.email" @keyup="errors.email=''" required>
-          <transition name="slide-fade">
-            <span v-show="show_error&&errors.email" class="text-danger">Email không hợp lệ</span>
-          </transition>
-        </div>
-        <div class="form-group">
-          <label>Mật khẩu <span class="text-danger">*</span></label>
-          <input type="password" class="input" :class="errors.password?'error':''" placeholder="Mật khẩu"  v-model="user.password" @keyup="errors.password=''" required>
-          <transition name="slide-fade">
-            <span v-show="show_error&&errors.password" class="text-danger">Mật khẩu không hợp lệ</span>
-          </transition>
-        </div>
-        <div class="form-group">
-          <label>Xác nhận mật khẩu <span class="text-danger">*</span></label>
-          <input type="password" class="input" :class="errors.password_confirmation?'error':''" placeholder="Xác nhận mật khẩu" v-model="user.password_confirmation" @keyup="errors.password_confirmation=''" required>
-          <transition name="slide-fade">
-            <span v-if="show_error&&errors.password_confirmation" class="text-danger">{{ errors.password_confirmation }}</span>
-          </transition>
-        </div>
-        <div class="text-right">
-          <button class="btn btn-outline-primary">Đăng ký</button>
-        </div>
-      </form>
+  <div class="register-form">
+    <div class="intro-frame">
+      <img src="/images/register.jpg" alt="">
     </div>
+    <form @submit.prevent="register()">
+      <div>
+        <router-link :to="{name: 'home'}">
+          <rent-logo-icon :height="'30px'" :width="'auto'" class="fill-blue"/>
+        </router-link>
+        <p class="text-primary px-1" style="font-size: large">Đăng ký tài khoản</p>
+      </div>
+      <div class="form-group">
+        <label>Tên người dùng <span class="text-danger">*</span></label>
+        <input type="text" class="input" :class="errors.name?'error':''" placeholder="Tên người dùng" v-model="user.name" @keyup="errors.name=''" required>
+        <transition name="slide-fade">
+          <span v-show="show_error&&errors.name" class="text-danger">Tên người dùng không hợp lệ</span>
+        </transition>
+      </div>
+      <div class="form-group">
+        <label>Email <span class="text-danger">*</span></label>
+        <input type="email" class="input" :class="errors.email?'error':''" placeholder="Email" v-model="user.email" @keyup="errors.email=''" required>
+        <transition name="slide-fade">
+          <span v-show="show_error&&errors.email" class="text-danger">Email không hợp lệ</span>
+        </transition>
+      </div>
+      <div class="form-group">
+        <label>Mật khẩu <span class="text-danger">*</span></label>
+        <input type="password" class="input" :class="errors.password?'error':''" placeholder="Mật khẩu"  v-model="user.password" @keyup="errors.password=''" required>
+        <transition name="slide-fade">
+          <span v-show="show_error&&errors.password" class="text-danger">Mật khẩu không hợp lệ</span>
+        </transition>
+      </div>
+      <div class="form-group">
+        <label>Xác nhận mật khẩu <span class="text-danger">*</span></label>
+        <input type="password" class="input" :class="errors.password_confirmation?'error':''" placeholder="Xác nhận mật khẩu" v-model="user.password_confirmation" @keyup="errors.password_confirmation=''" required>
+        <transition name="slide-fade">
+          <span v-if="show_error&&errors.password_confirmation" class="text-danger">{{ errors.password_confirmation }}</span>
+        </transition>
+      </div>
+      <div class="text-right">
+        <button class="btn btn-outline-primary">Đăng ký</button>
+      </div>
+    </form>
   </div>
 </template>
 <script>
+import RentLogoIcon from '../../icons/RentLogo'
 export default {
+  components: {
+    RentLogoIcon
+  },
   data () {
     return {
       user: {
@@ -87,13 +94,6 @@ export default {
 }
 </script>
 <style scoped>
-  .auth-container {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    background-color: var(--blue);
-    padding: 10px;
-  }
   label {
     font-weight: 600;
     margin-bottom: 0px;
