@@ -30,6 +30,7 @@
         TRUE: 1,
         FALSE: 0,
         APP_NAME: `{!! env('APP_NAME') !!}`,
+        APP_URL: `{!! env('OAUTH_URL') !!}`,
         USER: {!! json_encode(config('const.USER')) !!},
         ANONYMOUS: `{!! asset('images/anonymous.svg') !!}`,
         REVIEW: {!! json_encode(config('const.REVIEW')) !!},

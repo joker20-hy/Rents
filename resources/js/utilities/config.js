@@ -8,7 +8,7 @@ class Config {
   }
 }
 const config = new Config()
-config.set('base_url', 'http://rent.joker.com')
+config.set('base_url', $config.APP_URL)
 config.set('routes', new Config())
 config.routes.set('login', '/api/login')
 config.routes.set('refresh', '/api/refresh')
