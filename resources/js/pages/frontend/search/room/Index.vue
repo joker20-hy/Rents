@@ -12,7 +12,7 @@
         :page-count="page_count"
         :page-range="3"
         :margin-pages="2"
-        :click-handler="list"
+        :click-handler="changePage"
         :prev-text="'Prev'"
         :next-text="'Next'"
         :container-class="'pagination'"
@@ -64,7 +64,10 @@ export default {
   watch: {
     '$route.query': {
       handler (query) {
-        this.query = query
+        if(query.page) this.query.page = parseInt(query.page)
+        if(query.district) this.query.district = query.district
+        if(query.address) this.query.address = query.address
+        if(query.type) this.query.type = query.type
         this.list()
       },
       deep: true,
@@ -72,13 +75,13 @@ export default {
     }
   },
   methods: {
-    list (page = 1) {
-      this.query.page = page
+    list () {
       $eventHub.$emit('on-loading')
       ajax().get(`/api/room?${serialize.fromObj(this.query)}`)
       .then(res => {
         $eventHub.$emit('off-loading')
         this.rooms = res.data.data
+        this.page_count = res.data.last_page
       })
       .catch(err => {
         $eventHub.$emit('off-loading')
@@ -91,12 +94,18 @@ export default {
     },
     filter (conditions) {
       this.query = merge.objects(conditions, this.query)
-      this.list()
+      this.query.page = 1
+      this.$router.push({name: 'search-room', query: this.query})
     },
     sort (conditions) {
       if (conditions==null) return false
       this.query.sort = conditions
-      this.list()
+      this.query.page = 1
+      this.$router.push({name: 'search-room', query: this.query})
+    },
+    changePage(page) {
+      this.query.page = page
+      this.$router.push({name: 'search-room', query: this.query})
     }
   }
 }

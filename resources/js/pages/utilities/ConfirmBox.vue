@@ -39,7 +39,8 @@ export default {
       this.$emit('cancel')
     },
     beforeClose () {
-     this.$emit('before-close')
+      this.$emit('cancel')
+      this.$emit('before-close')
     }
   }
 }

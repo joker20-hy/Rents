@@ -46,19 +46,20 @@
       <h4>Hóa đơn</h4>
       <div class="form-group row" v-for="row in bill.services" :key="row.servince_id">
         <div class="col-6">{{ row.servince_name }}</div>
-        <div class="col-6 text-right">{{ row.price }} vnđ</div>
+        <div class="col-6 text-right">{{ range(row.price) }} vnđ</div>
       </div>
       <div class="form-group row">
         <div class="col-6">Tiền phòng</div>
-        <div class="col-6 text-right">{{ bill.room_price }} vnđ</div>
+        <div class="col-6 text-right">{{ range(bill.room_price) }} vnđ</div>
       </div>
       <hr>
-      <div class="text-right">{{ bill.total }} vnđ</div>
+      <div class="text-right">{{ range(bill.total) }} vnđ</div>
       <button class="btn btn-success" @click="store()" :disabled="storing">Lưu</button>
     </div>
   </div>
 </template>
 <script>
+import number from '../../../utilities/number'
 export default {
   data () {
     return {
@@ -96,6 +97,9 @@ export default {
         this.room = res.data.room
       })
       .catch(err => console.log(err))
+    },
+    range(num) {
+      return number.range(`${num}`)
     },
     generate () {
       this.bill.services = []

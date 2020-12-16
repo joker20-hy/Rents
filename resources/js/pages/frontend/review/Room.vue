@@ -1,16 +1,17 @@
 <template>
   <div review-contain v-if="room!=null" class="mb-5">
-  	<form review-form @submit.prevent="create">
+	<transition name="slide-fade">
+  	<form v-show="!done" review-form @submit.prevent="create">
 	  <div class="pb-4">
 		<router-link :to="{name: 'room-for-rent', params: {id: room.id}}">
 		  <h2>{{ room.name }}</h2>
 		</router-link>
 		<small>{{ room.house.address_detail }}</small>
 	  </div>
-	  <label>Tiêu đề</label>
+	  <!-- <label>Tiêu đề</label>
   	  <div class="form-group">
 		<input type="text" class="form-control" v-model="title" placeholder="Tiêu đề">
-	  </div>
+	  </div> -->
   	  <label>Chủ trọ</label>
   	  <review-stars class="form-group" :count="10" @change="ownerRate" :rate="owner_rate"/>
   	  <label>An ninh</label>
@@ -19,7 +20,7 @@
   	  <review-stars class="form-group" :count="10" @change="getRate" :rate="infra_rate"/>
   	  <label>Nhận xét</label>
   	  <div class="form-group">
-  		<textarea class="form-control" placeholder="Nhận xét bổ xung" v-model="description"></textarea>
+  		<textarea class="form-control" placeholder="Nhận xét bổ sung" v-model="description"></textarea>
   	  </div>
   	  <div class="form-group d-flex align-items-center justify-content-end" style="font-weight: 600;flex-wrap: wrap;position:relative" v-click-outside="function (){note=false}">
   	  	<input type="checkbox" v-model="anonymous" :checked="anonymous">
@@ -36,6 +37,20 @@
   	  	</button>
   	  </div>
   	</form>
+	</transition>
+	<transition name="slide-left">
+      <div v-show="done" class="text-center" page-section>
+        <h3 class="text-success">
+          Cảm ơn
+        </h3>
+        <p>{{ APP_NAME }} chân thành cảm ơn vì đóng góp của bạn</p>
+        <div>
+          <router-link :to="{name: 'room-for-rent', params: {id: id}}" class="btn btn-primary">
+            Chi tiết phòng
+          </router-link>
+        </div>
+      </div>
+    </transition>
   </div>
 </template>
 <script>
@@ -58,7 +73,9 @@ export default {
 	  infra_rate: '',
 	  anonymous: 0,
 	  description: '',
-	  note: false
+	  note: false,
+	  done: false,
+	  APP_NAME: $config.APP_NAME
   	}
   },
   watch: {
@@ -99,6 +116,7 @@ export default {
 	  this.infra_rate = rate
 	},
 	create () {
+	  $eventHub.$emit('on-loading')
 	  ajax().post(`/api/room/${this.id}/review`, {
 		title: this.title,
 		owner_rate: this.owner_rate,
@@ -108,10 +126,21 @@ export default {
 		description: this.description
 	  })
 	  .then(res => {
-		//
+		$eventHub.$emit('off-loading')
+		this.done = true
+        $eventHub.$emit('success-alert', {
+          title: 'Thành công',
+          message: "Đánh giá thành công",
+          timeout: 4000
+        })
 	  })
 	  .catch(err => {
-	    
+	    $eventHub.$emit('off-loading')
+        $eventHub.$emit('error-alert', {
+          title: 'Không thành công',
+          message: "Hiện không thể đánh giá phòng trọ này, hãy thử lại sau",
+          timeout: 5000
+        })
 	  })
 	}
   },

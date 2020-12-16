@@ -130,26 +130,32 @@ class HouseRepository
     {
         $house = $this->house->findOrFail($id);
     	$house = DB::transaction(function () use ($house, $params) {
-            $params['contact'] = json_encode($params['contact']);
+            if(array_key_exists('contact', $params)) {
+                $params['contact'] = json_encode($params['contact']);
+            }
             $house->update($params);
         	return $house;
         });
-        $houseServices = [];
-        foreach($params['add_services'] as $serv) {
-            array_push($houseServices, [
-                'house_id' => $house->id,
-                'service_id' => $serv['id'],
-                'price' => $serv['price']
-            ]);
+        if(array_key_exists('add_services', $params)) {
+            $houseServices = [];
+            foreach($params['add_services'] as $serv) {
+                array_push($houseServices, [
+                    'house_id' => $house->id,
+                    'service_id' => $serv['id'],
+                    'price' => $serv['price']
+                ]);
+            }
+            DB::transaction(function () use ($houseServices) {
+                $this->houseService->insert($houseServices);
+            });
         }
-        DB::transaction(function () use ($houseServices) {
-            $this->houseService->insert($houseServices);
-        });
-        DB::transaction(function () use ($house, $params) {
-            $this->houseService->where('house_id', $house->id)
-                ->whereIn('service_id', $params['remove_services'])
-                ->delete();
-        });
+        if (array_key_exists('remove_services', $params)) {
+            DB::transaction(function () use ($house, $params) {
+                $this->houseService->where('house_id', $house->id)
+                    ->whereIn('service_id', $params['remove_services'])
+                    ->delete();
+            });
+        }
         return $house;
     }
 

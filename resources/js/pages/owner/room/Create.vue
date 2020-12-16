@@ -83,7 +83,8 @@ export default {
         acreage: '',
         price: '',
         cycle: '',
-        description: ''
+        description: '',
+        images: []
       },
       criterias: []
     }
@@ -137,6 +138,13 @@ export default {
         $eventHub.$emit('off-loading')
         if (err.response==422) {
           this.error = err.response.data.errors
+        } else if (err.response==413) {
+          this.error = {}
+          $eventHub.$emit('error-alert', {
+            title: 'Đã có lỗi',
+            message:  'Hiện chưa thể upload quá nhiều ảnh',
+            timeout: 3000
+          })
         } else {
           this.error = {}
           $eventHub.$emit('error-alert', {

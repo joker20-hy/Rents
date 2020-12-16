@@ -13,7 +13,7 @@
         <label>Đánh giá</label>
         <review-stars class="form-group" :count="10" @change="getRate" :rate="review.rate"/>
         <div class="form-group">
-        <textarea class="form-control" placeholder="Nhận xét bổ xung" v-model="review.description"></textarea>
+        <textarea class="form-control" placeholder="Nhận xét bổ sung" v-model="review.description"></textarea>
         </div>
         <div class="form-group d-flex align-items-center justify-content-end" style="font-weight: 600;flex-wrap: wrap;position:relative" v-click-outside="function (){note=false}">
           <input type="checkbox" v-model="review.anonymous" :checked="review.anonymous">
@@ -67,7 +67,7 @@ export default {
         type: $config.REVIEW.TYPE.RENTER
       },
       note: false,
-      done: true,
+      done: false,
       APP_NAME: $config.APP_NAME
     }
   },
@@ -94,7 +94,7 @@ export default {
       $eventHub.$emit('on-loading')
       ajax().post(`/api/renter/${this.id}/review`, this.review)
       .then(res => {
-        
+        $eventHub.$emit('off-loading')
         $eventHub.$emit('success-alert', {
           title: 'Thành công',
           message: "Đánh giá thành công",

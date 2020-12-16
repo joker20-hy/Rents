@@ -62,6 +62,8 @@ class RoomServices
                     $conditions['status'] = config('const.ROOM_STATUS.waiting');
                     break;
             }
+        } else {
+            $conditions['status'] = config('const.ROOM_STATUS.waiting');
         }
         return $this->roomRepository->index($conditions, ['criterias', 'roommateWanted'], $paginate);
     }

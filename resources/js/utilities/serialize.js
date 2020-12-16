@@ -6,11 +6,7 @@ export default {
    */
   fromObj (obj, glue='&') {
     let params = []
-    for (let key in obj) {
-      if (!(obj[key]===''||obj[key]==null)) {
-        params.push(`${key}=${obj[key]}`)
-      }
-    }
+    for (let key in obj) obj[key]==''||obj[key]==null?'':params.push(`${key}=${obj[key]}`)
     return params.join(glue)
   }
 }

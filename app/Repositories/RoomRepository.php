@@ -76,7 +76,8 @@ class RoomRepository
         } elseif (array_key_exists('province', $conditions)) {
             return $query->where('provinces.slug', $conditions['province']);
         } elseif (array_key_exists('address', $conditions)) {
-            return $query->where('houses.address_detail', 'like', "%".$conditions['address']."%");
+            return $query->whereRaw("match(houses.address_detail) against('".$conditions['address']."')");
+            // return $query->where('houses.address_detail', 'like', "%".$conditions['address']."%");
         }
         return $query;
     }

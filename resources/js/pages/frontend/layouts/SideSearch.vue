@@ -70,7 +70,6 @@ export default {
       this.showSuggest = false
     },
     search () {
-      this.hide()
       if (this.address.name!=undefined) {
         let query = {}
         switch (this.address.type) {
@@ -92,6 +91,8 @@ export default {
       } else {
         this.$router.push({name: 'search-room'})
       }
+      this.addresses = []
+      this.hide()
     }
   },
   directives: {

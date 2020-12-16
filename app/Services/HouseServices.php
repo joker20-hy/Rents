@@ -134,11 +134,15 @@ class HouseServices
         if (!$this->permission($id)) {
             return abort(403, "You have no permission to update house's images");
         }
-        $images = $this->imageServices->store($images, $this->folder, 'h');
         $house = $this->houseRepository->update($id, [
             'images' => json_encode($images)
         ]);
         return $house;
+    }
+
+    public function deleteImages($id, array $images)
+    {
+
     }
 
     /**

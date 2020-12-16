@@ -44,7 +44,7 @@
             <i class="fas fa-user-plus"></i> Thêm người thuê
           </router-link>
         </div>
-        <div class="col-md-3 text-center pt-2">
+        <div class="col-md-3 text-center pt-2" v-if="room.status!=statuses.waiting">
           <router-link class="btn text-primary" :to="{name: 'owner-list-renter', params: {room: room.id}}">
             <i class="fas fa-user"></i> Người thuê
           </router-link>

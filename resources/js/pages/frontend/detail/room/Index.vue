@@ -35,7 +35,7 @@
       <div v-if="room.roommate_wanted.content"><span class="text-bold">Thông tin thêm: </span>{{ room.roommate_wanted.content }}</div>
     </div>
 
-    <div class="c-toolbar" page-section>
+    <div class="c-toolbar" v-if="room.house.contact" page-section>
       <h2 class="mb-0">Liên hệ của chủ nhà</h2>
       <div class="col-6 py-2 pl-0" v-if="room.house.contact.phone!=null">
         <span class="text-bold">Số điện thoại:</span> <a :href="`tel:${room.house.contact.phone}`">{{ room.house.contact.phone }}</a>
